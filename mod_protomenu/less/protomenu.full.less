@@ -1,0 +1,203 @@
+
+
+.ptmenu{
+	background-color: #e3e3e3;
+	transition: background-color 0.3s ease;
+}
+.ptmenu .nav-wrapper{
+	position: relative;
+	z-index: 10; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht.
+}
+
+
+/*
+	Allgemein
+*/
+.ptmenu ul li{
+	position: relative;
+
+	// Ein Anker
+	a.nav-item{
+		font-size: 1.1em; // Schriftgröße, Pfeilgröße sowie Abstand vom Pfeil zum Text. Entspricht 1,1 * @font-size-base (16px) = ~18px
+		//.mk-responsive-font-size(0.8em,1em,1em,1.1em); // Dynamische größe ***** Benötigt payload.less *****
+
+		font-family: @font-family-sans-serif;
+		color: @text-color;
+		font-weight: normal;
+		text-decoration: none;
+		text-transform: uppercase;
+
+		display: block;
+		padding: 0.4em 1em 0.3em 1em;
+
+		cursor: pointer;
+		&[tabindex="0"]{ cursor: default; } // Wenn kein href Attribut vorhanden ist (<a tabindex="0" class="nav-item">Foo</a>)
+	}
+
+	// Aktiver Menüeintrag
+	&.active > a.nav-item{
+		background-color: transparent;
+		color: @brand-primary;
+	}
+
+
+	a.nav-item:active, 	// Touch; Mit dem Finger angetippt. Bleibt nicht aktiv, „blitzt” nur kurz auf.
+	a.nav-item.open,	// Hat ein Untermenü geöffnet, bleibt aktiv.
+	&:hover > a.nav-item{ // Maus Hover...
+		background-color: #f7a600;
+		color: #ffffff;
+	}
+
+	// Pfeile in Menüeinträgen allgemein
+	// ***** Benötigt FontAwesome *****
+	&.deeper.parent > a.nav-item{
+		i{
+			display: inline-block;
+			position: relative;
+			vertical-align: baseline;
+			margin-left: 0.1em;
+			width: 0.7em;
+			height: 0.7em;
+		}
+		i:before{
+			.fa();
+			position: absolute;
+			font-size: 0.7em;
+			line-height: 0;
+			transition: transform 0.25s ease;
+		}
+		/* &.open i:before{} */
+	}
+}
+
+/* Bilder in Menüeinträgen allgemein
+*/
+.ptmenu .nav-item .item-image{
+	img{max-width: 100%;}
+}
+
+
+/*	Erste Ebene/Root-Level
+*/
+.ptmenu ul.nav-first{
+	.container();
+}
+.ptmenu ul.nav-first > li{
+	display: inline-block; // Horizontales Menü
+
+	/* Rahmen als Trennlinie zwischen den <li>
+	border: solid #ffffff;
+	border-width: 0px 0px 0px 1px;
+	&:last-of-type{ border-right-width: 1px; }
+	*/
+
+	/* Eigene Hover-Farbe für Anker und Rahmen im Root-Level.
+	&:hover{
+		border-color: #fbcf75;
+		+ li,
+		+ span + li{
+			border-left-color: #fbcf75;
+		}
+		> a.nav-item{
+			color: #ffffff;
+		}
+	}
+	*/
+}
+
+/*
+	Pfeile in Menüeinträgen im Root-Level (Vertikale Pfeile [nach unten])
+	***** Benötigt FontAwesome *****
+*/
+.ptmenu ul.nav-first > li.parent.deeper > a.nav-item{
+	i:before{
+		content: @fa-var-chevron-down;
+		top: 0;
+		left: 0;
+	}
+
+	// Hat ein Untermenü geöffnet
+	&.open i:before{
+		transform: rotate3d(1,0,0,-180deg);
+	}
+}
+
+
+
+/*
+	Alle Dropdown – Ab der zweiten Ebene, direkt nach Root-Level.
+	<ul class="nav-first">
+		<li class="parent deeper">
+			<a class="nav-item"></a>
+			<div class="nav-child nav-level-2"> 	<------------
+			
+*/
+.ptmenu .nav-child{
+	// Dein Zeug:
+	background-color: #222222;
+
+	// Position:
+	position: absolute;
+	z-index: 2;
+	top: 100%;
+	left: 0;
+	.nav-child { // Ab der dritten Ebene
+		top: 0;
+		left: 100%;
+	}
+
+	// Ausgeblendet:
+	opacity: 0;
+	transition: transform 0.2s cubic-bezier(.54,.39,0,1.02), opacity 0.3s ease;
+	height: 0;
+	width: 0;
+	overflow: hidden;
+	transform: scale3d(0.95,0.95,0.95);
+
+	// Eingeblendet:
+	&.in{ // .nav-child bekommt diese Klasse solange ein Transition läuft, und solange das .nav-child zu sehen ist.
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	&.open{ // Aktiv/Ausgeklappt/Geöffnet
+		z-index: 3;
+		opacity: 1;
+		transform: scale3d(1,1,1);
+	}
+}
+
+
+/* Alle Menüainträge (<a class="nav-item">) ab der zweiten Ebene
+*//*
+.ptmenu .nav-child li{
+	.nav-item{
+		white-space: nowrap;
+		font-size: 1em;
+		color: #eeeeee;
+		padding-top: 0.5em;
+		padding-bottom: 0.4em;
+	}
+	.nav-item .item-image{
+		display: none;
+	}
+
+	a.nav-item:active,
+	a.nav-item.open,
+	&:hover > a.nav-item{
+		background-color: #f7a600;
+		color: @text-color;
+	}
+}
+*/
+// Pfeil nach rechts:
+.ptmenu .nav-child li.parent.deeper > a.nav-item{
+	i:before{
+		content: @fa-var-chevron-right;
+		top: 0.525em;
+		left: 0.2em;
+	}
+	&.open i:before{
+		transform: rotate3d(0,1,0,-180deg);
+	}
+}

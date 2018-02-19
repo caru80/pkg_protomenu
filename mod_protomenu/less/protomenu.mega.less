@@ -1,0 +1,182 @@
+
+/*
+	Mega, 2. Ebene +
+*/
+.ptmenu ul.nav-first > li.mega{
+	position: static;
+}
+.ptmenu li.mega .nav-child{
+	width: 100%;
+	transform: scale3d(1,1,1); // Das sieht sonst schlimm aus.
+}
+.ptmenu li.mega .nav-child li.deeper.parent i{ // Pfeil weg, weil da nichts mehr zum aufklappen ist.
+	display: none;
+	visibility: hidden;
+}
+.ptmenu li.mega .nav-child .nav-child{ // Alle Kinder ab 3. Ebene immer anzeigen.
+	opacity: 1;
+	position: static;
+	height: auto;
+	width: auto;
+}
+
+
+/**************************************************
+
+	Bsp.: Mega mit Bootstrap Grid
+
+	***** Benötigt payload.less ******
+
+**************************************************/
+@media(min-width: @screen-lg-min) {
+
+	.ptmenu li.mega > .nav-child > div{
+		.container-xl();
+		padding-top: 2em;
+	}
+	.ptmenu li.mega > .nav-child > div > ul.nav-sub{
+		.make-row();
+		.clearfix();
+	}
+	.ptmenu li.mega > .nav-child > div > ul.nav-sub > li{
+		.mk-grid-cols(12, 6, 4, 3, 3, @reset: true, @reset-selector: ~'li', @reset-begin: 2);
+		margin-bottom: 2em;
+	}
+}
+
+/*
+	Items in Megamenü
+*/
+.ptmenu li.mega .nav-child li {
+
+	a.nav-item{
+		width: 100%;
+		white-space: normal;
+		padding: 0;
+	}
+
+	a.nav-item .item-label{
+		display: block;
+		padding: 0.8em 0;
+	}
+
+	a.nav-item .item-label i{
+		.fa();
+		padding-left: 0.35em;
+		font-size: 1.15em;
+		&:before{
+			content: @fa-var-chevron-right;
+			color: #f7a600;
+		}
+	}
+
+	a.nav-item .item-image{
+		overflow: hidden;
+		display: block;
+		border-bottom: 2px solid transparent;
+	}
+	a.nav-item .item-image img{
+		transition: transform 0.5s ease;
+		width: 100%;
+	}
+
+	@media(max-width: @screen-md-max){
+		a.nav-item{
+			display: table;
+		}
+		a.nav-item .item-image,
+		a.nav-item span.item-label {
+			border: none;
+			display: table-cell;
+		}
+
+		a.nav-item .item-image{
+			width: 45%;
+		}
+		a.nav-item .item-label{
+			width: 55%;
+			padding: 0 0.8em;
+			vertical-align: middle;
+			i{display: none;}
+		}
+	}
+
+
+
+	a.nav-item:active,
+	a.nav-item.open,
+	&.active > a.nav-item{
+		color: @brand-primary;
+	}
+	&:hover > a.nav-item{
+		background-color: transparent;
+		color: @brand-primaryer;
+		i:before{
+			color: #fbcf75;
+		}
+		.item-image{
+			border-color: @brand-primary;
+		}
+		.item-image img{
+			transform: scale3d(1.07,1.07,1.07);
+		}
+	}
+}
+
+
+/*
+	Bsp.: Mega mit Bootstrap Grid
+
+	SIEHE: Betrachte udert-arbeitsbuehnen.de in verschiedenen Auflösungen!
+
+	***** Benötigt payload.less *****
+
+*/
+/*
+@media(max-width: @screen-md-max){
+	.ptmenu li.mega > .nav-child > div{
+		.container-xl();
+		padding-top: 0em;
+	}
+	.ptmenu li.mega > .nav-child > div > ul.nav-sub{
+		.make-row();
+		.clearfix();
+	}
+	.ptmenu li.mega > .nav-child > div > ul.nav-sub > li{
+		.mk-grid-cols(12, 6, 4, @reset: true, @reset-selector: ~'li', @reset-begin: 2); // :)
+		margin-bottom: 2em;
+	}
+}
+
+
+.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.alias-for-parent{
+	border-bottom: 1px solid #333333;
+}
+.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.full-col{
+	&.top{
+		border-bottom: 1px solid #333333;
+	}
+	&.bottom{
+		border-top: 1px solid #333333;
+	}
+	.item-label{
+		padding: 0;
+	}
+}
+.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.alias-for-parent,
+.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.full-col{
+
+	.mk-grid-cols(12,12,12,12,12,@gutter: 0px, @reset: false);
+	clear: both;
+
+	.nav-item{
+		text-align: center;
+		padding: 1em 0;
+		font-size: 1.1em;
+		.item-label i{
+			display: inline-block;
+			visibility: visible;
+		}
+	}
+}
+*/

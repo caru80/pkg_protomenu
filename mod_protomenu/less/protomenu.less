@@ -1,0 +1,53 @@
+/*
+	Protomenu 0.11.0
+	Carsten Ruppert - 2017-11-29
+*/
+
+/* Alle Menülisten (<ul>) in .ptmenu
+*/
+.ptmenu ul.nav-first,
+.ptmenu ul.nav-sub{
+	list-style-type: none;
+	&, li{margin: 0; padding: 0;}
+	li + span{height: 0;}
+	li{/* Markieren von Text im Menü unterbinden. */-webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+}
+
+/* Dropdown-Auslöser Trennen:
+*/
+.ptmenu li a.nav-item{
+	/* Dropdown-Auslöser; Moduloption: „Auslöser trennen” */
+	.item-switch{display: none !important; visibility: hidden !important;}
+}
+
+/* Sonstige Eigenschaften für Hyperlinks:
+*/
+.ptmenu li a.nav-item{ &:hover, &:focus, &:active{/* Keine Outlines */outline: none !important;}}
+
+/* Überbleibsel aus alter Version
+*/
+.ptmenu .nav-child .nav-child-toolbar{display: none !important; visibility: hidden !important;}
+
+
+
+/****************************************************************************************************
+
+	Stylesheet, je nach Media Query etc.:
+
+	Angenommen die Desktop-Version befindet sich im Element: div#site-header
+	Und die Handy-Version befindet sich im Element: div#ngrid
+
+****************************************************************************************************/
+
+@media(min-width: @screen-xs-max){
+	#ngrid{
+		@import 'protomenu.stacked.less'; // Stylsheet „Gestapelt” = Alle Menüeinträge untereinander.
+	}
+}
+
+@media(min-width: @screen-md-min){
+	#site-header{
+		@import 'protomenu.full.less'; 		// „Full” Stylesheet
+		// @import 'protomenu.mega.less'; 	// „Mega” könnte „Full” um Megamenü-Funktionen ergänzen. ***** Benötigt payload.less *****
+	}
+}

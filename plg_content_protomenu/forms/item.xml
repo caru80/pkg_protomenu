@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+	<fields name="params" >
+		<fieldset name="PROTOMENU">
+
+			<field
+				name="note1"
+				type="note"
+				class=""
+				label="PLG_PROTOMENU_NOTE1"
+				description="PLG_PROTOMENU_NOTE1_DESC"
+			/>
+
+			<field
+				name="ptmbehavior"
+				type="list"
+				label="PLG_PROTOMENU_BEHAVIOR"
+				description="PLG_PROTOMENU_BEHAVIOR_DESC"
+				default="0"
+			>
+				<option value="0">PLG_PROTOMENU_BEHAVIOR_NORMAL</option>
+				<option value="1">PLG_PROTOMENU_BEHAVIOR_MEGA</option>
+				<option value="2">PLG_PROTOMENU_BEHAVIOR_LOADPOSITION</option>
+				<option value="3">PLG_PROTOMENU_BEHAVIOR_LOADMODULE</option>
+			</field>
+
+			<field
+				name="note-modules"
+				type="note"
+				class=""
+				label="PLG_PROTOMENU_NOTE_MODULESNOTE"
+			/>
+
+
+			<field
+				name="ptmloadmodposition"
+				type="moduleposition"
+				label="PLG_PROTOMENU_LOADMODPOSITION"
+				description="PLG_PROTOMENU_LOADMODPOSITION_DESC"
+				default=""
+			/>
+
+			<field
+				name="ptmloadmodule"
+				type="text"
+				default=""
+				label="PLG_PROTOMENU_LOADMODULE"
+				hint="PLG_PROTOMENU_LOADMODULE_HINT"
+				description="PLG_PROTOMENU_LOADMODULE_DESC"
+			/>
+		</fieldset>
+	</fields>
+</form>

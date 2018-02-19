@@ -1,0 +1,140 @@
+
+
+.ptmenu{}
+.ptmenu .nav-wrapper{}
+
+
+/*
+	Allgemein
+*/
+.ptmenu ul li{
+	position: relative;
+
+	a.nav-item{
+		font-size: 1.1em; // Schriftgröße, Pfeilgröße sowie Abstand vom Pfeil zum Text.
+		font-family: @font-family-sans-serif;
+
+		display: block;
+		padding: 0.7em 1em 0.5em 1em;
+
+		cursor: pointer;
+		&[tabindex="0"]{ cursor: default; } // Kein href
+
+		color: #dddddd;
+		font-weight: 400;
+		text-decoration: none;
+		text-transform: uppercase;
+	}
+
+
+	&.active > a.nav-item{
+		background-color: transparent;
+		color: @brand-primary;
+	}
+
+	a.nav-item.open,
+	a.nav-item:active{
+		background-color: @brand-primary;
+		color: #ffffff; // @text-color;
+	}
+
+	&.deeper.parent > a.nav-item{ // Pfeil allgemein
+		i{
+			display: inline-block;
+			position: relative;
+			vertical-align: baseline;
+			margin-left: 0.1em;
+			width: 0.7em;
+			height: 0.7em;
+		}
+		i:before{
+			.fa();
+			position: absolute;
+			font-size: 0.7em;
+			line-height: 0;
+			transition: transform 0.25s ease;
+		}
+		&.open i:before{ // Aktiv
+		}
+	}
+}
+/*
+	Bilder Allgemein
+*/
+.ptmenu .nav-item .item-image{
+	display: none !important;
+}
+
+
+
+
+/*
+	Erste Ebene
+*/
+.ptmenu ul.nav-first{
+}
+.ptmenu ul.nav-first > li > a.nav-item{
+	border-bottom: 1px solid #333333;
+	&.open{
+		&, + div > div .nav-sub{
+			border-bottom: 1px solid #5988b7;
+		}
+	}
+}
+// Pfeil:
+.ptmenu ul.nav-first li.parent.deeper > a.nav-item{
+	i:before{
+		content: @fa-var-chevron-down;
+		top: 0; //0.1em;
+		left: 0;
+	}
+	&.open i:before{ // Aktiv
+		transform: rotate3d(1,0,0,-180deg);
+	}
+}
+
+
+
+/*
+	Dropdown, 2. Ebene +
+*/
+.ptmenu .nav-child{
+
+	background-color: #282828;
+
+	// Ausgeblendet:
+	opacity: 0;
+	height: 0;
+	width: 0;
+	overflow: hidden;
+
+	// Eingeblendet:
+	&.in{ // .nav-child bekommt diese Klasse solange ein Transition läuft, und solange das .nav-child zu sehen ist ist.
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	&.open{ // Aktiv/Ausgeklappt
+		//z-index: 3;
+		opacity: 1;
+	}
+}
+.ptmenu .nav-child .nav-sub{ // <div class="nav-child"><div><ul class="nav-sub">...
+	padding-bottom: 1em;
+}
+.ptmenu li .nav-child .nav-child{ // 3. Ebene und Tiefer
+	top: 0;
+	left: 100%;
+	&.rtl{ // Von rechts nach Links – Das Script macht das aber NICHT mehr automatisch.
+		right: 100%;
+		left: auto;
+	}
+}
+.ptmenu .nav-child .nav-item{
+	white-space: nowrap;
+	font-size: 1em;
+	&.open,
+	&:active{
+		background-color: @brand-primary;
+	}
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.8" type="plugin" group="content" method="upgrade">
+	<name>Content - Protomenu</name>
+	<author>Carsten Ruppert</author>
+	<creationDate></creationDate>
+	<copyright></copyright>
+	<license></license>
+	<authorEmail></authorEmail>
+	<authorUrl></authorUrl>
+	<version>1.0</version>
+	<description>PLG_PROTOMENU_DESCRIPTION</description>
+	<scriptfile>install.script.php</scriptfile>
+	<files>
+		<filename plugin="protomenu">protomenu.php</filename>
+		<filename>index.html</filename>
+		<folder>forms</folder>
+	</files>
+	<languages folder="languages">
+		<language tag="de-DE">de-DE.plg_content_protomenu.ini</language>
+		<language tag="de-DE">de-DE.plg_content_protomenu.sys.ini</language>
+	</languages>
+</extension>
