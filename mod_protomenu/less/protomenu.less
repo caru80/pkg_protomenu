@@ -1,6 +1,9 @@
 /*
-	Protomenu 0.11.0
-	Carsten Ruppert - 2017-11-29
+	Protomenu 2.0.0
+	Carsten Ruppert - 2018-02-23
+
+
+	An diversen Stellen wird „payload.less” erwähnt. Die Datei befindet sich in /templates/head/less/
 */
 
 /* Alle Menülisten (<ul>) in .ptmenu
@@ -14,9 +17,9 @@
 }
 
 /* Dropdown-Auslöser Trennen:
+	Nur bei Moduloption: „Auslöser trennen” – kein Style, musst du selbst machen!
 */
 .ptmenu li a.nav-item{
-	/* Dropdown-Auslöser; Moduloption: „Auslöser trennen” */
 	.item-switch{display: none !important; visibility: hidden !important;}
 }
 
@@ -24,7 +27,7 @@
 */
 .ptmenu li a.nav-item{ &:hover, &:focus, &:active{/* Keine Outlines */outline: none !important;}}
 
-/* Überbleibsel aus alter Version
+/* Obsolet; Aus alter Version
 */
 .ptmenu .nav-child .nav-child-toolbar{display: none !important; visibility: hidden !important;}
 
@@ -32,14 +35,47 @@
 
 /****************************************************************************************************
 
-	Stylesheet, je nach Media Query etc.:
+	„Backdrop”
+
+****************************************************************************************************/
+
+.ptmenu-backdrop {
+	background-color: rgba(255,255,255,0.6);
+	width: 0;
+	height: 0;
+	opacity: 0;
+	overflow: hidden;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	z-index: 3; // Relativ zu <body> – div.ptmenu-backdrop wird im <body> an 1. Stelle eingehängt.
+	transition: opacity 0.3s ease;
+
+	&.in{ // Wichtig!
+		width: 100%;
+		height: 100%;
+		bottom: 0;
+		right: 0;
+		overflow: visible;
+	}
+	&.open{ // Übergänge
+		opacity: 1;
+	}
+}
+
+
+/****************************************************************************************************
+
+	Stylesheet (oder „Theme”), je nach Media Query etc.:
 
 	Angenommen die Desktop-Version befindet sich im Element: div#site-header
 	Und die Handy-Version befindet sich im Element: div#ngrid
 
 ****************************************************************************************************/
 
-@media(min-width: @screen-xs-max){
+@media(max-width: @screen-sm-max){
 	#ngrid{
 		@import 'protomenu.stacked.less'; // Stylsheet „Gestapelt” = Alle Menüeinträge untereinander.
 	}
@@ -48,6 +84,6 @@
 @media(min-width: @screen-md-min){
 	#site-header{
 		@import 'protomenu.full.less'; 		// „Full” Stylesheet
-		// @import 'protomenu.mega.less'; 	// „Mega” könnte „Full” um Megamenü-Funktionen ergänzen. ***** Benötigt payload.less *****
+		// @import 'protomenu.mega.less'; 	// „Mega” könnte „Full” um Megamenü-Eigenschaften ergänzen. ***** Benötigt payload.less *****
 	}
 }

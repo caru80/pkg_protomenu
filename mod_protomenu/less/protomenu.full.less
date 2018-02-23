@@ -1,4 +1,9 @@
+/*
+	Protomenu 2.0.0
+	Carsten Ruppert - 2018-02-23
 
+	„Full” Stylesheet
+*/
 
 .ptmenu{
 	background-color: #e3e3e3;
@@ -6,7 +11,7 @@
 }
 .ptmenu .nav-wrapper{
 	position: relative;
-	z-index: 10; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht.
+	z-index: 10; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann noch nicht klappt musst du dein Stylesheet korrigieren.
 }
 
 
@@ -40,7 +45,7 @@
 		color: @brand-primary;
 	}
 
-
+	// Hover etc.
 	a.nav-item:active, 	// Touch; Mit dem Finger angetippt. Bleibt nicht aktiv, „blitzt” nur kurz auf.
 	a.nav-item.open,	// Hat ein Untermenü geöffnet, bleibt aktiv.
 	&:hover > a.nav-item{ // Maus Hover...
@@ -130,7 +135,7 @@
 		<li class="parent deeper">
 			<a class="nav-item"></a>
 			<div class="nav-child nav-level-2"> 	<------------
-			
+
 */
 .ptmenu .nav-child{
 	// Dein Zeug:
@@ -190,7 +195,9 @@
 	}
 }
 */
-// Pfeil nach rechts:
+
+/* Vertikale Pfeil (nach rechts), für alle Anker ab der 2. Ebene
+*/
 .ptmenu .nav-child li.parent.deeper > a.nav-item{
 	i:before{
 		content: @fa-var-chevron-right;

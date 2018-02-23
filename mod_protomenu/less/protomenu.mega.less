@@ -1,13 +1,20 @@
-
 /*
-	Mega, 2. Ebene +
+	Protomenu 2.0.0
+	Carsten Ruppert - 2018-02-23
+
+	„Mega” Stylesheet ergänzt full.less
+*/
+
+
+
+/*	Mega, 2. Ebene +
 */
 .ptmenu ul.nav-first > li.mega{
 	position: static;
 }
 .ptmenu li.mega .nav-child{
 	width: 100%;
-	transform: scale3d(1,1,1); // Das sieht sonst schlimm aus.
+	transform: scale3d(1,1,1); // Das sieht sonst schlimm aus. Überschreibt full.less
 }
 .ptmenu li.mega .nav-child li.deeper.parent i{ // Pfeil weg, weil da nichts mehr zum aufklappen ist.
 	display: none;
@@ -20,29 +27,6 @@
 	width: auto;
 }
 
-
-/**************************************************
-
-	Bsp.: Mega mit Bootstrap Grid
-
-	***** Benötigt payload.less ******
-
-**************************************************/
-@media(min-width: @screen-lg-min) {
-
-	.ptmenu li.mega > .nav-child > div{
-		.container-xl();
-		padding-top: 2em;
-	}
-	.ptmenu li.mega > .nav-child > div > ul.nav-sub{
-		.make-row();
-		.clearfix();
-	}
-	.ptmenu li.mega > .nav-child > div > ul.nav-sub > li{
-		.mk-grid-cols(12, 6, 4, 3, 3, @reset: true, @reset-selector: ~'li', @reset-begin: 2);
-		margin-bottom: 2em;
-	}
-}
 
 /*
 	Items in Megamenü
@@ -124,14 +108,15 @@
 }
 
 
-/*
-	Bsp.: Mega mit Bootstrap Grid
+/****************************************************************************************************
+
+	Bsp.: Mega mit Bootstrap 3 Grid
 
 	SIEHE: Betrachte udert-arbeitsbuehnen.de in verschiedenen Auflösungen!
 
 	***** Benötigt payload.less *****
 
-*/
+/****************************************************************************************************
 /*
 @media(max-width: @screen-md-max){
 	.ptmenu li.mega > .nav-child > div{
@@ -143,40 +128,8 @@
 		.clearfix();
 	}
 	.ptmenu li.mega > .nav-child > div > ul.nav-sub > li{
-		.mk-grid-cols(12, 6, 4, @reset: true, @reset-selector: ~'li', @reset-begin: 2); // :)
+		.mk-grid-cols(12, 6, 4, @reset: true, @reset-selector: ~'li', @reset-begin: 2); // :) – Siehe Doku in payload.less
 		margin-bottom: 2em;
-	}
-}
-
-
-.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.alias-for-parent{
-	border-bottom: 1px solid #333333;
-}
-.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.full-col{
-	&.top{
-		border-bottom: 1px solid #333333;
-	}
-	&.bottom{
-		border-top: 1px solid #333333;
-	}
-	.item-label{
-		padding: 0;
-	}
-}
-.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.alias-for-parent,
-.ptmenu li.mega > .nav-child > div > ul.nav-sub > li.full-col{
-
-	.mk-grid-cols(12,12,12,12,12,@gutter: 0px, @reset: false);
-	clear: both;
-
-	.nav-item{
-		text-align: center;
-		padding: 1em 0;
-		font-size: 1.1em;
-		.item-label i{
-			display: inline-block;
-			visibility: visible;
-		}
 	}
 }
 */

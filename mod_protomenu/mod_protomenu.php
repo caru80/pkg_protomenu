@@ -17,20 +17,27 @@ $doc = JFactory::getDocument();
 
 if (count($list))
 {
+	$jsPlugins = array();
+	if($params->get('plugin-backdrop',0)) $jsPlugins[] = $params->get('plugin-backdrop',0);
+
+
 	$options = array(
 		'seperateswitch' 	=> $params->get('seperateswitch',0),
 		'mouseover'			=> $params->get('mouseover',0),
-		'clickAnywhere'		=> $params->get('anywhereclose',0)
+		'clickAnywhere'		=> $params->get('anywhereclose',0),
+		'plugins' 			=> "['".implode("','", $jsPlugins)."']"
 		);
 
 	$optstr = '';
-	foreach( $options as $o => $v )
-	{
+	foreach( $options as $o => $v ){
+
 		$optstr .= $optstr == '' ? $o.':'.$v : ','.$o.':'.$v;
+
 	}
 	$optstr = '{'.$optstr.'}';
 
 
+	// $doc->addScript( JUri::base( true ).'/media/protomenu/js/jquery.protomenu.js' ); // Dev.
 	$doc->addScript( JUri::base( true ).'/media/protomenu/js/jquery.protomenu.min.js' );
 	$runscript = ';(function($){$(document).ready(function(){$(\'#ptmenu-'.$module->id.'\').protomenu('.$optstr.');})})(jQuery);';
 	$doc->addScriptDeclaration($runscript);

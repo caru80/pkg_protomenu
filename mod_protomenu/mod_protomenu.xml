@@ -5,15 +5,16 @@
 	client="site"
 	method="upgrade"
 	>
-	<name>mod_protomenu</name>
+	<name>Protomenü 2</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2017-11-06</creationDate>
-	<copyright>Copyright (c) 2017 HEAD. MARKETING GmbH</copyright>
+	<creationDate>2018-02-23</creationDate>
+	<copyright>Copyright (c) 2018 HEAD. MARKETING GmbH</copyright>
 	<license></license>
 	<authorEmail>c.ruppert@headmarketing.de</authorEmail>
 	<authorUrl></authorUrl>
-	<version>1.0</version>
+	<version>2.0.0</version>
 	<description>MOD_PTMENU_XML_DESCRIPTION</description>
+
 	<files>
 		<filename module="mod_protomenu">mod_protomenu.php</filename>
 		<folder>tmpl</folder>
@@ -21,16 +22,20 @@
 		<filename>index.html</filename>
 		<filename>mod_protomenu.xml</filename>
 	</files>
+
 	<languages folder="language">
 		<language tag="de-DE">de-DE.mod_protomenu.ini</language>
 		<language tag="de-DE">de-DE.mod_protomenu.sys.ini</language>
 	</languages>
+
 	<media destination="protomenu" folder="media">
 		<filename>index.html</filename>
 		<folder>js</folder>
 		<folder>less</folder>
 	</media>
+
 	<help key="JHELP_EXTENSIONS_MODULE_MANAGER_MENU" />
+
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
@@ -143,6 +148,24 @@
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+				</field>
+				<field
+					name="note-plugins"
+					type="note"
+					label="MOD_PTMENU_NOTE_PLUGIN_HEADLINE"
+					description=""
+				/>
+
+				<field
+					name="plugin-backdrop"
+					type="radio"
+					class="btn-group"
+					default="0"
+					label="MOD_PTMENU_PLUGIN_BACKDROP_LABEL"
+					description="MOD_PTMENU_PLUGIN_BACKDROP_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="ProtomenuBackdrop">JYES</option>
 				</field>
 			</fieldset>
 			<fieldset

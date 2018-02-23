@@ -1,6 +1,15 @@
 /**
-	Protomenu 0.11.0
-	Carsten Ruppert - 2017-11-29
+	Protomenu 2.0.0
+	Carsten Ruppert - 2018-02-23
+
+	2.0.0 - 2018-02-23
+	- Plugins können nun auch dynamisch pro Instant geladen werden, nicht mehr nur für alle Instanzen
+	- Fix von statischen CSS-Klassennamen im Code
+	- Doppeltes auslösen von Event afterStateChanged korrigiert
+
+	0.12.0 - 2018-02-22
+	- Fix der Plugin-Logik. Es wurde immer ein und die gleiche Instanz eines Plugin-Objekts (Backdrop) benutzt, egal wieviele Instanzen von Protomenu existierten.
+	- Fix von Backdrop-Plugin
 
 	0.11.0 – 2017-11-29
 	- Unterscheidung Touch und Mouseover, wenn Option „Mouseover” eingeschaltet ist.
@@ -10,8 +19,10 @@
 	- Entkernt!
 	- Abhängigkeit von $.prepareTransition entfernt
 	- Abhängigkeit von $.touchSwipe entfernt
+
 */
 'use strict';
+
 (function($) {
 
 	$.Protomenu = function( options, node )
@@ -22,11 +33,17 @@
 	};
 
 	$.Protomenu.defaults = {
-		classopen		: 'open', 	// CSS Klasse geöffneter Untermenüs und aktiver Anker.
+		classNames : {
+			open 	: 'open',
+			in 		: 'in'
+		},
 		seperateswitch 	: false, 	// Hier auf true setzen, wenn Umschalter und Anke getrennt werden sollen.
 		mouseover 		: false, 	// Öffnen von Untermenüs bei Mouseover
-		clickAnywhere 	: false		// Irgendwo klicken um alle Menüs zu schließen? (Außer in dem Menü selbst, oder einem Modul in einem Menü)
+		clickAnywhere 	: false,	// Irgendwo klicken um alle Menüs zu schließen? (Außer in dem Menü selbst, oder einem Modul in einem Menü)
+		plugins 		: []
 	};
+
+	$.Protomenu.Plugins = [];
 
 	$.Protomenu.prototype = {
 		_init : function( options ) {
@@ -36,7 +53,53 @@
 
 			this.setupTriggers();
 			this.setupEvents();
+
+			// Plugins initialisieren
+			/*
+				Mit dem Käse wird immer auf das gleiche Plugin-Objekt zugegriffen.
+
+			if( $.Protomenu.Plugins.length > 0 )
+			{
+				for( var i = 0, len = $.Protomenu.Plugins.length; i < len; i++ )
+				{
+					this[$.Protomenu.Plugins[i]].parent = this;
+					this[$.Protomenu.Plugins[i]]._init();
+				}
+			}*/
+
+			/*
+			this.opt.plugins = this.options.plugins.concat($.Protomenu.Plugins).forEach(function(e){
+
+			});
+			*/
+
+			this.opt.plugins = this.opt.plugins.concat($.Protomenu.Plugins);
+			this.opt.plugins = this.opt.plugins.filter(function(value, index, self){return self.indexOf(value) === index;}); // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-an-array-remove-duplicates
+
+			if( this.opt.plugins.length > 0 )
+			{
+				for( var i = 0, len = this.opt.plugins.length; i < len; i++ )
+				{
+					this[this.opt.plugins[i]] = new $[this.opt.plugins[i]](this); // = z.B.: this.ProtomenuBackdrop = new $.ProtomenuBackdrop(this);
+				}
+			}
+
+			/*
+			if( $.Protomenu.Plugins.length > 0 )
+			{
+				for( var i = 0, len = $.Protomenu.Plugins.length; i < len; i++ )
+				{
+					//this[$.Protomenu.Plugins[i]].parent = this;
+					//this[$.Protomenu.Plugins[i]]._init();
+
+					//console.log(this.backDrop.parent.$node);
+					this[$.Protomenu.Plugins[i]] = new $[$.Protomenu.Plugins[i]](this);
+				}
+			}
+			*/
+
 		},
+
 
 		/*
 			Auslösereignis an Auslöser für Untermenüs „el” binden (Anker oder separater „Umschalter”).
@@ -150,12 +213,12 @@
 		*/
 		disableTriggers : function(sub)
 		{
-			sub.data('ptmenu').triggers.removeClass('open');
+			sub.data('ptmenu').triggers.removeClass(this.opt.classNames.open);
 
 			let descestors = sub.find('.nav-child');
 			for(let i = 0, len = descestors.length; i < len; i++)
 			{
-				descestors.eq(i).data('ptmenu').triggers.removeClass('open'); // Auslöser aller Nachkommen deaktivieren
+				descestors.eq(i).data('ptmenu').triggers.removeClass(this.opt.classNames.open); // Auslöser aller Nachkommen deaktivieren
 			}
 		},
 
@@ -165,13 +228,15 @@
 		disableDescestors : function(sub)
 		{
 			let descestors = sub.find('.nav-child');
-
-			descestors.removeClass('open in');
-
+			descestors.removeClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
+			/*
+				disableTriggers wird immer von hideSub aufgerufen.
+				disableTriggers wandert durch alle Nachkommen.
 			for(let i = 0, len = descestors.length; i < len; i++)
 			{
 				this.disableTriggers(descestors.eq(i));
 			}
+			*/
 		},
 
 		/*
@@ -187,7 +252,7 @@
 			let tdur = sub.css('transition-duration').split(','),
 				time = 0;
 
-			tdur.forEach(function(dur){
+			tdur.forEach(function(dur) { // Wert von längster transition ermitteln
 				dur = parseFloat(dur);
 				time = dur > time ? dur : time;
 			});
@@ -196,9 +261,11 @@
 			{
 				let self = this;
 
-				let afterTransition = function(sub){
-					sub.removeClass('in');
+				let afterTransition = function(sub) {
+					sub.removeClass(this.opt.classNames.in);
 					this.disableDescestors(sub);
+
+					//this.$node.triggerHandler('afterStateChanged');
 				};
 				/*
 					Das Problem mit transitionEnd:
@@ -223,13 +290,18 @@
 					afterTransition.bind(this, sub),
 					time * 1000
 				);
-				sub.removeClass('open');
+				//sub.removeClass('open');
+				sub.removeClass(this.opt.classNames.open);
+				//this.$node.triggerHandler('afterStateChanged');
 			}
-			else {
-				sub.removeClass('open in');
+			else
+			{
+				sub.removeClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
 				this.disableDescestors(sub);
-			}
 
+				//this.$node.triggerHandler('afterStateChanged');
+			}
+			this.$node.triggerHandler('afterStateChanged');
 			this.disableTriggers(sub);
 		},
 
@@ -242,19 +314,23 @@
 
 			this.closeEqual(sub);
 
-			sub.addClass('open in');
-			sub.data('ptmenu').triggers.addClass('open');
+			sub.addClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
+			sub.data('ptmenu').triggers.addClass(this.opt.classNames.open);
+
+			this.$node.triggerHandler('afterStateChanged');
 		},
 
 		/*
-			Sucht und schließt offene Elemente im Root-Level.
+			Sucht und schließt offene Elemente im Root-Level. Wird bei Mouseover true benutzt.
 		*/
 		closeRoot : function() {
-			let sub = this.$menu.find('.nav-child.nav-level-2.open');
+			let sub = this.$menu.find('.nav-child.nav-level-2.'+this.opt.classNames.open);
 			if(sub.length)
 			{
 				this.hideSub(sub);
 			}
+
+		//	this.$node.triggerHandler('afterStateChanged');
 		},
 
 		/*
@@ -262,7 +338,7 @@
 		*/
 		closeEqual : function(el)
 		{
-			let subs = el.parent().parent().find('.nav-child.open').not(el);
+			let subs = el.parent().parent().find('.nav-child.'+this.opt.classNames.open).not(el);
 
 			for(let i = 0, len = subs.length; i < len; i++ )
 			{
@@ -270,6 +346,25 @@
 			}
 		},
 
+		/*
+			Ist noch irgenein sub offen?
+		*/
+		isExpanded : function(first)
+		{
+			let something;
+			if(first) // Nur im first-level suchen
+			{
+				something = this.$menu.find('.nav-child.nav-level-2.'+this.opt.classNames.open);
+			}
+			else {
+				something = this.$menu.find('.nav-child.'+this.opt.classNames.open);
+			}
+
+			if(something.length)
+				return true;
+
+			return false;
+		},
 
 		toggleSubmenu : function(trigger, mouseover)
 		{
@@ -280,7 +375,7 @@
 			}
 
 			let sub 	= trigger.data('ptmenu').submenu,
-				isopen 	= sub.hasClass(this.opt.classopen);
+				isopen 	= sub.hasClass(this.opt.classNames.open);
 
 			if(isopen && !mouseover)
 			{
@@ -323,6 +418,81 @@
 			self = new $.Protomenu(options, this);
 		}
 		return self;
+	}
+
+})(jQuery);
+
+
+(function($) {
+
+	//$.Protomenu.Plugins.push('ProtomenuBackdrop');
+
+	$.Protomenu.defaults.backDrop = {
+		template : '<div class="ptmenu-backdrop"></div>'
+	};
+
+	$.ProtomenuBackdrop = function(parent) {
+		this.parent = parent;
+		this._init();
+	}
+
+	$.ProtomenuBackdrop.prototype = {
+		_init : function()
+		{
+			let self = this;
+
+			this.backdrop = $(this.parent.opt.backDrop.template);
+			this.timer = null;
+
+			$('body').prepend(this.backdrop);
+
+			this.parent.$node.on('afterStateChanged', function(ev)
+			{
+				if(self.parent.isExpanded(true))
+				{
+					// self.backdrop.addClass('open in');
+					self.backdrop.addClass( $.map(self.parent.opt.classNames, function(n){return n}).join(' ') );
+				}
+				else
+				{
+					self.close();
+				}
+			});
+
+			/*
+			this.parent.$node.on('closeRoot', function(ev) // Nur Mouseover triggert diesen Event
+			{
+				self.close();
+			});
+			*/
+		},
+
+		close : function()
+		{
+			window.clearTimeout(this.timer);
+
+			let time = 0;
+
+			this.backdrop.css('transition-duration').split(',').forEach(function(dur)
+			{
+				dur = parseFloat(dur);
+				time = dur > time ? dur : time;
+			});
+
+			let afterTransition = function()
+			{
+				if(this.parent.isExpanded()) return;
+				//this.backdrop.removeClass('in');
+				this.backdrop.removeClass(this.parent.opt.classNames.in);
+			};
+
+			this.timer = window.setTimeout(
+				afterTransition.bind(this),
+				time * 1000
+			);
+			//this.backdrop.removeClass('open');
+			this.backdrop.removeClass(this.parent.opt.classNames.open);
+		}
 	}
 
 })(jQuery);
