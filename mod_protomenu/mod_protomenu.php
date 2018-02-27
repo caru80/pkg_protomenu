@@ -17,22 +17,21 @@ $doc = JFactory::getDocument();
 
 if (count($list))
 {
-	$jsPlugins = array();
-	if($params->get('plugin-backdrop',0)) $jsPlugins[] = $params->get('plugin-backdrop',0);
-
-
 	$options = array(
 		'seperateswitch' 	=> $params->get('seperateswitch',0),
 		'mouseover'			=> $params->get('mouseover',0),
-		'clickAnywhere'		=> $params->get('anywhereclose',0),
-		'plugins' 			=> "['".implode("','", $jsPlugins)."']"
+		'clickAnywhere'		=> $params->get('anywhereclose',0)
 		);
+	// Plugins
+	$jsPlugins = array();
+	if($params->get('plugin-backdrop',0)) $jsPlugins[] = $params->get('plugin-backdrop',0);
+	// Plugins vorhanden?
+	if(count($jsPlugins)) $options['plugins'] = "['".implode("','", $jsPlugins)."']";
 
 	$optstr = '';
-	foreach( $options as $o => $v ){
-
+	foreach( $options as $o => $v )
+	{
 		$optstr .= $optstr == '' ? $o.':'.$v : ','.$o.':'.$v;
-
 	}
 	$optstr = '{'.$optstr.'}';
 
