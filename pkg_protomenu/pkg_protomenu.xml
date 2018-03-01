@@ -4,11 +4,11 @@
 	<author>Carsten Ruppert</author>
 	<creationDate>2018-03-01</creationDate>
 	<packagename>protomenu</packagename>
-	<version>2.0.1</version>
+	<version>2.0.2</version>
 	<url>http://www.headmarketing.de/</url>
 	<packager>Carsten Ruppert</packager>
 	<packagerurl>http://www.headmarketing.de/</packagerurl>
-	<description>Protomenü 2.0.0 Installationspaket</description>
+	<description>Protomenü 2.0.2 Installationspaket</description>
 	<files folder="packages">
 		<file type="module" id="protomenu" client="site">mod_protomenu.zip</file>
 		<file type="plugin" id="protomenu" group="content">plg_content_protomenu.zip</file>
