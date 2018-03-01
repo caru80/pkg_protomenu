@@ -10,27 +10,23 @@ jimport( 'joomla.application.module.helper' );
 // Note. It is important to remove spaces between elements. – siehe auch Google: "white-space dependent rendering", oder: http://stackoverflow.com/questions/5256533/a-space-between-inline-block-list-items
 ?>
 <nav id="ptmenu-<?php echo $module->id;?>" class="ptmenu <?php echo $class_sfx;?>">
-<div class="nav-wrapper">
-	<div class="nav-container nav-menu" id="<?php echo $module->id;?>-cmenu">
-		<div class="nav-container-toolbar">
-<a class="trigger-<?php echo $module->id;?>-cmenu" href="#"><span class="trigger-label"></span><i></i></a>
-		</div>
+	<div class="nav-wrapper">
 		<ul class="nav-first">
 <?php
 
-$keepActiveOpen = $params->get('keepactiveopen',false);
+$keepActiveOpen = $params->get('keepactiveopen',false); // Kinder von li.active werden angezeigt.
 
 foreach ($list as $i => &$item)
 {
-	$iparams = $item->params;
-	$class = 'item-' . $item->id;
+	$iparams 	= $item->params;
+	$class 		= 'item-' . $item->id;
 
 	// -- CSS Klassen
 
 	// Aktiv ?
 	if (($item->id == $active_id) OR ($item->type == 'alias' AND $item->params->get('aliasoptions') == $active_id)) $class .= ' current';
 
-	$parentActive = false;
+	$parentActive = false; // Für keepActiveOpen...
 
 	if (in_array($item->id, $path)){
 		$class .= ' active';
@@ -78,16 +74,8 @@ foreach ($list as $i => &$item)
 		$class .= ' module';
 	}
 
-	/*
-	if( $iparams->get('ptmbehavior',0) > 1 ) ?????????
-	{
-		$class .= ' module';
-	}
-	*/
-
 	// -- Klassenliste einfügen
 	if (!empty($class)) $class = 'class="' . trim($class) . '"';
-
 
 	echo '<li id="parent-'.$module->id.'-'.$item->id.'" ' . $class . '>';
 
@@ -116,7 +104,7 @@ foreach ($list as $i => &$item)
 	{
 		$act = $parentActive && $keepActiveOpen ? ' open in' : '';
 		echo '<div id="'.$module->id.'-'.$item->id.'" class="nav-child nav-level-'.($item->level + 1).$act.'">';
-		echo '<div class="nav-child-toolbar"><a tabindex="0" class="trigger trigger-'.$module->id.'-'.$item->id.'" data-ptmenu=\'{"trigger":"trigger-'.$module->id.'-'.$item->id.'"}\'><i></i><span>'.JText::_('TPL_HEAD_PTMENU_BACK').'</span></a></div><div>';
+		echo '<div>';
 		echo '<ul class="nav-sub">';
 	}
 	elseif ($item->shallower)
@@ -132,7 +120,6 @@ foreach ($list as $i => &$item)
 	}
 }
 ?>
-			</ul>
-		</div>
+		</ul>
 	</div>
 </nav>

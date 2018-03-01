@@ -36,8 +36,8 @@ if (count($list))
 	$optstr = '{'.$optstr.'}';
 
 
-	// $doc->addScript( JUri::base( true ).'/media/protomenu/js/jquery.protomenu.js' ); // Dev.
-	$doc->addScript( JUri::base( true ).'/media/protomenu/js/jquery.protomenu.min.js' );
+	// $doc->addScript( JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.js' ); // Dev.
+	$doc->addScript( JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.min.js' );
 	$runscript = ';(function($){$(document).ready(function(){$(\'#ptmenu-'.$module->id.'\').protomenu('.$optstr.');})})(jQuery);';
 	$doc->addScriptDeclaration($runscript);
 

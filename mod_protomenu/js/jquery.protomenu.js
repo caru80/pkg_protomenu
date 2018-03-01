@@ -1,6 +1,9 @@
 /**
-	Protomenu 2.0.0
-	Carsten Ruppert - 2018-02-23
+	Protomenu 2.0.1
+	Carsten Ruppert - 2018-03-01
+
+	2.0.1 - 2018-03-01
+	- Fix für MouseOver: Untermenus bleiben geschlossen, obwohl Mauszeiger auf einem Elterneintrag zeigt.
 
 	2.0.0 - 2018-02-23
 	- Plugins können nun auch dynamisch pro Instant geladen werden, nicht mehr nur für alle Instanzen
@@ -250,6 +253,7 @@
 			*/
 
 			let tdur = sub.css('transition-duration').split(','),
+				d 	 = sub.data('ptmenu'),
 				time = 0;
 
 			tdur.forEach(function(dur) { // Wert von längster transition ermitteln
@@ -286,11 +290,14 @@
 
 				Deshalb setTimeout:
 				*/
-				window.setTimeout(
-					afterTransition.bind(this, sub),
-					time * 1000
-				);
+
+				d.timeout = window.setTimeout(
+								afterTransition.bind(this, sub),
+								time * 1000
+							);
+
 				//sub.removeClass('open');
+				sub.data('ptmenu', d);
 				sub.removeClass(this.opt.classNames.open);
 				//this.$node.triggerHandler('afterStateChanged');
 			}
@@ -310,8 +317,10 @@
 		*/
 		showSub : function(sub)
 		{
-			let self = this;
+			let self 	= this,
+				d 		= sub.data('ptmenu');
 
+			if(d.timeout) window.clearTimeout(d.timeout);
 			this.closeEqual(sub);
 
 			sub.addClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );

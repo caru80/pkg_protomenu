@@ -21,7 +21,7 @@ $title 	= $item->anchor_title ? ' title="' . $item->anchor_title . '" ' : '';
 $text 	= $item->anchor_title ? '<span class="item-subtitle">' . $item->anchor_title . '</span>' : '';
 $switch = $item->deeper ? '<span class="item-switch"><i></i></span>' : '';
 
-if ($item->menu_image){
+if ($item->menu_image) {
 	$item->params->get('menu_text', 1) ?
 	$linktype = '<span class="item-image"><img src="' . $item->menu_image . '" alt="' . $item->title . '" /></span><span class="item-label">' . $item->title .'<i></i></span>' . $text :
 	$linktype = '<span class="item-image"><img src="' . $item->menu_image . '" alt="' . $item->title . '" /></span>';

@@ -7,7 +7,6 @@ defined('_JEXEC') or die;
 // -- mod_menu helper
 require_once JPATH_BASE . '/modules/mod_menu/helper.php';
 
-
 // -- Protomenu helper
 class ModProtomenuHelper extends ModMenuHelper {
 
@@ -35,8 +34,8 @@ class ModProtomenuHelper extends ModMenuHelper {
 
 	public static function renderModule( &$module ){
 
-		$attribs = array("style" => ""); // Module Chrome evtl. noch einbauen
-		$params = new JRegistry($module->params);
+		$attribs 	= array("style" => ""); // Module-Chrome evtl. noch einbauen
+		$params 	= new JRegistry($module->params);
 
 		// Modultitel
 		$title = '';
@@ -50,11 +49,10 @@ class ModProtomenuHelper extends ModMenuHelper {
 		// Modulklasse
 		$mclass = $params->get('moduleclass_sfx','') != '' ? ' '.$params->get('moduleclass_sfx','') : '';
 
-		$html  = '<'.$mtag.' class="nav-module module-'. $module->id . $mclass .'">';
+		$html  = '<'.$mtag.' class="moduletable nav-module module-'. $module->id . $mclass .'">';
 		$html .= $title;
 		$html .= JModuleHelper::renderModule($module, $attribs);
 		$html .= '</'.$mtag.'>';
 		return $html;
 	}
-
 }

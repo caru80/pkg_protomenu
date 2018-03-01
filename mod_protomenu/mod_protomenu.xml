@@ -7,12 +7,12 @@
 	>
 	<name>Protomenü 2</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2018-02-23</creationDate>
+	<creationDate>2018-03-01</creationDate>
 	<copyright>Copyright (c) 2018 HEAD. MARKETING GmbH</copyright>
 	<license></license>
 	<authorEmail>c.ruppert@headmarketing.de</authorEmail>
 	<authorUrl></authorUrl>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<description>MOD_PTMENU_XML_DESCRIPTION</description>
 
 	<files>
@@ -28,7 +28,7 @@
 		<language tag="de-DE">de-DE.mod_protomenu.sys.ini</language>
 	</languages>
 
-	<media destination="protomenu" folder="media">
+	<media destination="mod_protomenu" folder="media">
 		<filename>index.html</filename>
 		<folder>js</folder>
 		<folder>less</folder>

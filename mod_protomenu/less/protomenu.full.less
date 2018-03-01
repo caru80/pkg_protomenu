@@ -11,7 +11,7 @@
 }
 .ptmenu .nav-wrapper{
 	position: relative;
-	z-index: 10; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann noch nicht klappt musst du dein Stylesheet korrigieren.
+	z-index: 110; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann noch nicht klappt musst du dein Stylesheet korrigieren.
 }
 
 
@@ -30,7 +30,6 @@
 		color: @text-color;
 		font-weight: normal;
 		text-decoration: none;
-		text-transform: uppercase;
 
 		display: block;
 		padding: 0.4em 1em 0.3em 1em;
@@ -174,29 +173,33 @@
 
 
 /* Alle Menüainträge (<a class="nav-item">) ab der zweiten Ebene
-*//*
-.ptmenu .nav-child li{
-	.nav-item{
-		white-space: nowrap;
-		font-size: 1em;
+*/
+.ptmenu .nav-child li {
+	.nav-item {
 		color: #eeeeee;
+		white-space: nowrap;
+	}
+/*
+	.nav-item{
+		font-size: 1em;
 		padding-top: 0.5em;
 		padding-bottom: 0.4em;
 	}
 	.nav-item .item-image{
 		display: none;
 	}
-
+*/
 	a.nav-item:active,
 	a.nav-item.open,
 	&:hover > a.nav-item{
 		background-color: #f7a600;
-		color: @text-color;
 	}
 }
-*/
 
-/* Vertikale Pfeil (nach rechts), für alle Anker ab der 2. Ebene
+
+/*
+	Mit Untermenüs/Kindern.
+	Vertikale Pfeil (nach rechts), für alle Anker ab der 2. Ebene
 */
 .ptmenu .nav-child li.parent.deeper > a.nav-item{
 	i:before{

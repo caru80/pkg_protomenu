@@ -27,11 +27,6 @@
 */
 .ptmenu li a.nav-item{ &:hover, &:focus, &:active{/* Keine Outlines */outline: none !important;}}
 
-/* Obsolet; Aus alter Version
-*/
-.ptmenu .nav-child .nav-child-toolbar{display: none !important; visibility: hidden !important;}
-
-
 
 /****************************************************************************************************
 
@@ -50,7 +45,7 @@
 	top: 0;
 	left: 0;
 
-	z-index: 3; // Relativ zu <body> – div.ptmenu-backdrop wird im <body> an 1. Stelle eingehängt.
+	z-index: 10; // Relativ zu <body> – div.ptmenu-backdrop wird im <body> an 1. Stelle eingehängt.
 	transition: opacity 0.3s ease;
 
 	&.in{ // Wichtig!
@@ -84,6 +79,6 @@
 @media(min-width: @screen-md-min){
 	#site-header{
 		@import 'protomenu.full.less'; 		// „Full” Stylesheet
-		// @import 'protomenu.mega.less'; 	// „Mega” könnte „Full” um Megamenü-Eigenschaften ergänzen. ***** Benötigt payload.less *****
+		@import 'protomenu.mega.less'; 	// „Mega” könnte „Full” um Megamenü-Eigenschaften ergänzen. ***** Benötigt payload.less *****
 	}
 }
