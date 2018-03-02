@@ -8,7 +8,7 @@
 	<url>http://www.headmarketing.de/</url>
 	<packager>Carsten Ruppert</packager>
 	<packagerurl>http://www.headmarketing.de/</packagerurl>
-	<description>Protomenü 2.0.2 Installationspaket</description>
+	<description>Protomenü 2.0.2h Installationspaket</description>
 	<files folder="packages">
 		<file type="module" id="protomenu" client="site">mod_protomenu.zip</file>
 		<file type="plugin" id="protomenu" group="content">plg_content_protomenu.zip</file>
