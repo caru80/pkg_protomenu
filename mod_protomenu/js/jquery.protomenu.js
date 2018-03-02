@@ -25,7 +25,6 @@
 
 */
 'use strict';
-
 (function($) {
 
 	$.Protomenu = function( options, node )
@@ -49,7 +48,8 @@
 	$.Protomenu.Plugins = [];
 
 	$.Protomenu.prototype = {
-		_init : function( options ) {
+		_init : function( options )
+		{
 
 			this.opt = $.extend({}, $.Protomenu.defaults, options);
 			this.$menu  = this.$node.find('.nav-first');
@@ -70,12 +70,6 @@
 				}
 			}*/
 
-			/*
-			this.opt.plugins = this.options.plugins.concat($.Protomenu.Plugins).forEach(function(e){
-
-			});
-			*/
-
 			this.opt.plugins = this.opt.plugins.concat($.Protomenu.Plugins);
 			this.opt.plugins = this.opt.plugins.filter(function(value, index, self){return self.indexOf(value) === index;}); // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-an-array-remove-duplicates
 
@@ -86,21 +80,6 @@
 					this[this.opt.plugins[i]] = new $[this.opt.plugins[i]](this); // = z.B.: this.ProtomenuBackdrop = new $.ProtomenuBackdrop(this);
 				}
 			}
-
-			/*
-			if( $.Protomenu.Plugins.length > 0 )
-			{
-				for( var i = 0, len = $.Protomenu.Plugins.length; i < len; i++ )
-				{
-					//this[$.Protomenu.Plugins[i]].parent = this;
-					//this[$.Protomenu.Plugins[i]]._init();
-
-					//console.log(this.backDrop.parent.$node);
-					this[$.Protomenu.Plugins[i]] = new $[$.Protomenu.Plugins[i]](this);
-				}
-			}
-			*/
-
 		},
 
 
@@ -162,7 +141,7 @@
 			{
 				$(document).on('click', function(ev)
 				{ // Klick irgendwo zu schließen
-					self.closeRoot();
+					self.closeRootLevel();
 				});
 			}
 			// -- Bubbling stoppen:
@@ -212,7 +191,7 @@
 
 
 		/*
-			Deaktiviert alle Auslöser eines „Untermenüs”.
+			Deaktiviert alle „Auslöser” eines „Untermenüs”.
 		*/
 		disableTriggers : function(sub)
 		{
@@ -221,7 +200,8 @@
 			let descestors = sub.find('.nav-child');
 			for(let i = 0, len = descestors.length; i < len; i++)
 			{
-				descestors.eq(i).data('ptmenu').triggers.removeClass(this.opt.classNames.open); // Auslöser aller Nachkommen deaktivieren
+				let d = descestors.eq(i).data('ptmenu');
+				if(d) d.triggers.removeClass(this.opt.classNames.open); // Auslöser aller Nachkommen deaktivieren
 			}
 		},
 
@@ -232,14 +212,15 @@
 		{
 			let descestors = sub.find('.nav-child');
 			descestors.removeClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
-			/*
-				disableTriggers wird immer von hideSub aufgerufen.
-				disableTriggers wandert durch alle Nachkommen.
-			for(let i = 0, len = descestors.length; i < len; i++)
-			{
-				this.disableTriggers(descestors.eq(i));
-			}
-			*/
+		},
+
+		/*
+			Versteckt ein „Untermenü” nachdem dessen Transition beendet ist – sofern vorhanden
+		*/
+		disableAfterTransition : function(sub)
+		{
+			sub.removeClass(this.opt.classNames.in);
+			this.disableDescestors(sub);
 		},
 
 		/*
@@ -252,25 +233,18 @@
 				Siehe unten Problem „transitionEnd”
 			*/
 
-			let tdur = sub.css('transition-duration').split(','),
+			let tdur = sub.css('transition-duration').split(','), // „transitionDuration”
 				d 	 = sub.data('ptmenu'),
 				time = 0;
 
-			tdur.forEach(function(dur) { // Wert von längster transition ermitteln
+			tdur.forEach(function(dur) { // Dauer von längster transition ermitteln
 				dur = parseFloat(dur);
 				time = dur > time ? dur : time;
 			});
 
-			if(time > 0)
+			if(time > 0) // Es wird ein transition benutzt
 			{
 				let self = this;
-
-				let afterTransition = function(sub) {
-					sub.removeClass(this.opt.classNames.in);
-					this.disableDescestors(sub);
-
-					//this.$node.triggerHandler('afterStateChanged');
-				};
 				/*
 					Das Problem mit transitionEnd:
 					- z.B.:
@@ -290,26 +264,34 @@
 
 				Deshalb setTimeout:
 				*/
+				/*
+				let afterTransition = function(sub)
+				{
+					sub.removeClass(this.opt.classNames.in);
+					this.disableDescestors(sub);
+				};
 
 				d.timeout = window.setTimeout(
 								afterTransition.bind(this, sub),
 								time * 1000
 							);
+				*/
+				d.timeout = window.setTimeout(
+								this.disableAfterTransition.bind(this, sub),
+								time * 1000
+							);
 
-				//sub.removeClass('open');
 				sub.data('ptmenu', d);
 				sub.removeClass(this.opt.classNames.open);
-				//this.$node.triggerHandler('afterStateChanged');
 			}
-			else
+			else // Es wird kein transition benutzt
 			{
 				sub.removeClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
 				this.disableDescestors(sub);
-
-				//this.$node.triggerHandler('afterStateChanged');
 			}
-			this.$node.triggerHandler('afterStateChanged');
 			this.disableTriggers(sub);
+
+			this.$node.triggerHandler('afterStateChanged');
 		},
 
 		/*
@@ -317,35 +299,32 @@
 		*/
 		showSub : function(sub)
 		{
-			let self 	= this,
-				d 		= sub.data('ptmenu');
+			let d = sub.data('ptmenu');
 
-			if(d.timeout) window.clearTimeout(d.timeout);
-			this.closeEqual(sub);
+			if(d.timeout && this.opt.mouseover) window.clearTimeout(d.timeout); // Sofern für dieses „sub” ein Timeout in closeSub gesetzt wurde, müssen wir diesen hier löschen.
+
+			this.closeEqualLevel(sub);
 
 			sub.addClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
-			sub.data('ptmenu').triggers.addClass(this.opt.classNames.open);
+			d.triggers.addClass(this.opt.classNames.open);
 
 			this.$node.triggerHandler('afterStateChanged');
 		},
 
 		/*
-			Sucht und schließt offene Elemente im Root-Level. Wird bei Mouseover true benutzt.
+			Sucht und schließt offene Elemente im Root-Level (und alle darunter). Wird bei Mouseover true benutzt.
 		*/
-		closeRoot : function() {
-			let sub = this.$menu.find('.nav-child.nav-level-2.'+this.opt.classNames.open);
-			if(sub.length)
-			{
-				this.hideSub(sub);
-			}
+		closeRootLevel : function()
+		{
+			let sub = this.$menu.find('.nav-child.nav-level-2.' + this.opt.classNames.open);
 
-		//	this.$node.triggerHandler('afterStateChanged');
+			if(sub.length) this.hideSub(sub);
 		},
 
 		/*
 			Mach Alles auf der gleichen Ebene zu.
 		*/
-		closeEqual : function(el)
+		closeEqualLevel : function(el)
 		{
 			let subs = el.parent().parent().find('.nav-child.'+this.opt.classNames.open).not(el);
 
@@ -365,7 +344,8 @@
 			{
 				something = this.$menu.find('.nav-child.nav-level-2.'+this.opt.classNames.open);
 			}
-			else {
+			else
+			{
 				something = this.$menu.find('.nav-child.'+this.opt.classNames.open);
 			}
 
@@ -379,7 +359,7 @@
 		{
 			if(!trigger.data('ptmenu')) // Dieser „Trigger” hat kein Untermenü, wenn "this.opt.mouseover" an ist, könnte aber ein „Untermenü” offen sein, welches ausgeblendet werden muss.
 			{
-				if(mouseover) this.closeEqual(trigger);
+				if(mouseover) this.closeEqualLevel(trigger);
 				return;
 			}
 
@@ -403,7 +383,7 @@
 					if( ! $(this).find('#'+sub.attr('id')).length )
 					{
 						$(document).off('mousemove.protomenu');
-						self.closeRoot();
+						self.closeRootLevel();
 					}
 				});
 
@@ -411,7 +391,7 @@
 					if( ! $(ev.target).parents('.ptmenu').length )
 					{
 						$(document).off('mousemove.protomenu');
-						self.closeRoot();
+						self.closeRootLevel();
 					}
 				})
 			}
