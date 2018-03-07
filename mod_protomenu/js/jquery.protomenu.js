@@ -378,7 +378,7 @@
 			if( mouseover )
 			{
 				let self = this;
-
+				/*
 				this.$menu.children('li').off('mousemove.protomenu').on('mousemove.protomenu', function(ev){
 					if( ! $(this).find('#'+sub.attr('id')).length )
 					{
@@ -386,9 +386,9 @@
 						self.closeRootLevel();
 					}
 				});
-
+				*/
 				$(document).off('mousemove.protomenu').on('mousemove.protomenu', function(ev){
-					if( ! $(ev.target).parents('.ptmenu').length )
+					if( ! $(ev.target).parents('ul.nav-first').length )
 					{
 						$(document).off('mousemove.protomenu');
 						self.closeRootLevel();
