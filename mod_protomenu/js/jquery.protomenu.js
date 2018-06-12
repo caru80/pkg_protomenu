@@ -1,3 +1,4 @@
+
 /**
  * @package        HEAD. Protomenü 2
  * @version        2.1.0
@@ -7,8 +8,13 @@
  * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
  * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 /**
+	Protomenu 2.1.0
+	Carsten Ruppert - 2018-06-12
+
+    2.1.0 - 2018-06-12
+    - Fix für MouseOver
+
 	2.0.1 - 2018-03-01
 	- Fix für MouseOver: Untermenus bleiben geschlossen, obwohl Mauszeiger auf einem Elterneintrag zeigt.
 
@@ -21,11 +27,11 @@
 	- Fix der Plugin-Logik. Es wurde immer ein und die gleiche Instanz eines Plugin-Objekts (Backdrop) benutzt, egal wieviele Instanzen von Protomenu existierten.
 	- Fix von Backdrop-Plugin
 
-	0.11.0 – 2017-11-29
+	0.11.0 – 2017-11-29
 	- Unterscheidung Touch und Mouseover, wenn Option „Mouseover” eingeschaltet ist.
 	- etc.
 
-	0.10.0 – 2017-11-06
+	0.10.0 – 2017-11-06
 	- Entkernt!
 	- Abhängigkeit von $.prepareTransition entfernt
 	- Abhängigkeit von $.touchSwipe entfernt
@@ -93,7 +99,7 @@
 		/*
 			Auslösereignis an Auslöser für Untermenüs „el” binden (Anker oder separater „Umschalter”).
 
-			el – jQuery - Ein <a class="nav-item"> oder ein <xyz class="item-switch"> unterhalb von <a ...
+			el – jQuery - Ein <a class="nav-item"> oder ein <xyz class="item-switch"> unterhalb von <a ...
 		*/
 		attachTriggerEvent : function(el)
 		{
@@ -259,7 +265,7 @@
 							transition: transform 0.3s ease, opacity 0.5 linear;
 						}
 
-						sub.one(...) würde nach 0.3s feuern, nicht nach 0.5 – Der CSS Author müsste zwingend die längste duration als erstes eingeben
+						sub.one(...) würde nach 0.3s feuern, nicht nach 0.5 – Der CSS Author müsste zwingend die längste duration als erstes eingeben
 						sub.on() würde 2mal feuern, weil jede transition-Property den Event auslöst
 
 				sub.one('transitionend transitionEnd', function(ev)
@@ -298,7 +304,7 @@
 			}
 			this.disableTriggers(sub);
 
-			this.$node.triggerHandler('afterStateChanged');
+			this.$node.triggerHandler('afterStateChanged', {closed : sub});
 		},
 
 		/*
@@ -315,7 +321,7 @@
 			sub.addClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
 			d.triggers.addClass(this.opt.classNames.open);
 
-			this.$node.triggerHandler('afterStateChanged');
+			this.$node.triggerHandler('afterStateChanged', {opened : sub});
 		},
 
 		/*
@@ -363,7 +369,7 @@
 		},
 
 		toggleSubmenu : function(trigger, mouseover)
-		{
+		{	
 			if(!trigger.data('ptmenu')) // Dieser „Trigger” hat kein Untermenü, wenn "this.opt.mouseover" an ist, könnte aber ein „Untermenü” offen sein, welches ausgeblendet werden muss.
 			{
 				if(mouseover) this.closeEqualLevel(trigger);
@@ -378,7 +384,7 @@
 				this.hideSub(sub);
 				trigger.blur();
 			}
-			else {
+			else if(!isopen) {
 				this.showSub(sub);
 			}
 
@@ -395,7 +401,7 @@
 				});
 
 				$(document).off('mousemove.protomenu').on('mousemove.protomenu', function(ev){
-					if( ! $(ev.target).parents('.ptmenu').length )
+					if( ! $(ev.target).closest('.nav-first').length )
 					{
 						$(document).off('mousemove.protomenu');
 						self.closeRootLevel();
@@ -427,7 +433,7 @@
 		template : '<div class="ptmenu-backdrop"></div>'
 	};
 
-	$.ProtomenuBackdrop = function(parent) {
+	$.ProtomenuBackdrop = function(parent) {
 		this.parent = parent;
 		this._init();
 	}
@@ -435,50 +441,38 @@
 	$.ProtomenuBackdrop.prototype = {
 		_init : function()
 		{
-			let self = this;
-
-			this.backdrop = $(this.parent.opt.backDrop.template);
-			this.timer = null;
+			this.backdrop 	= $(this.parent.opt.backDrop.template);
+			this.timer 		= null;
 
 			$('body').prepend(this.backdrop);
 
 			this.parent.$node.on('afterStateChanged', function(ev)
 			{
-				if(self.parent.isExpanded(true))
+				if(this.parent.isExpanded(true))
 				{
-					// self.backdrop.addClass('open in');
-					self.backdrop.addClass( $.map(self.parent.opt.classNames, function(n){return n}).join(' ') );
+					this.backdrop.addClass( $.map(this.parent.opt.classNames, function(n){return n}).join(' ') );
 				}
 				else
 				{
-					self.close();
+					this.close();
 				}
-			});
-
-			/*
-			this.parent.$node.on('closeRoot', function(ev) // Nur Mouseover triggert diesen Event
-			{
-				self.close();
-			});
-			*/
+			}.bind(this));
 		},
 
 		close : function()
 		{
 			window.clearTimeout(this.timer);
 
-			let time = 0;
-
+			var time = 0;
 			this.backdrop.css('transition-duration').split(',').forEach(function(dur)
 			{
 				dur = parseFloat(dur);
 				time = dur > time ? dur : time;
 			});
 
-			let afterTransition = function()
+			var afterTransition = function()
 			{
 				if(this.parent.isExpanded()) return;
-				//this.backdrop.removeClass('in');
 				this.backdrop.removeClass(this.parent.opt.classNames.in);
 			};
 
@@ -486,19 +480,19 @@
 				afterTransition.bind(this),
 				time * 1000
 			);
-			//this.backdrop.removeClass('open');
+
 			this.backdrop.removeClass(this.parent.opt.classNames.open);
 		}
 	}
 
 
-	$.Protomenu.Plugins.push('ProtomenuHtml5Video');
+	// $.Protomenu.Plugins.push('ProtomenuHtml5Video');
 
 	$.Protomenu.defaults.html5video = {
 		autoplay : true
 	};
 
-	$.ProtomenuHtml5Video = function(parent) {
+	$.ProtomenuHtml5Video = function(parent) {
 		this.parent = parent;
 		this._init();
 	}
@@ -506,76 +500,52 @@
 	$.ProtomenuHtml5Video.prototype = {
 		_init : function()
 		{
-			var self = this;
-			this.parent.on('afterStateChanged', function() {
-				self.tick();
-			});
+    		this.parent.$node.on('afterStateChanged', function(ev, data) {
+				this.tick(data);
+			}.bind(this));
 		},
 
-		tick : function()
+		tick : function(data)
 		{
-			var self	= this,
-				current = this.$node.find('.nav-level-2.open')
-				video 	= this.getVideoObject(current);
+            if(data.closed) {
+                data.closed.find('video').each(function() {
+                    this.pause();
+                    if(this.currentTime) { // Wenn IE11 noch keine Metadaten geladen hat bekommen wir sonst beim ersten abfeuern von hideVideo einen InvalidStateError:
+                        this.currentTime = 0;
+                    }
+                });
+            }
 
-			if(video)
+            if(data.opened) {
+				var videos = data.opened.find('video');
+
+				var vid;
+				for(var i = 0, len = videos.length; i < len; i++) {
+					vid = videos.get(i);
+					vid.offsetWidth;
+					if(vid.readyState >=2) {
+						this.playVideo(vid);
+					}
+					else {
+						$(vid).one('canplay.protomenu.html5video', function(ev) {
+							this.playVideo(ev.originalTarget);
+						}.bind(this));
+					}
+				}
+            }
+		},
+
+		playVideo : function(video)
+		{
+            if(video)
 			{
-				if(video.readyState >= 2) // Mindestens die Metadaten und ein Frame des Videos stehen zur Verfügung.
-				{
-					this.playVideo();
-				}
-				else // Noch nix da. Müssen warten.
-				{
-					$(video).one('canplay.protomenu.html5video', function()
-					{
-						self.playVideo();
-					});
-				}
-			}
-		},
-
-		getVideoObject : function(current)
-		{
-			var video = current.find('video');
-			if( video.length ) return video.get(0);
-			return false;
-		},
-
-		playVideo : function()
-		{
-			var self  = this,
-				slide = this.parent.State.stage[0],
-				video = this.getVideoObject(slide);
-
-			if( video )
-			{
-				var opt = $(video).data('ptoptions') || {};
-
-				// Video Zurückspulen wenn ein Slide ausgeblendet wurde.
-				/*
-				if(!video.hasAttribute('loop'))
-				{
-					slide.one('afterSlideOut.ptslider.html5video', function(ev)
-					{
-						var video = self.getVideoObject($(this));
-						if(video)
-						{
-							video.pause();
-							video.currentTime = 0;
-						}
-					});
-				}
-				*/
-
+				var opt = $(video).data('ptoptions') || {};
 				// Autoplay
-				if(this.parent.options.html5video.autoplay || opt.autoplay)
+				if(this.parent.opt.html5video.autoplay || opt.autoplay)
 				{
 					video.play();
 				}
 			}
 		}
 	}
-
-
-
 })(jQuery);
