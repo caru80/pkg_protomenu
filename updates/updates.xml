@@ -1,3 +1,20 @@
-<extensionset name="HEAD. Protomenü 2" description="HEAD. Protomenü 2 Package">
-	<extension name="HEAD. Protomenü 2" element="pkg_protomenu" type="package" version="2.1.1" detailsurl="https://github.com/caru80/pkg_protomenu/raw/master/updates/pkg_protomenu.xml"/>
-</extensionset>
+<updates>
+    <update>
+		<name>HEAD. Protomenü 2</name>
+		<description>Code Optimierung</description>
+		<element>pkg_protomenu</element>
+		<version>2.1.1</version>
+		<type>package</type>
+		<client>0</client>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/caru80/pkg_protomenu/raw/master/dist/pkg_protomenu.zip</downloadurl>
+		</downloads>
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<maintainer>Carsten Ruppert</maintainer>
+		<maintainerurl>https://www.headmarketing.de</maintainerurl>
+		<targetplatform name="joomla" version="3.[78910]" />
+		<php_minimum>5.6.0</php_minimum>
+	</update>
+</updates>
