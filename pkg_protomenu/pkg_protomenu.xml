@@ -10,9 +10,9 @@
 	<version>2.1.0</version>
 	<description>Protomenü Installationspaket</description>
     <packagename>protomenu</packagename>
-    <updateservers>
-		<server type="extension" priority="0" name="HEAD. Protomenü 2">https://raw.githubusercontent.com/caru80/pkg_protomenu/master/updates/updates.xml</server>
- 	</updateservers>
+	<updateservers>
+		<server type="collection" priority="0" name="pkg_protomenu">https://raw.githubusercontent.com/caru80/pkg_protomenu/master/updates/updates.xml</server>
+	</updateservers>
 	<files folder="packages">
 		<file type="module" id="protomenu" client="site">mod_protomenu.zip</file>
 		<file type="plugin" id="protomenu" group="content">plg_content_protomenu.zip</file>
