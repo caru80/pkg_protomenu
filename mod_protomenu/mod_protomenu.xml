@@ -5,16 +5,15 @@
 	client="site"
 	method="upgrade"
 	>
-	<name>Protomenü 2</name>
+	<name>HEAD. Protomenü 2</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2018-03-01</creationDate>
-	<copyright>Copyright (c) 2018 HEAD. MARKETING GmbH</copyright>
-	<license></license>
-	<authorEmail>c.ruppert@headmarketing.de</authorEmail>
-	<authorUrl></authorUrl>
-	<version>2.0.2h</version>
+	<creationDate>2018-06-12</creationDate>
+	<copyright>©2018 HEAD. MARKETING GmbH</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>webmaster@headmarketing.de</authorEmail>
+	<authorUrl>https://www.headmarketing.de</authorUrl>
+	<version>2.1.0</version>
 	<description>MOD_PTMENU_XML_DESCRIPTION</description>
-
 	<files>
 		<filename module="mod_protomenu">mod_protomenu.php</filename>
 		<folder>tmpl</folder>
@@ -22,20 +21,16 @@
 		<filename>index.html</filename>
 		<filename>mod_protomenu.xml</filename>
 	</files>
-
 	<languages folder="language">
 		<language tag="de-DE">de-DE.mod_protomenu.ini</language>
 		<language tag="de-DE">de-DE.mod_protomenu.sys.ini</language>
 	</languages>
-
 	<media destination="mod_protomenu" folder="media">
 		<filename>index.html</filename>
 		<folder>js</folder>
 		<folder>less</folder>
 	</media>
-
-	<help key="JHELP_EXTENSIONS_MODULE_MANAGER_MENU" />
-
+	<!--help key="JHELP_EXTENSIONS_MODULE_MANAGER_MENU" /-->
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
@@ -166,6 +161,17 @@
 				>
 					<option value="0">JNO</option>
 					<option value="ProtomenuBackdrop">JYES</option>
+				</field>
+				<field
+					name="plugin-html5video"
+					type="radio"
+					class="btn-group"
+					default="0"
+					label="MOD_PTMENU_PLUGIN_HTML5VIDEO_LABEL"
+					description="MOD_PTMENU_PLUGIN_HTML5VIDEO_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="ProtomenuHtml5Video">JYES</option>
 				</field>
 			</fieldset>
 			<fieldset

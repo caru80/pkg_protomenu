@@ -48,6 +48,35 @@
 				hint="PLG_PROTOMENU_LOADMODULE_HINT"
 				description="PLG_PROTOMENU_LOADMODULE_DESC"
 			/>
+
+			<field 
+				name="note-enhanced"
+				type="note"
+				label="PLG_PROTOMENU_ENHANCED_ITEM_SETTINGS_NOTE"
+				description="PLG_PROTOMENU_ENHANCED_ITEM_SETTINGS_NOTE_DESC"
+			/>
+
+			<field
+				name="ptm_item_attributes"
+				type="text"
+				cols="80"
+				rows="2"
+				class="input-xxlarge"
+				default=""
+				label="PLG_PROTOMENU_ITEM_ATTRIBUTES_LABEL"
+				description="PLG_PROTOMENU_ITEM_ATTRIBUTES_DESC"
+			/>
+			<field
+				name="ptm_item_template"
+				type="text"
+				cols="80"
+				rows="2"
+				class="input-xxlarge"
+				default=""
+				label="PLG_PROTOMENU_ITEM_TEMPLATE_LABEL"
+				description="PLG_PROTOMENU_ITEM_TEMPLATE_DESC"
+			/>
+
 		</fieldset>
 	</fields>
 </form>

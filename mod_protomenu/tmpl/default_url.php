@@ -34,9 +34,14 @@ else{
 
 
 
-$flink = $item->flink;
-$flink = JFilterOutput::ampReplace(htmlspecialchars($flink));
 
+// -- Erweiterte Einstellungen
+$enh_attribs 	= $item->params->get('ptm_item_attributes',''); // Zusätzliche Attribute
+$enh_template 	= $item->params->get('ptm_item_template','') != '' ? "?tmpl=" . $item->params->get('ptm_item_template','') : ''; // Template: z.B. component, oder ajax_load_component
+
+
+$flink = $item->flink . $enh_template;
+$flink = JFilterOutput::ampReplace(htmlspecialchars($flink));
 
 if( $item->deeper && !$options["mouseover"] )
 {
@@ -47,25 +52,24 @@ else
 	$href = ' href="'.$flink.'"';
 }
 
-
 switch ( $item->browserNav ) :
 	default:
 	case 0:
 ?>
-<a <?php echo $class; echo $href; echo $title; ?> <?php echo $iparams->get('itemattributes','');?>><?php echo $switch . $linktype; ?></a>
+<a <?php echo $class; echo $href; echo $title; ?> <?php echo $enh_attribs;?>><?php echo $switch . $linktype; ?></a>
 <?php
 		break;
 	case 1:
 		// _blank
 ?>
-<a <?php echo $class; echo $href; echo $title; ?> target="_blank" <?php echo $iparams->get('itemattributes','');?>><?php echo $switch . $linktype; ?></a>
+<a <?php echo $class; echo $href; echo $title; ?> <?php echo $enh_attribs;?> target="_blank"><?php echo $switch . $linktype; ?></a>
 <?php
 		break;
 	case 2:
 		// Use JavaScript "window.open"
 		$options = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,' . $params->get('window_open');
 ?>
-<a <?php echo $class; echo $href; echo $title; ?> <?php echo $iparams->get('itemattributes','');?> onclick="window.open(this.href,'targetWindow','<?php echo $options;?>');return false;" <?php echo $title; ?>><?php echo $switch . $linktype; ?></a>
+<a <?php echo $class; echo $href; echo $title; ?> <?php echo $iparams->get('itemattributes','');?> onclick="window.open(this.href,'targetWindow','<?php echo $options;?>');return false;" <?php echo $title; ?> <?php echo $enh_attribs;?>><?php echo $switch . $linktype; ?></a>
 <?php
 		break;
 endswitch;

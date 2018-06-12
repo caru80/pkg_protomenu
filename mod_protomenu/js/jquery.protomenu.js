@@ -1,7 +1,14 @@
 /**
-	Protomenu 2.0.1
-	Carsten Ruppert - 2018-03-01
+ * @package        HEAD. Protomenü 2
+ * @version        2.1.0
+ * 
+ * @author         Carsten Ruppert <webmaster@headmarketing.de>
+ * @link           https://www.headmarketing.de
+ * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
+ * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
 
+/**
 	2.0.1 - 2018-03-01
 	- Fix für MouseOver: Untermenus bleiben geschlossen, obwohl Mauszeiger auf einem Elterneintrag zeigt.
 
@@ -378,7 +385,7 @@
 			if( mouseover )
 			{
 				let self = this;
-				/*
+
 				this.$menu.children('li').off('mousemove.protomenu').on('mousemove.protomenu', function(ev){
 					if( ! $(this).find('#'+sub.attr('id')).length )
 					{
@@ -386,9 +393,9 @@
 						self.closeRootLevel();
 					}
 				});
-				*/
+
 				$(document).off('mousemove.protomenu').on('mousemove.protomenu', function(ev){
-					if( ! $(ev.target).parents('ul.nav-first').length )
+					if( ! $(ev.target).parents('.ptmenu').length )
 					{
 						$(document).off('mousemove.protomenu');
 						self.closeRootLevel();
@@ -483,5 +490,92 @@
 			this.backdrop.removeClass(this.parent.opt.classNames.open);
 		}
 	}
+
+
+	$.Protomenu.Plugins.push('ProtomenuHtml5Video');
+
+	$.Protomenu.defaults.html5video = {
+		autoplay : true
+	};
+
+	$.ProtomenuHtml5Video = function(parent) {
+		this.parent = parent;
+		this._init();
+	}
+
+	$.ProtomenuHtml5Video.prototype = {
+		_init : function()
+		{
+			var self = this;
+			this.parent.on('afterStateChanged', function() {
+				self.tick();
+			});
+		},
+
+		tick : function()
+		{
+			var self	= this,
+				current = this.$node.find('.nav-level-2.open')
+				video 	= this.getVideoObject(current);
+
+			if(video)
+			{
+				if(video.readyState >= 2) // Mindestens die Metadaten und ein Frame des Videos stehen zur Verfügung.
+				{
+					this.playVideo();
+				}
+				else // Noch nix da. Müssen warten.
+				{
+					$(video).one('canplay.protomenu.html5video', function()
+					{
+						self.playVideo();
+					});
+				}
+			}
+		},
+
+		getVideoObject : function(current)
+		{
+			var video = current.find('video');
+			if( video.length ) return video.get(0);
+			return false;
+		},
+
+		playVideo : function()
+		{
+			var self  = this,
+				slide = this.parent.State.stage[0],
+				video = this.getVideoObject(slide);
+
+			if( video )
+			{
+				var opt = $(video).data('ptoptions') || {};
+
+				// Video Zurückspulen wenn ein Slide ausgeblendet wurde.
+				/*
+				if(!video.hasAttribute('loop'))
+				{
+					slide.one('afterSlideOut.ptslider.html5video', function(ev)
+					{
+						var video = self.getVideoObject($(this));
+						if(video)
+						{
+							video.pause();
+							video.currentTime = 0;
+						}
+					});
+				}
+				*/
+
+				// Autoplay
+				if(this.parent.options.html5video.autoplay || opt.autoplay)
+				{
+					video.play();
+				}
+			}
+		}
+	}
+
+
 
 })(jQuery);
