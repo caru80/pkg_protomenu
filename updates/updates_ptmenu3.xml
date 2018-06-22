@@ -1,5 +1,5 @@
 <updates>
-    <update>
+    <!--update>
 		<name>HEAD. Protomenü 2</name>
 		<description>Code Optimierung</description>
 		<element>pkg_protomenu</element>
@@ -16,5 +16,5 @@
 		<maintainerurl>https://www.headmarketing.de</maintainerurl>
 		<targetplatform name="joomla" version="3.[78910]" />
 		<php_minimum>5.6.0</php_minimum>
-	</update>
+	</update-->
 </updates>

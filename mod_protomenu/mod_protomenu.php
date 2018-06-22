@@ -17,47 +17,51 @@ defined('_JEXEC') or die;
 
 require_once __DIR__ . '/helper.php';
 
-$list		= ModProtomenuHelper::getList($params);
+$list		= ModProtomenuHelper::getList($params, $module);
 $base		= ModProtomenuHelper::getBase($params);
 $active		= ModProtomenuHelper::getActive($params);
 $active_id 	= $active->id;
 $path		= $base->tree;
 
 $showAll	= $params->get('showAllChildren');
-$class_sfx  = htmlspecialchars($params->get('class_sfx'), ENT_COMPAT, 'UTF-8');
+$class_sfx  = htmlspecialchars($params->get('moduleclass_sfx'), ENT_COMPAT, 'UTF-8');
 
 $doc = JFactory::getDocument();
 
-$options = array(
-    'seperateswitch' 	=> $params->get('seperateswitch', 0 ,'INT'),
-    'mouseover'			=> $params->get('mouseover',0,'INT'),
-    'clickAnywhere'		=> $params->get('anywhereclose',0,'INT')
-    );
+// -- Statisches oder Dynamisches Menü
+if((bool) $params->get('menu_behavior',1)) {
 
-// -- Plugins
-$jsPlugins = array();
-if($params->get('plugin-backdrop',0))   $jsPlugins[] = $params->get('plugin-backdrop',0);
-if($params->get('plugin-html5video',0)) $jsPlugins[] = $params->get('plugin-html5video',0);
+    $options = array(
+        'seperateswitch' 	=> $params->get('seperateswitch', 0 ,'INT'),
+        'mouseover'			=> $params->get('mouseover',0,'INT'),
+        'clickAnywhere'		=> $params->get('anywhereclose',0,'INT')
+        );
 
-// -- Plugins vorhanden?
-if(count($jsPlugins)) {
-	$options['plugins'] = $jsPlugins;
-}
+    // -- Plugins
+    $jsPlugins = array();
+    if($params->get('plugin-backdrop',0))   $jsPlugins[] = $params->get('plugin-backdrop',0);
+    if($params->get('plugin-html5video',0)) $jsPlugins[] = $params->get('plugin-html5video',0);
 
-// -- Optionen für JS
-$jsOptions = json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
+    // -- Plugins vorhanden?
+    if(count($jsPlugins)) {
+        $options['plugins'] = $jsPlugins;
+    }
 
-$doc->addScript( JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.min.js' );
+    // -- Optionen für JS
+    $jsOptions = json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-$initScript = <<<SCRIPT
+    $doc->addScript( JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.min.js' );
+
+    $initScript = <<<SCRIPT
 (function($){
-	$(function(){
-		$('#ptmenu-$module->id').protomenu($jsOptions);
-	});
+    $(function(){
+        $('#ptmenu-$module->id').protomenu($jsOptions);
+    });
 })(jQuery);
 SCRIPT;
 
-$doc->addScriptDeclaration($initScript);
+    $doc->addScriptDeclaration($initScript);
+}
 
 if(count($list))
 {

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü 2
- * @version        2.1.0
+ * @version        3.0.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -15,13 +15,61 @@
  */
 defined('_JEXEC') or die;
 
-$title = $item->anchor_title ? 'title="' . $item->anchor_title . '" ' : '';
+// Note. It is important to remove spaces between elements.
 
-$linktype = '<span class="item-label">'.$item->title.'</span>';
-
-$text = $item->anchor_title ? '<span class="item-subtitle">' . $item->anchor_title . '</span>' : '';
-
-// -- Erweiterte Einstellungen
-$enh_attribs = $item->params->get('ptm_item_attributes',''); // Zusätzliche Attribute
+$ptmItemConfig->classes[] = 'nav-header';
 ?>
-<span class="nav-header <?php echo $item->anchor_css; ?> <?php echo $enh_attribs;?>" <?php echo $title; ?>><?php echo $linktype; ?></span><?php echo $text;?>
+<span
+	class="<?php echo implode(' ', $ptmItemConfig->classes);?>" 
+	<?php
+		foreach($ptmItemConfig->dataAttribs as $name => $value):
+	?>
+			data-<?php echo $name;?>="<?php echo $value;?>"
+	<?php
+		endforeach;
+	?> 
+	<?php if($item->anchor_title != ''):        ?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
+	<?php echo $ptmItemConfig->customAttribs;?>
+>
+	<?php 
+		// -- Bild
+		if($item->menu_image) :
+	?>
+			<span class="item-image">
+				<img src="<?php echo $item->menu_image;?>" alt="<?php echo $item->title;?>" />
+			</span>
+	<?php 
+		endif;
+	?>
+
+	<?php
+		// -- Beschriftung
+		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
+	?>
+			<span class="item-label">
+				<?php echo $item->title;?>
+			</span>
+	<?php
+		endif;
+	?>
+	
+	<?php
+		// -- Beschreibung/Text
+		if($item->params->get('ptm_item_description','') !== ''):
+	?>
+			<span class="item-description">
+				<?php echo $item->params->get('ptm_item_description','');?>
+			</span>
+	<?php
+		endif;
+	?>
+
+	<?php
+		// -- Umschalter trennen?
+		if($params->get('seperateswitch', 0) && $item->deeper):
+	?>
+			<span class="item-switch" data-ptm-switcher><i></i></span>
+	<?php
+		endif;
+	?>
+</span>

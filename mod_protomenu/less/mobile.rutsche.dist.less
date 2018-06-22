@@ -1,0 +1,263 @@
+
+/*
+	Protomenu 3.0.0
+	Carsten Ruppert - 2018-06-22
+
+    Mobile-Theme „Rutsche”
+    
+    In den Moduleinstellungen:
+    - Deaktiviere „MouseOver”
+    - Aktiviere „Schließen Anzeigen”
+        
+	In dem Mobile-Theme habe ich aus Performance-Gründen auf Transitions verzichtet.
+
+*/
+.ptmenu{
+	font-size: @font-size-base;
+	height: 100%;
+
+	// -- Das markieren von Text im Menü verhindern:
+	-webkit-user-select: none; 
+	-khtml-user-select: none; 
+	-moz-user-select: none; 
+	-ms-user-select: none; 
+	user-select: none;
+}
+
+.ptmenu .nav-wrapper {
+	position: relative;
+	height: 100%;
+	z-index: 110; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann auch nicht klappt, musst du dein Stylesheet korrigieren.
+}
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Menüsinträge
+
+-------------------------------------------------------------------------------- */
+
+
+// -- Ein Menüeintrag
+.ptmenu ul li {
+	
+	// Ein Anker
+	a.nav-item {
+		font-size: inherit;
+		font-family: @font-family-sans-serif;
+		color: #dddddd;
+		font-weight: normal;
+		text-decoration: none;
+		// text-transform: uppercase;
+
+		display: block;
+		padding: 0.8em 1em 0.7em 1em;
+
+		white-space: nowrap;
+
+		&[tabindex="0"]{ cursor: default; } // Wenn kein href Attribut vorhanden ist (z.B.: <a tabindex="0" class="nav-item">Foo</a>)
+	}
+
+	// Aktiver Menüeintrag
+	&.active > a.nav-item,
+	&.alias-parent-active > a.nav-item {
+		background-color: transparent;
+		color: lighten(@brand-primary, 20);
+		font-weight: bold;
+	}
+
+	// Geöffnet, Angetippt
+	a.nav-item:active, 		// Touch; Mit dem Finger angetippt. Bleibt nicht aktiv, „blitzt” nur kurz auf.
+	a.nav-item.open,		// Hat ein Untermenü geöffnet, bleibt aktiv.
+	&.open > .nav-item{
+		background-color: @brand-primary;
+		color: lighten(@brand-primary, 40);
+		font-weight: bold;
+	}
+}
+
+// -- Eintrag in der ersten Ebene
+ul.nav-first > li > .nav-item{
+	text-transform: uppercase;
+}
+
+
+// -- Bild im Menüeintrag (<div>)
+.ptmenu .nav-item .item-image {
+	img{max-width: 100%;}
+}
+
+
+// -- Beschreibung im Menüeintrag (ein Freier Text, der im Menüeintrag eingegeben werden kann)
+.ptmenu .nav-item .item-description {}
+
+
+// -- Joomla Item-Typ: Menüüberschrift (<span>)
+.ptmenu .nav-item.nav-header {
+	display: block;
+	padding: 0.8em 1em 0.7em 1em;
+	color: #ffffff;
+	font-weight: bold;
+	background-color: darken(@brand-primary, 5);
+}
+
+
+// -- Joomla Item-Typ: Trennzeichen (<span>)
+.ptmenu .seperator {}
+
+
+// -- Module (Wrapper) (<div>)
+.ptmenu .ptmenu-item-modules {}
+
+
+// -- Code (und Weiterlesen-Text) (<div>)
+.ptmenu .ptmenu-item-custom {}
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Pfeile – Wenn etwas aufgeklappt werden kann.
+
+-------------------------------------------------------------------------------- */
+
+// -- Pfeil:
+.ptmenu ul li.deeper {
+	i.item-arrow {
+		font-style: normal; // !
+
+		display: inline-block;
+		position: relative;
+		margin-left: 0.2em;
+		width: 0.7em;
+		height: 0.7em;
+
+		&:before {
+			font-family: 'Font Awesome 5 Free';
+			font-weight: 800;
+			content: @fa-var-plus-square;
+
+			position: absolute;
+			top: 0.525em;
+			left: 0.2em;
+
+			font-size: 0.7em;
+			line-height: 0;
+		}
+	}
+}
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Submenus / Untermenüs
+
+-------------------------------------------------------------------------------- */
+
+// -- Alle Untermenüs
+.ptmenu .nav-child{
+   background-color: #282828;
+}
+.ptmenu .nav-child .nav-child-close{
+	display: block;
+	padding: 0.8em 1em 0.7em 1em;
+	color: #ffffff;
+	background-color: @brand-danger;
+	i:before{
+		.fas();
+		content: @fa-var-chevron-left;
+	}
+	i + span {
+		padding-left: 0.2em;
+	}
+}
+.ptmenu .nav-child .nav-sub.nav-level-3{
+	padding: 10px 0;
+}
+
+
+/* --------------------------------------------------------------------------------
+
+	Submenus / Untermenüs Positionieren
+	
+	Hier sind keinerlei Änderungen nötig.
+
+	<li data-ptm-item="ModulId-ItemId">
+		<a|span>
+		<div class="nav-child nav-level-N" data-ptm-child="ModulId-ItemId" data-ptm-level="N” [data-ptm-static-child]>
+
+-------------------------------------------------------------------------------- */
+
+// -- Untermenüs Positionieren – Verhalten „Dropdown”
+[data-ptm-item]:not(.mega) {
+
+	// Ab der 2. Menüebene – von Oben nach Unten.
+	[data-ptm-child]:not([data-ptm-static-child]) {
+		position: absolute;
+		z-index: 2;
+		top: 0;
+		left: 0;
+	}
+}
+
+
+/* --------------------------------------------------------------------------------
+
+	Submenus / Untermenüs Ein- und Ausblenden
+	 
+	Hier sind keinerlei Änderungen nötig, es sei denn der Einblendeeffekt soll geändert werden. 
+
+	Im Mobile-Theme habe ich auf aus Performance-Gründen auf Transistions verzichtet.
+
+	<li data-ptm-item="ModulId-ItemId">
+		<a|span>
+		<div class="nav-child nav-level-N" data-ptm-child="ModulId-ItemId" data-ptm-level="N” [data-ptm-static-child]>
+
+-------------------------------------------------------------------------------- */
+
+// -- Verhalten „Dropdown” und „Mega Menü”
+[data-ptm-item] [data-ptm-child]:not([data-ptm-static-child]) {
+	// Ausgeblendet:
+	height: 0;
+	width: 0;
+	overflow: hidden;
+	opacity: 0;
+	
+	transform: translate3d(100%, 0, 0);
+	transition: transform 0.4s cubic-bezier(.54,.39,0,1.02);
+
+	// Alle .nav-child bekommen die Klasse „in” während ein Übergang (transition) läuft, und solange sie Eingeblendet sind.
+	&.in{ 
+		width: 100%;
+		height: auto;
+		min-height: 100%;
+		overflow: visible;
+		opacity: 1;
+	}
+
+	// Aktiv, Ausgeklappt, Geöffnet:
+	&.open{
+		z-index: 10;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+
+/* --------------------------------------------------------------------------------
+
+	Listen-Fix
+	 
+	You shall not touch this! Es sei denn, du musst.
+	 
+-------------------------------------------------------------------------------- */
+
+.ptmenu ul.nav-first,
+.ptmenu ul.nav-sub {
+	list-style-type: none;
+	&, li{
+		margin: 0; padding: 0;
+	}
+}

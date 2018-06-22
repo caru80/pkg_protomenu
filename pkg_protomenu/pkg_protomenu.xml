@@ -7,11 +7,11 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>webmaster@headmarketing.de</authorEmail>
 	<authorUrl>https://www.headmarketing.de</authorUrl>
-	<version>2.1.0</version>
+	<version>3.0.0</version>
 	<description>Protomenü Installationspaket</description>
     <packagename>protomenu</packagename>
 	<updateservers>
-		<server type="extension" priority="1" name="pkg_protomenu">https://raw.githubusercontent.com/caru80/pkg_protomenu/master/updates/updates.xml</server>
+		<server type="extension" priority="1" name="pkg_protomenu">https://raw.githubusercontent.com/caru80/pkg_protomenu/master/updates/updates_ptmenu3.xml</server>
 	</updateservers>
 	<files folder="packages">
 		<file type="module" id="protomenu" client="site">mod_protomenu.zip</file>

@@ -1,0 +1,369 @@
+/*
+	Protomenu 3.0.0
+	Carsten Ruppert - 2018-06-22
+
+	Desktop-Theme
+*/
+.ptmenu{
+	font-size: @font-size-base;
+	background-color: @brand-primary;
+
+	// -- Das markieren von Text im Menü verhindern:
+	-webkit-user-select: none; 
+	-khtml-user-select: none; 
+	-moz-user-select: none; 
+	-ms-user-select: none; 
+	user-select: none;
+}
+
+.ptmenu .nav-wrapper {
+	position: relative;
+	z-index: 110; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann auch nicht klappt, musst du dein Stylesheet korrigieren.
+}
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Menüsinträge
+
+-------------------------------------------------------------------------------- */
+
+// -- Ein Menüeintrag
+.ptmenu ul li {
+	
+	// Ein Anker
+	a.nav-item {
+		font-size: inherit;
+		font-family: @font-family-sans-serif;
+		color: #ffffff;
+		font-weight: normal;
+		text-decoration: none;
+
+		display: block;
+		padding: 0.6em 1em 0.6em 1em;
+
+		white-space: nowrap;
+
+		&[tabindex="0"]{ cursor: default; } // Wenn kein href Attribut vorhanden ist (z.B.: <a tabindex="0" class="nav-item">Foo</a>)
+	}
+
+	// Aktiver Menüeintrag
+	&.active > a.nav-item,
+	&.alias-parent-active > a.nav-item {
+		background-color: transparent;
+		color: lighten(@brand-primary, 20);
+	}
+
+	// Geöffnet, Angetippt und Hover
+	a.nav-item:active, 		// Touch; Mit dem Finger angetippt. Bleibt nicht aktiv, „blitzt” nur kurz auf.
+	a.nav-item.open,		// Hat ein Untermenü geöffnet, bleibt aktiv.
+	&:hover > a.nav-item { 	// Maus; Hover...
+		background-color: lighten(@brand-primary, 20);
+		color: #ffffff;
+	}
+}
+
+// -- Ein Menüeintrag in der ersten Ebene (Horizontales Menü)
+.ptmenu ul.nav-first{
+	.clearfix();
+}
+.ptmenu ul.nav-first > li {
+	float: left; // display: inline-block verursacht (immer!) ein „White-Space” zwischen den <li>, einen unerwünschten Abstand, daher mit float.
+}
+
+
+// -- Bild im Menüeintrag (<div>)
+.ptmenu .nav-item .item-image {
+	img{max-width: 100%;}
+}
+
+
+// -- Beschreibung im Menüeintrag (ein Freier Text, der im Menüeintrag eingegeben werden kann)
+.ptmenu .nav-item .item-description {}
+
+
+// -- Joomla Item-Typ: Menüüberschrift (<span>)
+.ptmenu .nav-item.nav-header {}
+
+
+// -- Joomla Item-Typ: Trennzeichen (<span>)
+.ptmenu .seperator {}
+
+
+// -- Module (Wrapper) (<div>)
+.ptmenu .ptmenu-item-modules {}
+
+
+// -- Code (und Weiterlesen-Text) (<div>)
+.ptmenu .ptmenu-item-custom {}
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Pfeile – Wenn etwas aufgeklappt werden kann.
+
+-------------------------------------------------------------------------------- */
+
+// -- Pfeil:
+.ptmenu ul li.deeper {
+	i.item-arrow {
+		font-style: normal; // !
+
+		display: inline-block;
+		position: relative;
+		margin-left: 0.2em;
+		width: 0.7em;
+		height: 0.7em;
+
+		&:before {
+			font-family: 'Font Awesome 5 Free';
+			font-weight: 800;
+			content: @fa-var-chevron-right;
+
+			position: absolute;
+			top: 0.525em;
+			left: 0.2em;
+
+			font-size: 0.7em;
+			line-height: 0;
+
+			-webkit-transition: transform 0.25s ease;
+					transition: transform 0.25s ease;
+		}
+	}
+
+	&.open > .nav-item i.item-arrow:before,	// Mouseover
+	.nav-item.open i.item-arrow:before 		// Klick
+	{
+		transform: rotate3d(0,1,0,-180deg);
+	}
+}
+
+// -- Pfeil in der ersten Ebene:
+.ptmenu ul.nav-first > li.deeper {
+	> .nav-item i.item-arrow:before{
+		content: @fa-var-chevron-down;
+	}
+
+	&.open > .nav-item i.item-arrow:before, // MouseOver
+	> .nav-item.open i.item-arrow::before   // Klick
+	{
+		transform: rotate3d(1,0,0,-180deg);
+	}
+}
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Submenus / Untermenüs
+
+-------------------------------------------------------------------------------- */
+
+// -- Alle Untermenüs
+.ptmenu .nav-child{
+	background-color: lighten(@brand-primary, 30%);
+}
+//.ptmenu .nav-child:not(.mega) {} // Alle, außer Mega-Untermenüs (Ab Browsergeneration Internet Explorer 11)
+
+// -- Ein Mega-Untermenü
+.ptmenu .mega > .nav-child {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Backdrop
+
+-------------------------------------------------------------------------------- */
+
+.ptmenu-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+
+	background-color: rgba(255,255,255,0.7);
+	width: 0;
+	height: 0;
+	opacity: 0;
+	overflow: hidden;
+
+	z-index: 10; // Relativ zu <body> – div.ptmenu-backdrop wird im <body> an 1. Stelle eingehängt.
+	-webkit-transition: opacity 0.3s ease;
+			transition: opacity 0.3s ease;
+
+	&.in{ // Wichtig!
+		width: 100%;
+		height: 100%;
+		bottom: 0;
+		right: 0;
+		overflow: visible;
+	}
+	&.open{ // Übergänge
+		opacity: 1;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+	Submenus / Untermenüs Positionieren
+	
+	Hier sind keinerlei Änderungen nötig.
+
+	<li data-ptm-item="ModulId-ItemId">
+		<a|span>
+		<div class="nav-child nav-level-N" data-ptm-child="ModulId-ItemId" data-ptm-level="N” [data-ptm-static-child]>
+
+-------------------------------------------------------------------------------- */
+
+// -- Untermenüs Positionieren – Verhalten „Dropdown”
+[data-ptm-item]:not(.mega) {
+
+	// Untermenüs richten sich am <li> aus:
+	position: relative;
+
+	// Ab der 2. Menüebene – von Oben nach Unten.
+	[data-ptm-child]:not([data-ptm-static-child]) {
+		position: absolute;
+		z-index: 2;
+		top: 100%;
+		left: 0;
+	}
+	
+	// Ab der dritten Ebene – von Links nach Rechts:
+	[data-ptm-child] [data-ptm-child]:not([data-ptm-static-child]) {
+		top: 0;
+		left: 100%;
+	}
+}
+
+// -- Untermenüs Positionieren – Verhalten „Mega Menü”
+[data-ptm-item].mega {
+
+	// Untermenüs richten sich an <div class="nav-wrapper"> aus. Nur die 2. Ebene.
+	position: static;
+
+	// Nur die 2. Menüebene – von Oben nach unten.
+	> [data-ptm-child] {
+		position: absolute;
+		z-index: 2;
+		top: 100%;
+		left: 0;
+	}
+
+	// Ab der dritten Ebene – von Links nach Rechts:
+	[data-ptm-child] [data-ptm-child]:not([data-ptm-static-child]) {
+		top: 0;
+		left: 100%;
+	}
+}
+
+
+/* --------------------------------------------------------------------------------
+
+	Submenus / Untermenüs Ein- und Ausblenden
+	 
+	Hier sind keinerlei Änderungen nötig, es sei denn der Einblendeeffekt soll geändert werden. 
+
+	<li data-ptm-item="ModulId-ItemId">
+		<a|span>
+		<div class="nav-child nav-level-N" data-ptm-child="ModulId-ItemId" data-ptm-level="N” [data-ptm-static-child]>
+
+-------------------------------------------------------------------------------- */
+
+// -- Verhalten „Dropdown” und „Mega Menü”
+[data-ptm-item] [data-ptm-child]:not([data-ptm-static-child]) {
+	// Ausgeblendet:
+	height: 0;
+	width: 0;
+	overflow: hidden;
+
+	// Übergang:
+	opacity: 0;
+	-webkit-transform: scale3d(0.95,0.95,0.95);
+			transform: scale3d(0.95,0.95,0.95);
+	-webkit-transition: -webkit-transform 0.2s cubic-bezier(.54,.39,0,1.02), opacity 0.3s ease;
+			transition: 		transform 0.2s cubic-bezier(.54,.39,0,1.02), opacity 0.3s ease;
+
+	// Alle .nav-child bekommen die Klasse „in” während ein Übergang (transition) läuft, und solange sie Eingeblendet sind.
+	&.in{ 
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+
+	// Aktiv, Ausgeklappt, Geöffnet:
+	&.open{
+		z-index: 10;
+		opacity: 1;
+		transform: scale3d(1,1,1);
+	}
+}
+
+// -- Verhalten „Mega Menü” – Volle Breite, und keine Skalierung.
+[data-ptm-item].mega [data-ptm-child]:not([data-ptm-static-child]) {
+
+	-webkit-transform: translate3d(0,0,0);
+			transform: translate3d(0,0,0);
+	-webkit-transition: opacity 0.3s ease;
+			transition: opacity 0.3s ease;
+
+	&.in {
+		width: 100%;
+	}
+}
+
+
+/* --------------------------------------------------------------------------------
+
+	Listen- und Grid-Fix
+	 
+	You shall not touch this! Es sei denn, du musst.
+	 
+-------------------------------------------------------------------------------- */
+
+.ptmenu ul.nav-first,
+.ptmenu ul.nav-sub {
+	list-style-type: none;
+	&, li{
+		margin: 0; padding: 0;
+	}
+}
+.ptmenu ul.row{
+	margin: 0 -(@grid-gutter-width / 2);
+}
+.ptmenu ul.nav-first li[class*=col-],
+.ptmenu ul.nav-sub li[class*=col-]{
+	padding: 0 @grid-gutter-width / 2;
+}
+
+
+/* --------------------------------------------------------------------------------
+
+	Keine Outlines für Hyperlinks
+	 	 
+-------------------------------------------------------------------------------- */
+
+.ptmenu li a.nav-item{ 
+    &:hover, &:focus, &:active{
+        outline: none !important;
+    }
+}

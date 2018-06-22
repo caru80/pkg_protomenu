@@ -5,14 +5,14 @@
 	client="site"
 	method="upgrade"
 	>
-	<name>HEAD. Protomenü 2</name>
+	<name>Protomenü</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2018-06-12</creationDate>
+	<creationDate>2018-06-22</creationDate>
 	<copyright>©2018 HEAD. MARKETING GmbH</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>webmaster@headmarketing.de</authorEmail>
 	<authorUrl>https://www.headmarketing.de</authorUrl>
-	<version>2.1.0</version>
+	<version>3.0.0</version>
 	<description>MOD_PTMENU_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_protomenu">mod_protomenu.php</filename>
@@ -98,8 +98,21 @@
 				</field>
 
 				<field
+					name="menu_behavior"
+					type="radio"
+					class="btn-group btn-group-yesno"
+					label="MOD_PTMENU_FIELD_MENUBEHAVIOR_LABEL"
+					description="MOD_PTMENU_FIELD_MENUBEHAVIOR_DESC"
+					default="1"
+				>
+						<option value="0">MOD_PTMENU_FIELD_MENUBEHAVIOR_OPT_STATIC</option>
+						<option value="1">MOD_PTMENU_FIELD_MENUBEHAVIOR_OPT_DYNAMIC</option>
+				</field>
+
+				<field
 					name="seperateswitch"
 					type="radio"
+					showon="menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_FIELD_SEPERATESWITCH"
@@ -112,6 +125,7 @@
 				<field
 					name="mouseover"
 					type="radio"
+					showon="menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_FIELD_MOUSEOVER"
@@ -120,10 +134,33 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				
+				<field
+					name="submenu_close_button"
+					type="radio"
+					showon="mouseover:0[AND]menu_behavior:1"
+					class="btn-group"
+					default="0"
+					label="MOD_PTMENU_FIELD_SUBMENU_CLOSE_LABEL"
+					description="MOD_PTMENU_FIELD_SUBMENU_CLOSE_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field
+					name="submenu_close_button_label"
+					type="text"
+					showon="mouseover:0[AND]submenu_close_button:1[AND]menu_behavior:1"
+					default=""
+					label="MOD_PTMENU_FIELD_SUBMENU_CLOSE_LABEL_LABEL"
+					description="MOD_PTMENU_FIELD_SUBMENU_CLOSE_LABEL_DESC"
+				/>
 
 				<field
 					name="anywhereclose"
 					type="radio"
+					showon="mouseover:0[AND]menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_FIELD_ANYWHERECLOSE"
@@ -136,6 +173,7 @@
 				<field
 					name="keepactiveopen"
 					type="radio"
+					showon="menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_FIELD_KEEPACTIVEOPEN"
@@ -144,9 +182,13 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+
+
+
 				<field
 					name="note-plugins"
 					type="note"
+					showon="menu_behavior:1"
 					label="MOD_PTMENU_NOTE_PLUGIN_HEADLINE"
 					description=""
 				/>
@@ -154,6 +196,7 @@
 				<field
 					name="plugin-backdrop"
 					type="radio"
+					showon="menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_PLUGIN_BACKDROP_LABEL"
@@ -165,6 +208,7 @@
 				<field
 					name="plugin-html5video"
 					type="radio"
+					showon="menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_PLUGIN_HTML5VIDEO_LABEL"

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.8" type="plugin" group="content" method="upgrade">
-	<name>HEAD. Protomenü 2</name>
+	<name>Protomenü</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2018-06-12</creationDate>
+	<creationDate>2018-06-22</creationDate>
 	<copyright>©2018 HEAD. MARKETING GmbH</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>webmaster@headmarketing.de</authorEmail>
 	<authorUrl>https://www.headmarketing.de</authorUrl>
-	<version>2.1.0</version>
+	<version>3.0.0</version>
 	<description>PLG_PROTOMENU_DESCRIPTION</description>
 	<scriptfile>install.script.php</scriptfile>
 	<files>

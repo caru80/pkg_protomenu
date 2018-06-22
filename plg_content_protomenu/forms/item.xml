@@ -1,59 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-	<fields name="params" >
+	<fields name="params">
+		<!--fieldset name="menu-options">
+		</fieldset-->
 		<fieldset name="PROTOMENU">
 
 			<field
-				name="note1"
+				name="ptm-note-behavior"
 				type="note"
 				class=""
 				label="PLG_PROTOMENU_NOTE1"
 				description="PLG_PROTOMENU_NOTE1_DESC"
 			/>
-
 			<field
-				name="ptmbehavior"
+				name="ptm_item_behavior"
 				type="list"
 				label="PLG_PROTOMENU_BEHAVIOR"
 				description="PLG_PROTOMENU_BEHAVIOR_DESC"
 				default="0"
 			>
-				<option value="0">PLG_PROTOMENU_BEHAVIOR_NORMAL</option>
-				<option value="1">PLG_PROTOMENU_BEHAVIOR_MEGA</option>
-				<option value="2">PLG_PROTOMENU_BEHAVIOR_LOADPOSITION</option>
-				<option value="3">PLG_PROTOMENU_BEHAVIOR_LOADMODULE</option>
+				<option value="dropdown">PLG_PROTOMENU_BEHAVIOR_NORMAL</option>
+				<option value="megamenu">PLG_PROTOMENU_BEHAVIOR_MEGA</option>
+				<option value="static">PLG_PROTOMENU_BEHAVIOR_STATIC</option>
+				<option value="moduleposition">PLG_PROTOMENU_BEHAVIOR_LOADPOSITION</option>
+				<option value="modules">PLG_PROTOMENU_BEHAVIOR_LOADMODULE</option>
+				<option value="readmoretext">PLG_PROTOMENU_BEHAVIOR_READMORETEXT</option>
+				<option value="html">PLG_PROTOMENU_BEHAVIOR_HTML</option>
+			</field>
+
+			<field 
+				name="ptm-note-grid"
+				type="note"
+				showon="ptm_item_behavior:megamenu"
+				class=""
+				label="PLG_PROTOMENU_NOTE_GRID_LABEL"
+				description="PLG_PROTOMENU_NOTE_GRID_DESC"
+			/>
+			<field
+				name="ptm_item_enable_grid"
+				type="radio"
+				showon="ptm_item_behavior:megamenu"
+				class="btn-group"
+				label="PLG_PROTOMENU_ITEM_ENABLE_GRID_LABEL"
+				description="PLG_PROTOMENU_ITEM_ENABLE_GRID_DESC"
+				default="0"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 
 			<field
-				name="note-modules"
+				name="ptm_item_grid_containerclass"
+				type="text"
+				showon="ptm_item_enable_grid:1[AND]ptm_item_behavior:megamenu"
+				default="container"
+				label="PLG_PROTOMENU_ITEM_GRID_CONTAINERCLASS_LABEL"
+				description="PLG_PROTOMENU_ITEM_GRID_CONTAINERCLASS_LABEL"
+				hint="PLG_PROTOMENU_ITEM_GRID_CONTAINERCLASS_HINT"
+			/>
+
+			<field
+				name="ptm_item_grid_rowclass"
+				type="text"
+				showon="ptm_item_enable_grid:1[AND]ptm_item_behavior:megamenu"
+				default="row"
+				label="PLG_PROTOMENU_ITEM_GRID_ROWCLASS_LABEL"
+				description="PLG_PROTOMENU_ITEM_GRID_ROWCLASS_LABEL"
+				hint="PLG_PROTOMENU_ITEM_GRID_ROWCLASS_HINT"
+			/>
+
+			<field 
+				name="ptm-note-gridlayout"
 				type="note"
+				showon="ptm_item_enable_grid:1[AND]ptm_item_behavior:megamenu"
+				class=""
+				label="PLG_PROTOMENU_NOTE_GRIDLAYOUT_LABEL"
+				description="PLG_PROTOMENU_NOTE_GRIDLAYOUT_DESC"
+			/>
+
+			<field 
+				name="ptm-note-readmoretext"
+				type="note"
+				showon="ptm_item_behavior:readmoretext"
+				class=""
+				label="PLG_PROTOMENU_NOTE_READMORETEXT_LABEL"
+                description="PLG_PROTOMENU_NOTE_READMORETEXT_DESC"
+			/>
+
+			<field
+				name="ptm_item_readmoretext"
+				type="editor"
+				showon="ptm_item_behavior:readmoretext"
+				filter="raw"
+				label="PLG_PROTOMENU_ITEM_READMORETEXT_LABEL"
+				description="PLG_PROTOMENU_ITEM_READMORETEXT_DESC"
+			/>
+
+			<field 
+				name="ptm-note-html-content"
+				type="note"
+				showon="ptm_item_behavior:html"
+				class=""
+				label="PLG_PROTOMENU_NOTE_HTML_CONTENT_LABEL"
+                description="PLG_PROTOMENU_NOTE_HTML_CONTENT_DESC"
+			/>
+
+			<field
+				name="ptm_item_html_content"
+				type="textarea"
+				class="input-xxlarge"
+				cols="80"
+				rows="10"
+				showon="ptm_item_behavior:html"
+				filter="raw"
+				label="PLG_PROTOMENU_ITEM_HTML_CONTENT_LABEL"
+				description="PLG_PROTOMENU_ITEM_HTML_CONTENT_DESC"
+			/>
+
+			<field
+				name="ptm_item_readmore_title"
+				type="text"
+				showon="ptm_item_behavior:readmoretext[OR]ptm_item_behavior:html"
+				label="PLG_PROTOMENU_ITEM_READMORETITLE_LABEL"
+				description="PLG_PROTOMENU_ITEM_READMORETITLE_DESC"
+			/>
+
+			<field
+				name="ptm-note-modules"
+				type="note"
+				showon="ptm_item_behavior:moduleposition,modules"
 				class=""
 				label="PLG_PROTOMENU_NOTE_MODULESNOTE"
 			/>
-
-
 			<field
-				name="ptmloadmodposition"
+				name="ptm_load_module_position"
 				type="moduleposition"
+				showon="ptm_item_behavior:moduleposition"
 				label="PLG_PROTOMENU_LOADMODPOSITION"
 				description="PLG_PROTOMENU_LOADMODPOSITION_DESC"
 				default=""
 			/>
 
 			<field
-				name="ptmloadmodule"
-				type="text"
+				name="ptm_load_modules"
+				type="sql"
+				showon="ptm_item_behavior:modules"
 				default=""
-				label="PLG_PROTOMENU_LOADMODULE"
-				hint="PLG_PROTOMENU_LOADMODULE_HINT"
+				query="SELECT id, CONCAT(title, ', Id: ', id, ' (', module, ', ', language, ')') as value FROM #__modules WHERE client_id=0 AND module != 'mod_protomenu'"
+				multiple="true"
+				key_field="id"
+				value_field="value"
+				label="PLG_PROTOMENU_LOADMODULE_LABEL"
 				description="PLG_PROTOMENU_LOADMODULE_DESC"
+				/>
+
+			<field
+				name="ptm_modules_chrome_style"
+				type="chromestyle"
+				showon="ptm_item_behavior:moduleposition,modules"
+				label="PLG_PROTOMENU_MODULES_CHROME_STYLE_LABEL"
+				description="PLG_PROTOMENU_MODULES_CHROME_STYLE_DESC"
 			/>
+
 
 			<field 
 				name="note-enhanced"
 				type="note"
 				label="PLG_PROTOMENU_ENHANCED_ITEM_SETTINGS_NOTE"
 				description="PLG_PROTOMENU_ENHANCED_ITEM_SETTINGS_NOTE_DESC"
+			/>
+
+			<field
+				name="ptm_listitem_classes"
+				type="text"
+				class=""
+				label="PLG_PROTOMENU_LISTITEM_CLASSES_LABEL"
+				description="PLG_PROTOMENU_LISTITEM_CLASSES_DESC"
 			/>
 
 			<field
@@ -75,6 +197,29 @@
 				default=""
 				label="PLG_PROTOMENU_ITEM_TEMPLATE_LABEL"
 				description="PLG_PROTOMENU_ITEM_TEMPLATE_DESC"
+			/>
+
+			<field
+				name="ptm_item_hideinmodule"
+				type="sql"
+				default="10"
+				multiple="true"
+				query="SELECT id, CONCAT(title, ' (', language, ')') as value FROM #__modules WHERE client_id=0 AND module = 'mod_protomenu'"
+				key_field="id"
+				value_field="value"
+				header="JSELECT"
+				label="PLG_PROTOMENU_HIDEINMODULE_LABEL"
+				description="PLG_PROTOMENU_HIDEINMODULE_DESC"
+			/>
+
+			<field
+				name="ptm_item_description"
+				type="textarea"
+				class="input-xxlarge"
+				cols="40"
+				rows="5"
+				label="PLG_PROTOMENUT_ITEM_DESCRIPTION_LABEL"
+				description="PLG_PROTOMENUT_ITEM_DESCRIPTION_DESC"
 			/>
 
 		</fieldset>

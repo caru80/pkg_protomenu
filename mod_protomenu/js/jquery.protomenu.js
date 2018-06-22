@@ -1,7 +1,7 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        2.1.0
+ * @version        3.0.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -12,8 +12,8 @@
 	Protomenu 2.1.0
 	Carsten Ruppert - 2018-06-12
 
-    2.1.0 - 2018-06-12
-    - Fix für MouseOver
+	2.1.0 - 2018-06-12
+	- Fix für MouseOver
 
 	2.0.1 - 2018-03-01
 	- Fix für MouseOver: Untermenus bleiben geschlossen, obwohl Mauszeiger auf einem Elterneintrag zeigt.
@@ -52,6 +52,8 @@
 			open 	: 'open',
 			in 		: 'in'
 		},
+		classRtl 		: 'rtl',
+		classBtl 		: 'btt',
 		seperateswitch 	: false, 	// Hier auf true setzen, wenn Umschalter und Anke getrennt werden sollen.
 		mouseover 		: false, 	// Öffnen von Untermenüs bei Mouseover
 		clickAnywhere 	: false,	// Irgendwo klicken um alle Menüs zu schließen? (Außer in dem Menü selbst, oder einem Modul in einem Menü)
@@ -104,7 +106,6 @@
 		attachTriggerEvent : function(el)
 		{
 			let self = this;
-
 			if(this.opt.mouseover)
 			{
 				el.on('mouseover.protomenu', function(ev)
@@ -158,7 +159,7 @@
 				});
 			}
 			// -- Bubbling stoppen:
-			this.$node.find('.nav-module, .nav-child-toolbar, .nav-item, .nav-container-toolbar').on('click.protomenu', function(ev)
+			this.$node.find('.nav-module, .nav-item').on('click.protomenu', function(ev)
 			{ // Verhindern, dass ein klick auf den Content eines Moduls im Menü den Click-Event am Body auslöst.
 				ev.stopPropagation();
 			});
@@ -168,20 +169,29 @@
 			Auslöser einrichten
 		*/
 		setupTriggers : function()
-		{
-			let self = this;
-
-			this.$submenus = this.$menu.find('.nav-container, .nav-child').not('.mega .nav-child .nav-child');
-			for(let i = 0, ilen = this.$submenus.length; i < ilen; i++)
+		{	
+			let submenus = this.$menu.find('[data-ptm-child]'); //.not('.mega [data-ptm-child] [data-ptm-child]');
+			
+			for(let i = 0, ilen = submenus.length; i < ilen; i++)
 			{
-				let sub 		= this.$submenus.eq(i),
-					triggers 	= this.$menu.find('.trigger-' + sub.attr('id'));
+				let sub = submenus.eq(i),
+					triggers;
+
+				if(!this.opt.mouseover) 
+				{
+					triggers = this.$menu.find('[data-ptm-trigger="' + sub.data('ptm-child') + '"]');
+				}
+				else 
+				{
+					triggers = this.$menu.find('[data-ptm-item="' + sub.data('ptm-child') + '"]');
+				}
+					
 
 				for(let x = 0, xlen = triggers.length; x < xlen; x++)
 				{
 					let trigger = triggers.eq(x),
 						d  		= {submenu : sub},
-						sep 	= trigger.children('.item-switch');
+						sep 	= trigger.find('[data-ptm-switcher]');
 
 					trigger = sep.length && this.opt.seperateswitch ? sep : trigger;
 					trigger.data('ptmenu', d);
@@ -191,17 +201,28 @@
 				sub.data('ptmenu', d);
 			}
 
-			this.items = this.$menu.find('.nav-item');
-			for(let i = 0; i < this.items.length; i++)
+			let triggers;
+			if(!this.opt.mouseover) 
 			{
-				let trigger = this.items.eq(i),
-					sep 	= trigger.children('.item-switch');
-
-				this.attachTriggerEvent( (sep.length && this.opt.seperateswitch ? sep : trigger) );
+				triggers = this.$menu.find('[data-ptm-trigger]');
+			}
+			else 
+			{
+				triggers = this.$menu.find('[data-ptm-item]');
 			}
 
+			for(let i = 0, ilen = triggers.length; i < ilen; i++)
+			{
+				let trigger  = triggers.eq(i),
+					switcher = trigger.find('[data-ptm-switcher]');
+				
+				if(switcher.length && this.opt.seperateswitch) {
+					trigger = switcher;
+				} 
+				
+				this.attachTriggerEvent(trigger);
+			}
 		},
-
 
 		/*
 			Deaktiviert alle „Auslöser” eines „Untermenüs”.
@@ -210,11 +231,15 @@
 		{
 			sub.data('ptmenu').triggers.removeClass(this.opt.classNames.open);
 
-			let descestors = sub.find('.nav-child');
+			let descestors = sub.find('[data-ptm-child]');
 			for(let i = 0, len = descestors.length; i < len; i++)
 			{
 				let d = descestors.eq(i).data('ptmenu');
-				if(d) d.triggers.removeClass(this.opt.classNames.open); // Auslöser aller Nachkommen deaktivieren
+				
+				if(d) 
+				{
+					d.triggers.removeClass(this.opt.classNames.open); // Auslöser aller Nachkommen deaktivieren
+				}
 			}
 		},
 
@@ -223,7 +248,7 @@
 		*/
 		disableDescestors : function(sub)
 		{
-			let descestors = sub.find('.nav-child');
+			let descestors = sub.find('[data-ptm-child]');
 			descestors.removeClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
 		},
 
@@ -307,6 +332,16 @@
 			this.$node.triggerHandler('afterStateChanged', {closed : sub});
 		},
 
+		getVps : function() {
+			let w = window,
+				e = document.documentElement,
+				b = document.getElementsByTagName('body')[0],
+				x = w.innerWidth || e.clientWidth || b.clientWidth,
+				y = w.innerHeight|| e.clientHeight|| b.clientHeight;
+
+			return {w : x, h : y};
+		},
+
 		/*
 			Macht ein „Untermenü” auf
 		*/
@@ -318,7 +353,16 @@
 
 			this.closeEqualLevel(sub);
 
-			sub.addClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
+			sub.addClass(this.opt.classNames.in);
+
+			if(this.getVps().w - (sub.offset().left + sub.outerWidth()) < 0) {
+				sub.addClass(this.opt.classRtl);
+			}
+			if(this.getVps().h - (sub.offset().top + sub.outerHeight()) < 0) {
+				sub.addClass(this.opt.classBtl);
+			}
+
+			sub.addClass(this.opt.classNames.open);
 			d.triggers.addClass(this.opt.classNames.open);
 
 			this.$node.triggerHandler('afterStateChanged', {opened : sub});
@@ -329,7 +373,8 @@
 		*/
 		closeRootLevel : function()
 		{
-			let sub = this.$menu.find('.nav-child.nav-level-2.' + this.opt.classNames.open);
+			// let sub = this.$menu.find('.nav-child.nav-level-2.' + this.opt.classNames.open);
+			let sub = this.$menu.find('.' + this.opt.classNames.open + '[data-ptm-child][data-ptm-level="2"]');
 
 			if(sub.length) this.hideSub(sub);
 		},
@@ -339,7 +384,9 @@
 		*/
 		closeEqualLevel : function(el)
 		{
-			let subs = el.parent().parent().find('.nav-child.'+this.opt.classNames.open).not(el);
+			//let subs = el.parent().parent().find('.' + this.opt.classNames.open + '[data-ptm-child]').not(el);
+
+			let subs = el.parent().parent().find('.' + this.opt.classNames.open + '[data-ptm-child]').not(el);
 
 			for(let i = 0, len = subs.length; i < len; i++ )
 			{
@@ -355,11 +402,11 @@
 			let something;
 			if(first) // Nur im first-level suchen
 			{
-				something = this.$menu.find('.nav-child.nav-level-2.'+this.opt.classNames.open);
+				something = this.$menu.find('.' + this.opt.classNames.open + '[data-ptm-child][data-ptm-level="2"]');
 			}
 			else
 			{
-				something = this.$menu.find('.nav-child.'+this.opt.classNames.open);
+				something = this.$menu.find('.' + this.opt.classNames.open + '[data-ptm-child]');
 			}
 
 			if(something.length)
@@ -376,7 +423,7 @@
 				return;
 			}
 
-			let sub 	= trigger.data('ptmenu').submenu,
+			var sub 	= trigger.data('ptmenu').submenu,
 				isopen 	= sub.hasClass(this.opt.classNames.open);
 
 			if(isopen && !mouseover)
@@ -390,23 +437,24 @@
 
 			if( mouseover )
 			{
-				let self = this;
+				/**
+					Wenn die Eltern-Liste des <li> verlassen wird, machen wir alles innerhalb der Eltern-Liste zu.
+					Das wird nötig, wenn Dropdown-Menüs in Megamenüs und in Spalten dargestellt werden */
+				let parentList = trigger.parents('[data-ptm-sub]');
+				parentList.one('mouseout.protomenu', function(trigger, sub, ev){
+					if(ev.currentTarget === ev.relatedTarget) {
+						this.closeEqualLevel($(ev.currentTarget));
+					}
+				}.bind(this, trigger, sub));
 
-				this.$menu.children('li').off('mousemove.protomenu').on('mousemove.protomenu', function(ev){
-					if( ! $(this).find('#'+sub.attr('id')).length )
+				// -- Wenn <ul data-ptm-root> verlassen wird machen wir Alles zu.
+				$(document).off('mousemove.protomenu').on('mousemove.protomenu', function(ev) {
+					if(!$(ev.target).closest('[data-ptm-root]').length )
 					{
 						$(document).off('mousemove.protomenu');
-						self.closeRootLevel();
+						this.closeRootLevel();
 					}
-				});
-
-				$(document).off('mousemove.protomenu').on('mousemove.protomenu', function(ev){
-					if( ! $(ev.target).closest('.nav-first').length )
-					{
-						$(document).off('mousemove.protomenu');
-						self.closeRootLevel();
-					}
-				})
+				}.bind(this));
 			}
 		}
 	} // prototype
@@ -500,23 +548,23 @@
 	$.ProtomenuHtml5Video.prototype = {
 		_init : function()
 		{
-    		this.parent.$node.on('afterStateChanged', function(ev, data) {
+			this.parent.$node.on('afterStateChanged', function(ev, data) {
 				this.tick(data);
 			}.bind(this));
 		},
 
 		tick : function(data)
 		{
-            if(data.closed) {
-                data.closed.find('video').each(function() {
-                    this.pause();
-                    if(this.currentTime) { // Wenn IE11 noch keine Metadaten geladen hat bekommen wir sonst beim ersten abfeuern von hideVideo einen InvalidStateError:
-                        this.currentTime = 0;
-                    }
-                });
-            }
+			if(data.closed) {
+				data.closed.find('video').each(function() {
+					this.pause();
+					if(this.currentTime) { // Wenn IE11 noch keine Metadaten geladen hat bekommen wir sonst beim ersten abfeuern von hideVideo einen InvalidStateError:
+						this.currentTime = 0;
+					}
+				});
+			}
 
-            if(data.opened) {
+			if(data.opened) {
 				var videos = data.opened.find('video');
 
 				var vid;
@@ -532,12 +580,12 @@
 						}.bind(this));
 					}
 				}
-            }
+			}
 		},
 
 		playVideo : function(video)
 		{
-            if(video)
+			if(video)
 			{
 				var opt = $(video).data('ptoptions') || {};
 				// Autoplay

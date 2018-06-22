@@ -1,75 +1,78 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  mod_menu
- *
- * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @package        HEAD. Protomenü 2
+ * @version        3.0.0
+ * 
+ * @author         Carsten Ruppert <webmaster@headmarketing.de>
+ * @link           https://www.headmarketing.de
+ * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
+ * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
+/**
+ * @copyright    Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @license      GNU General Public License version 2 or later; see LICENSE.txt
+ */
 defined('_JEXEC') or die;
 
 // Note. It is important to remove spaces between elements.
-$classList = $item->anchor_css ? 'nav-item ' . $item->anchor_css : 'nav-item';
-if( $item->deeper ) $classList .= ' trigger-'.$module->id.'-'.$item->id;
-if($parentActive && $keepActiveOpen && $item->parent) $classList .= ' open';
-$class = 'class="'.$classList.'"';
 
-
-$title 	= $item->anchor_title ? 'title="' . $item->anchor_title . '" ' : '';
-$text 	= $item->anchor_title ? '<span class="item-subtitle">' . $item->anchor_title . '</span>' : '';
-$switch = $item->deeper ? '<span class="item-switch"><i></i></span>' : '';
-
-if ($item->menu_image){
-	$item->params->get('menu_text', 1) ?
-	$linktype = '<span class="item-image"><img src="' . $item->menu_image . '" alt="' . $item->title . '" /></span><span class="item-label">' . $item->title .'<i></i></span>' . $text :
-	$linktype = '<span class="item-image"><img src="' . $item->menu_image . '" alt="' . $item->title . '" /></span>';
-}
-else{
-	$linktype = '<span class="item-label">' . $item->title . '<i></i></span>' . $text;
-}
-
-
-// $linktype = '<span class="item-label">' . $item->title . '<i></i></span>' . $text;
-
-
-
-
-// -- Erweiterte Einstellungen
-$enh_attribs 	= $item->params->get('ptm_item_attributes',''); // Zusätzliche Attribute
-$enh_template 	= $item->params->get('ptm_item_template','') != '' ? "?tmpl=" . $item->params->get('ptm_item_template','') : ''; // Template: z.B. component, oder ajax_load_component
-
-
-$flink = $item->flink . $enh_template;
-$flink = JFilterOutput::ampReplace(htmlspecialchars($flink));
-
-if( $item->deeper && !$options["mouseover"] )
-{
-	$href = ' tabindex="0"';
-}
-else
-{
-	$href = ' href="'.$flink.'"';
-}
-
-switch ( $item->browserNav ) :
-	default:
-	case 0:
+$item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 ?>
-<a <?php echo $class; echo $href; echo $title; ?> <?php echo $enh_attribs;?>><?php echo $switch . $linktype; ?></a>
-<?php
-		break;
-	case 1:
-		// _blank
-?>
-<a <?php echo $class; echo $href; echo $title; ?> <?php echo $enh_attribs;?> target="_blank"><?php echo $switch . $linktype; ?></a>
-<?php
-		break;
-	case 2:
-		// Use JavaScript "window.open"
-		$options = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,' . $params->get('window_open');
-?>
-<a <?php echo $class; echo $href; echo $title; ?> <?php echo $iparams->get('itemattributes','');?> onclick="window.open(this.href,'targetWindow','<?php echo $options;?>');return false;" <?php echo $title; ?> <?php echo $enh_attribs;?>><?php echo $switch . $linktype; ?></a>
-<?php
-		break;
-endswitch;
+<a
+	<?php echo $item->flink != '' ? ' href="' . $item->flink . ($ptmItemConfig->template != '' ? '?tmpl=' . $ptmItemConfig->template : '') . '"' : ' tabindex="0"'; ?> 
+	class="<?php echo implode(' ', $ptmItemConfig->classes);?>" 
+	<?php
+		foreach($ptmItemConfig->dataAttribs as $name => $value):
+	?>
+			data-<?php echo $name;?>="<?php echo $value;?>"
+	<?php
+		endforeach;
+	?> 
+	<?php if($item->browserNav === 1):		?> target="_blank"<?php endif;?>
+	<?php if($item->browserNav === 2):		?> onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;"<?php endif;?>
+	<?php if($item->anchor_title != ''): 	?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
+	<?php echo $ptmItemConfig->customAttribs;?>
+>
+	<?php 
+		// -- Bild
+		if($item->menu_image) :
+	?>
+			<span class="item-image">
+				<img src="<?php echo $item->menu_image;?>" alt="<?php echo $item->title;?>" />
+			</span>
+	<?php 
+		endif;
+	?>
+
+	<?php
+		// -- Beschriftung
+		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
+	?>
+			<span class="item-label">
+                <?php echo $item->title;?><?php if($item->deeper): ?><i class="item-arrow"></i><?php endif;?>
+			</span>
+	<?php
+		endif;
+	?>
+	
+	<?php
+		// -- Beschreibung/Text
+		if($item->params->get('ptm_item_description','') !== ''):
+	?>
+			<span class="item-description">
+				<?php echo $item->params->get('ptm_item_description','');?>
+			</span>
+	<?php
+		endif;
+	?>
+
+	<?php
+		// -- Umschalter trennen?
+		if($params->get('seperateswitch', 0) && $item->deeper):
+	?>
+			<span class="item-switch" data-ptm-switcher><i></i></span>
+	<?php
+		endif;
+	?>
+</a>
