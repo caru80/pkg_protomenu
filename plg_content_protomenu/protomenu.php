@@ -1,7 +1,7 @@
 <?php
 /**
- * @package        HEAD. Protomenü 2
- * @version        2.1.0
+ * @package        HEAD. Protomenü
+ * @version        3.0.2
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de

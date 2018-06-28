@@ -225,6 +225,15 @@
 				description="PLG_PROTOMENU_HIDEINMODULE_DESC"
 			/>
 
+            <field
+				name="ptm_item_hideinmenuitem"
+				type="menuitem"
+				default="0"
+				multiple="true"
+				label="PLG_PROTOMENU_HIDEINMENUITEM_LABEL"
+				description="PLG_PROTOMENU_HIDEINMENUITEM_DESC"
+			/>
+
 			<field
 				name="ptm_item_description"
 				type="textarea"

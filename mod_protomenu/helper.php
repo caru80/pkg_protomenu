@@ -184,7 +184,7 @@ class ModProtomenuHelper extends ModMenuHelper {
 	/**
 	 * Hole die Module anhand der übergebenen Parameter
 	 * 
-	 * @param   string  $task   Ein String der definiert was zu tun ist. Dies kann entweder "loadmodule" oder "loadposition sein.
+	 * @param   string  $task   Ein String der definiert was zu tun ist. Dies kann entweder "loadmodule" oder "loadposition" sein.
 	 * @param   \Joomla\CMS\Registry\Registry  $itemParams   Ein Joomla Registry Objekt, welches die Menüitem-Parameter enthält.
 	 * 
 	 * @return   string  Das gerenderte HTML-Markup der angeforderten Module, oder ein leerer String, wenn keine Module gerendert wurden.
@@ -219,7 +219,7 @@ class ModProtomenuHelper extends ModMenuHelper {
                 $db = \Joomla\CMS\Factory::getDbo();
                 
                 // -- Zugriffsrechte respektieren
-                $levels     = \Joomla\CMS\Factory::getUser()->getAuthorisedViewLevels(); // Ids der Joomla Zugriffsebenen, denen dieser User angehört.
+                $levels     = \Joomla\CMS\Factory::getUser()->getAuthorisedViewLevels(); // Ids der Joomla Zugriffsebenen, denen der aktuelle User angehört.
                 
                 // -- Veröffentlichungszeitraum respektieren
                 $now        = \Joomla\CMS\Factory::getDate()->toSql(); // Aktuelles Datum als SQL DateTime String
