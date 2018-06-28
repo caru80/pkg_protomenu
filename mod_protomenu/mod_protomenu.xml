@@ -7,12 +7,12 @@
 	>
 	<name>Protomenü</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2018-06-22</creationDate>
+	<creationDate>2018-06-28</creationDate>
 	<copyright>©2018 HEAD. MARKETING GmbH</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>webmaster@headmarketing.de</authorEmail>
 	<authorUrl>https://www.headmarketing.de</authorUrl>
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 	<description>MOD_PTMENU_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_protomenu">mod_protomenu.php</filename>
@@ -134,11 +134,37 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
+
+                <field
+                    name="show_submenu_header"
+                    type="radio"
+                    showon="menu_behavior:1"
+                    class="btn-group"
+                    default="0"
+                    label="MOD_PTMENU_FIELD_SHOW_SUBMENU_HEADER_LABEL"
+                    description="MOD_PTMENU_FIELD_SHOW_SUBMENU_HEADER_LABEL"
+                >
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+                <field
+                    name="submenu_show_tree"
+                    type="radio"
+                    showon="show_submenu_header:1[AND]menu_behavior:1"
+                    class="btn-group"
+                    default="0"
+                    label="MOD_PTMENU_FIELD_SUBMENU_SHOW_TREE_LABEL"
+                    description="MOD_PTMENU_FIELD_SUBMENU_SHOW_TREE_LABEL"
+                >
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
 				<field
 					name="submenu_close_button"
 					type="radio"
-					showon="mouseover:0[AND]menu_behavior:1"
+					showon="show_submenu_header:1[AND]mouseover:0[AND]menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_FIELD_SUBMENU_CLOSE_LABEL"

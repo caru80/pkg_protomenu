@@ -1,14 +1,10 @@
 
 /*
-	Protomenu 3.0.0
-	Carsten Ruppert - 2018-06-22
+	Protomenu 3.0.1
+	Carsten Ruppert - 2018-06-28
 
-    Mobile-Theme „Rutsche”
-    
-    In den Moduleinstellungen:
-    - Deaktiviere „MouseOver”
-    - Aktiviere „Schließen Anzeigen”
-        
+	Mobile-Theme
+	
 	In dem Mobile-Theme habe ich aus Performance-Gründen auf Transitions verzichtet.
 
 */
@@ -98,7 +94,7 @@ ul.nav-first > li > .nav-item{
 	padding: 0.8em 1em 0.7em 1em;
 	color: #ffffff;
 	font-weight: bold;
-	background-color: darken(@brand-primary, 5);
+	background-color: #383838; //darken(@brand-primary, 5);
 }
 
 
@@ -131,7 +127,7 @@ ul.nav-first > li > .nav-item{
 		position: relative;
 		margin-left: 0.2em;
 		width: 0.7em;
-		height: 0.7em;
+        height: 0.7em;
 
 		&:before {
 			font-family: 'Font Awesome 5 Free';
@@ -161,22 +157,70 @@ ul.nav-first > li > .nav-item{
 .ptmenu .nav-child{
    background-color: #282828;
 }
+
+/* --------------------------------------------------------------------------------
+
+ 	Submenus / Untermenüs Header
+
+-------------------------------------------------------------------------------- */
+
+.ptmenu .nav-child .nav-child-header{
+    background-color: darken(@brand-primary, 10);
+}
+.ptmenu .nav-child .nav-child-header a{
+    color: lighten(@brand-primary, 25);
+}
+
+.ptmenu .nav-child .nav-child-tree {
+    padding: 0.8em 1em 0.7em 1em;
+    .clearfix();
+}
+.ptmenu .nav-child .nav-child-tree .tree-item{
+    display: block;
+    float: left;
+
+    color: #ffffff;
+    font-size: 1em;
+    font-size: 0.9em;
+
+    &:not(:first-child) i{
+        display: block;
+        font-size: inherit;
+        float: left;
+        padding: 0 0.5em;
+        &:before{
+            .fas();
+            content: @fa-var-chevron-right;
+            color: lighten(@brand-primary, 30);
+            font-size: 0.8em;
+        }
+    }
+    &:first-child i:before{
+        .fas();
+        content: @fa-var-home;
+    }
+}
+
+
 .ptmenu .nav-child .nav-child-close{
 	display: block;
 	padding: 0.8em 1em 0.7em 1em;
-	color: #ffffff;
-	background-color: @brand-danger;
+	color: #ffffff !important;
+    background-color: @brand-danger;
+    &:active {
+        background-color: darken(@brand-danger, 10);
+    }
+
 	i:before{
 		.fas();
-		content: @fa-var-chevron-left;
+        content: @fa-var-chevron-left;
+        //padding-right: 0.25em;
 	}
 	i + span {
-		padding-left: 0.2em;
+		padding-left: 0.3em;
 	}
 }
-.ptmenu .nav-child .nav-sub.nav-level-3{
-	padding: 10px 0;
-}
+
 
 
 /* --------------------------------------------------------------------------------

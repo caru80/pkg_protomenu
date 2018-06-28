@@ -1,7 +1,7 @@
 <?php
 /**
- * @package        HEAD. Protomenü 3
- * @version        3.0.0
+ * @package        HEAD. Protomenü
+ * @version        3.0.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -31,7 +31,6 @@ defined('_JEXEC') or die;
 	$readmoreTitle 		= $item->params->get('ptm_item_readmore_title','') ? $item->params->get('ptm_item_readmore_title','') : $item->title;
 	$readmoreInjected   = false;
 
-
 	// -- Den Weiterlesen-Link zusammenbauen:
 	if($item->flink !== '') :
 
@@ -58,6 +57,13 @@ defined('_JEXEC') or die;
 		ob_end_clean();
 	endif;
 
+
+	$searchAndReplace   = array(
+		"readmore_url" 		=> $item->flink,
+		"readmore_title" 	=> $readmoreTitle
+	);
+
+
 	/**
 		Template Ausgabe:
 	*/
@@ -65,17 +71,31 @@ defined('_JEXEC') or die;
 <div class="ptmenu-item-custom">
 	<?php
 		// -- Im Text den Platzhalter für Weiterlesen-Link ersetzen:
-		$find = preg_quote("{readmore}", "/");
-		if(preg_match("#" . $find . "#", $itemText)) :
-			$itemText = preg_replace("#" . $find . "#", $readmoreLink, $itemText);
-			$readmoreInjected = true;
+		if(!$item->params->get('ptm_item_disable_readmore',0)) :
+			$find = preg_quote("{readmore}", "/");
+			if(preg_match("#" . $find . "#", $itemText)) :
+				$itemText = preg_replace("#" . $find . "#", $readmoreLink, $itemText);
+				$readmoreInjected = true;
+			endif;
 		endif;
+
+		// -- Alle anderen Platzhalter im Text ersetzen:
+		foreach($searchAndReplace as $needle => $replace) :
+			$itemText = preg_replace("#" . preg_quote("{" . $needle . "}", "/") . "#", $replace, $itemText);
+		endforeach;
+
+		/*
+		if($item->flink != '') :
+			$find = preg_quote("{readmore_url}", "/");
+			$itemText = preg_replace("#" . $find . "#", $item->flink, $itemText);
+		endif;
+		*/
 	?>
 
 	<?php echo $itemText;?>
 
 	<?php
-		if(!$readmoreInjected) :
+		if(!$readmoreInjected && !$item->params->get('ptm_item_disable_readmore',0)) :
 			echo $readmoreLink;
 		endif;
 	?>

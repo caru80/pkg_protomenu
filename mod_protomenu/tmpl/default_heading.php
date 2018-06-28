@@ -1,7 +1,7 @@
 <?php
 /**
- * @package        HEAD. Protomenü 2
- * @version        3.0.0
+ * @package        HEAD. Protomenü
+ * @version        3.0.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -66,7 +66,7 @@ $ptmItemConfig->classes[] = 'nav-header';
 
 	<?php
 		// -- Umschalter trennen?
-		if($params->get('seperateswitch', 0) && $item->deeper):
+		if($params->get('seperateswitch', 0) && $item->deeper && $item->params->get('ptm_item_behavior','') !== 'static'):
 	?>
 			<span class="item-switch" data-ptm-switcher><i></i></span>
 	<?php

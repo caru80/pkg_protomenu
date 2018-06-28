@@ -84,7 +84,7 @@
 				showon="ptm_item_behavior:readmoretext"
 				class=""
 				label="PLG_PROTOMENU_NOTE_READMORETEXT_LABEL"
-                description="PLG_PROTOMENU_NOTE_READMORETEXT_DESC"
+				description="PLG_PROTOMENU_NOTE_READMORETEXT_DESC"
 			/>
 
 			<field
@@ -102,21 +102,34 @@
 				showon="ptm_item_behavior:html"
 				class=""
 				label="PLG_PROTOMENU_NOTE_HTML_CONTENT_LABEL"
-                description="PLG_PROTOMENU_NOTE_HTML_CONTENT_DESC"
+				description="PLG_PROTOMENU_NOTE_HTML_CONTENT_DESC"
 			/>
 
 			<field
 				name="ptm_item_html_content"
-				type="textarea"
+				type="editor"
+				editor="codemirror"
+				height="150"
+				width="300"
 				class="input-xxlarge"
-				cols="80"
-				rows="10"
 				showon="ptm_item_behavior:html"
-				filter="raw"
+				filter="safehtml"
 				label="PLG_PROTOMENU_ITEM_HTML_CONTENT_LABEL"
 				description="PLG_PROTOMENU_ITEM_HTML_CONTENT_DESC"
 			/>
 
+			<field
+				name="ptm_item_disable_readmore"
+				type="radio"
+				class="btn-group"
+				showon="ptm_item_behavior:readmoretext[OR]ptm_item_behavior:html"
+				label="PLG_PROTOMENU_ITEM_DISABLE_READMORE_LABEL"
+				description="PLG_PROTOMENU_ITEM_DISABLE_READMORE_DESC"
+				default="0"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
 			<field
 				name="ptm_item_readmore_title"
 				type="text"
@@ -215,6 +228,7 @@
 			<field
 				name="ptm_item_description"
 				type="textarea"
+				filter="raw"
 				class="input-xxlarge"
 				cols="40"
 				rows="5"

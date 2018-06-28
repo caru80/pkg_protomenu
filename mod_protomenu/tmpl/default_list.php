@@ -1,7 +1,7 @@
 <?php
 /**
- * @package        HEAD. Protomenü 2
- * @version        3.0.0
+ * @package        HEAD. Protomenü
+ * @version        3.0.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -149,19 +149,19 @@ TMPL;
 		$containerClass = $item->params->get('ptm_item_behavior','') === 'megamenu' && $item->params->get('ptm_item_enable_grid',0) ? ' class="' . $item->params->get('ptm_item_grid_containerclass', 'container') . '"' : '';
 		$rowClass       = $item->params->get('ptm_item_behavior','') === 'megamenu' && $item->params->get('ptm_item_enable_grid',0) ? $item->params->get('ptm_item_grid_rowclass', 'row') : '';
 
-		// -- Untermenü Schließen-Knopf
-		$closeButton = "";
-		if(!$params->get('mouseover',0) && $params->get('submenu_close_button',1) && ! $parentStatic) 
+        // -- Untermenü Header. Navigationspfad und Schließen-Knopf
+        $childHeader = "";
+		if($params->get('show_submenu_header', 0) && ! $parentStatic) 
 		{
-			foreach($ptmItemConfig->dataAttribs as $key => $value) {
-				$closeButton .= " data-$name=\"$value\"";
-			}
-			$closeButton = '<a tabindex="0" class="nav-child-close" ' . $closeButton . '><i></i><span>' . $params->get('submenu_close_button_label','') . '</span></a>';
+            ob_start();
+            require JModuleHelper::getLayoutPath('mod_protomenu','default_childheader');
+            $childHeader = ob_get_contents();
+            ob_end_clean();
 		}
 
 		echo <<<TMPL
 <div class="nav-child nav-level-$childLevel $isVisible" data-ptm-child="$module->id-$item->id" data-ptm-level="$childLevel" $staticChild>
-	$closeButton
+	$childHeader
 	<div$containerClass>
 		<ul class="nav-sub nav-level-$childLevel $rowClass" data-ptm-sub="$module->id-$item->id">
 TMPL;

@@ -1,7 +1,7 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        3.0.0
+ * @version        3.0.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de

@@ -1,7 +1,7 @@
 <?php
 /**
- * @package        HEAD. Protomenü 2
- * @version        3.0.0
+ * @package        HEAD. Protomenü
+ * @version        3.0.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -48,7 +48,7 @@ defined('_JEXEC') or die;
 		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
 	?>
 			<span class="item-label">
-				<?php echo $item->title;?><?php if($item->deeper): ?><i class="item-arrow"></i><?php endif;?>
+				<?php echo $item->title;?><?php if($item->deeper && !$parentStatic): ?><i class="item-arrow"></i><?php endif;?>
 			</span>
 	<?php
 		endif;
@@ -67,7 +67,7 @@ defined('_JEXEC') or die;
 
 	<?php
 		// -- Umschalter trennen?
-		if($params->get('seperateswitch', 0) && $item->deeper):
+		if($params->get('seperateswitch', 0) && $item->deeper && !$parentStatic):
 	?>
 			<span class="item-switch" data-ptm-switcher><i></i></span>
 	<?php
