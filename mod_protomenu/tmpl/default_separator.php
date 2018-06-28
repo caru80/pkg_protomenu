@@ -15,4 +15,4 @@
  */
 defined('_JEXEC') or die;
 ?>
-<span class="separator"></span>
+<span class="separator<?php echo count($ptmItemConfig->classes) ? ' ' . implode(' ', $ptmItemConfig->classes) : '';?>"></span>
