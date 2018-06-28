@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.1
+ * @version        3.0.2
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -84,7 +84,16 @@ class ModProtomenuHelper extends ModMenuHelper {
 						$hidden_parents[] = $item->id;
 						unset($items[$i]);
 						continue;
-					}
+                    }
+                    
+                    // -- CRu. von definierten Menüeinträgen ausschließen
+                    if(!empty($item->params->get('ptm_item_hideinmenuitem')) 
+                        && in_array($app->input->get('Itemid', 0, 'INT'), $item->params->get('ptm_item_hideinmenuitem')))
+                    {
+                        $hidden_parents[] = $item->id;
+						unset($items[$i]);
+						continue;
+                    }
 
 					// Exclude item with menu item option set to exclude from menu modules
 					if (($item->params->get('menu_show', 1) == 0) || in_array($item->parent_id, $hidden_parents))
