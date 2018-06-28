@@ -132,7 +132,7 @@ foreach ($list as $i => &$item)
 	
 	// -- Listen-Eintrag öffnen:
 	echo <<<TMPL
-		<li class="$classList" data-ptm-item="$module->id-$item->id">
+<li class="$classList" data-ptm-item="$module->id-$item->id">
 TMPL;
 	
 	// -- Den Menüeintrag zusammenbauen:
