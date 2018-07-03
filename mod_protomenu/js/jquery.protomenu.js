@@ -259,6 +259,31 @@
 		{
 			sub.removeClass(this.opt.classNames.in);
 			this.disableDescestors(sub);
+
+			if(this.opt.mouseover) {
+				for(let i = 0, len = sub.data('ptmenu').triggers.length; i < len; i++) {
+					let trigger = sub.data('ptmenu').triggers.eq(i);
+					this.unpauseEvent(trigger, 'mouseover');
+				}
+			}
+		},
+
+		pauseEvent : function(el, name)
+		{
+			if(!el.data('paused-events')) {
+				el.data('paused-events', {});
+			}
+
+			el.data('paused-events')[name] = el.data('events')[name];
+			el.data('events')[name] = null;
+		},
+
+		unpauseEvent : function(el, name)
+		{
+			if(!el.data('paused-events')) return;
+
+			el.data('events')[name] = el.data('paused-events')[name];
+			el.data('paused-events')[name] = null;
 		},
 
 		/*
@@ -302,22 +327,19 @@
 
 				Deshalb setTimeout:
 				*/
-				/*
-				let afterTransition = function(sub)
-				{
-					sub.removeClass(this.opt.classNames.in);
-					this.disableDescestors(sub);
-				};
-
-				d.timeout = window.setTimeout(
-								afterTransition.bind(this, sub),
-								time * 1000
-							);
-				*/
 				d.timeout = window.setTimeout(
 								this.disableAfterTransition.bind(this, sub),
 								time * 1000
 							);
+
+				if(this.opt.mouseover) 
+				{
+					for(let i = 0, len = d.triggers.length; i < len; i++) 
+					{
+						let trigger = d.triggers.eq(i);
+						this.pauseEvent(trigger, 'mouseover');
+					}
+				}
 
 				sub.data('ptmenu', d);
 				sub.removeClass(this.opt.classNames.open);
@@ -435,7 +457,7 @@
 				this.showSub(sub);
 			}
 
-			if( mouseover )
+			if( mouseover && !isopen )
 			{
 				/**
 					Wenn die Eltern-Liste des <li> verlassen wird, machen wir alles innerhalb der Eltern-Liste zu.
