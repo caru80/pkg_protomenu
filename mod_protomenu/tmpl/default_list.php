@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.3
+ * @version        3.0.4
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -15,7 +15,7 @@
  */
 defined('_JEXEC') or die;
 
-// -- Kinder von allen <li class="active"> werden nach dem neuladen der Seite geöffnet?
+// -- Sollen die Kinder von allen <li class="active"> nach dem neuladen der Seite geöffnet werden.
 $keepActiveOpen = $params->get('keepactiveopen', false);
 
 foreach ($list as $i => &$item)

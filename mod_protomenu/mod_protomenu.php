@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.3
+ * @version        3.0.4
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -50,7 +50,7 @@ if((bool) $params->get('menu_behavior',1)) {
     // -- Optionen für JS
     $jsOptions = json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-    $doc->addScript( JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.min.js' );
+    $doc->addScript(JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.min.js');
 
     $initScript = <<<SCRIPT
 (function($){

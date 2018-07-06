@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.3
+ * @version        3.0.4
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -23,7 +23,7 @@ class ModProtomenuHelper extends ModMenuHelper {
 
 
 	/**
-	 * Get a list of the menu items. Modifiziert um Menüeinträge aus definierten Modulen auszuschließen.
+	 * Get a list of the menu items. Modifiziert um Menüeinträge aus definierten Modulen und Menüeinträgen auszuschließen.
 	 *
 	 * @param   \Joomla\Registry\Registry  &$params  The module options.
 	 *
@@ -258,8 +258,12 @@ class ModProtomenuHelper extends ModMenuHelper {
 
 	public static function renderModule(&$module, &$itemParams) 
 	{
-		$params = new \Joomla\Registry\Registry($module->params);
-		if($itemParams->get('ptm_modules_chrome_style',0)) $params->set('style', $itemParams->get('ptm_modules_chrome_style'));
+        $params = new \Joomla\Registry\Registry($module->params);
+        
+        if($itemParams->get('ptm_modules_chrome_style',0)) 
+        {
+            $params->set('style', $itemParams->get('ptm_modules_chrome_style'));
+        }
 
 		$module->params = $params->toString();
 

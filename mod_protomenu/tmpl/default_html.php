@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.3
+ * @version        3.0.4
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -36,7 +36,6 @@ defined('_JEXEC') or die;
 
 		// -- Dem Link werden zusätzliche Klassen hinzugefügt:
 		$ptmItemConfig->classes[] = 'readmore';
-		// $ptmItemConfig->classes[] = 'more';
 
 		// -- Link-Template:
 		ob_start();
@@ -57,7 +56,7 @@ defined('_JEXEC') or die;
 		ob_end_clean();
 	endif;
 
-
+    // -- Diese Zeichenketten (die Array-Keys) im Text ersetzen (durch die Werte).
 	$searchAndReplace   = array(
 		"readmore_url" 		=> $item->flink,
 		"readmore_title" 	=> $readmoreTitle
@@ -70,7 +69,7 @@ defined('_JEXEC') or die;
 ?>
 <div class="ptmenu-item-custom">
 	<?php
-		// -- Im Text den Platzhalter für Weiterlesen-Link ersetzen:
+		// -- Im Text den Platzhalter für den Weiterlesen-Link ersetzen:
 		if(!$item->params->get('ptm_item_disable_readmore',0)) :
 			$find = preg_quote("{readmore}", "/");
 			if(preg_match("#" . $find . "#", $itemText)) :
@@ -95,6 +94,7 @@ defined('_JEXEC') or die;
 	<?php echo $itemText;?>
 
 	<?php
+        // -- Wenn der Weiterlesen-Link nicht eingefügt wurde, und nicht Abgeschaltet ist, wird er jetzt eingefügt:
 		if(!$readmoreInjected && !$item->params->get('ptm_item_disable_readmore',0)) :
 			echo $readmoreLink;
 		endif;

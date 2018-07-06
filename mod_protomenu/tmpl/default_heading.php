@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.3
+ * @version        3.0.4
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -28,7 +28,7 @@ $ptmItemConfig->classes[] = 'nav-header';
 	<?php
 		endforeach;
 	?> 
-	<?php if($item->anchor_title != ''):        ?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
+	<?php if($item->anchor_title != '') : ?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
 	<?php echo $ptmItemConfig->customAttribs;?>
 >
 	<?php 

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.3
+ * @version        3.0.4
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -22,7 +22,7 @@ defined('_JEXEC') or die;
 	if($params->get('submenu_show_tree',0)) :
         $tree = <<<TREE
 <span class="tree-item home">
-    <a tabindex="0" class="close-ptmenu-$module->id"><span></span></psan><i></i></a>
+    <a tabindex="0" class="close-ptmenu-$module->id"><span></span><i></i></a>
     <script>
         (function($){
             $('.close-ptmenu-$module->id').on('click', function() {
