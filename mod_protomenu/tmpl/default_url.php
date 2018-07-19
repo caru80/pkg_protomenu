@@ -35,7 +35,7 @@ $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 	<?php echo $ptmItemConfig->customAttribs;?>
 >
 	<?php 
-		// -- Bild
+        // -- Bild
 		if($item->menu_image) :
 	?>
 			<span class="item-image">
@@ -47,7 +47,7 @@ $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 
 	<?php
 		// -- Beschriftung
-		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
+		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
 	?>
 			<span class="item-label">
                 <?php echo $item->title;?><?php if($item->deeper && !$parentStatic): ?><i class="item-arrow"></i><?php endif;?>

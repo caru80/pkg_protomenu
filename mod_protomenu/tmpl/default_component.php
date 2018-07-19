@@ -45,7 +45,7 @@ defined('_JEXEC') or die;
 
 	<?php
 		// -- Beschriftung
-		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
+		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
 	?>
 			<span class="item-label">
 				<?php echo $item->title;?><?php if($item->deeper && !$parentStatic): ?><i class="item-arrow"></i><?php endif;?>
