@@ -1,7 +1,7 @@
 <?php
 /**
- * @package        HEAD. Protomenü 2
- * @version        3.0.4
+ * @package        HEAD. Protomenü
+ * @version        3.0.5
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -13,7 +13,7 @@
  * @copyright    Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license      GNU General Public License version 2 or later; see LICENSE.txt
  */
-defined('_JEXEC') or die;
+defined( '_JEXEC' ) or die();
 
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');

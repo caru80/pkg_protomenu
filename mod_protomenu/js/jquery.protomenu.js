@@ -1,7 +1,7 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        3.0.4
+ * @version        3.0.5
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -263,7 +263,7 @@
 			if(this.opt.mouseover) {
 				for(let i = 0, len = sub.data('ptmenu').triggers.length; i < len; i++) {
 					let trigger = sub.data('ptmenu').triggers.eq(i);
-					this.unpauseEvent(trigger, 'mouseover');
+					// this.unpauseEvent(trigger, 'mouseover');
 				}
 			}
 		},
@@ -337,7 +337,7 @@
 					for(let i = 0, len = d.triggers.length; i < len; i++) 
 					{
 						let trigger = d.triggers.eq(i);
-						this.pauseEvent(trigger, 'mouseover');
+						// this.pauseEvent(trigger, 'mouseover');
 					}
 				}
 
