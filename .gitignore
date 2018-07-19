@@ -1,3 +1,5 @@
+.DS_Store
 dist/.DS_Store
 mod_protomenu/js/.DS_Store
 pkg_protomenu/.DS_Store
+plg_protomenu/.DS_Store
