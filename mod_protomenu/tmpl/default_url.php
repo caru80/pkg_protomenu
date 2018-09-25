@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.5
+ * @version        3.0.6
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -29,8 +29,8 @@ $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 	<?php
 		endforeach;
 	?> 
-	<?php if($item->browserNav === 1):		?> target="_blank"<?php endif;?>
-	<?php if($item->browserNav === 2):		?> onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;"<?php endif;?>
+	<?php if($item->browserNav == 1):		?> target="_blank"<?php endif;?>
+	<?php if($item->browserNav == 2):		?> onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;"<?php endif;?>
 	<?php if($item->anchor_title != ''): 	?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
 	<?php echo $ptmItemConfig->customAttribs;?>
 >
