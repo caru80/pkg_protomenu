@@ -246,6 +246,10 @@
 		z-index: 2;
 		top: 100%;
 		left: 0;
+		&.rtl {
+			left: auto;
+			right: 0;
+		}
 	}
 	
 	// Ab der dritten Ebene – von Links nach Rechts:
