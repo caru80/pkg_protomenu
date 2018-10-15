@@ -122,7 +122,8 @@
 				el.on('touchend.protomenu', function(ev){
 					let item = $(this);
 
-					if(item.data('ptmenu'))
+					if(item.data('ptmenu')
+						&& $(ev.target).parents('li').get(0) === this)  // Diese Zeile behebt einen Fehler, der verhindert, dass Elterneinträge, die auf „statisch” eingestellt sind, nicht angetippt werden konnten (Touch).
 					{
 						ev.preventDefault();
 						ev.stopPropagation();
@@ -208,7 +209,7 @@
 			}
 			else 
 			{
-				triggers = this.$menu.find('[data-ptm-item]');
+				triggers = this.$menu.find('[data-ptm-item]').not('[data-ptm-item].static'); // der „not” Selektor behebt einen Fehler, der verhindert, dass Elterneinträge, die auf „statisch” eingestellt sind, nicht angetippt werden konnten (Touch).
 			}
 
 			for(let i = 0, ilen = triggers.length; i < ilen; i++)
