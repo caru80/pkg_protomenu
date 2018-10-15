@@ -42,6 +42,8 @@ foreach ($list as $i => &$item)
 		//case 'modules' :
 		//case 'moduleposition' :
 			$parentStatic = true;
+			$classList[] = 'static'; 	// „static” wird vom Script benötigt, kann nach Umbau auf CSS entfernt werden. Behebt einen Bug, der es verhindert, 
+										// dass Elternmenüeinträge mit Verhalten „statisch” nicht mehr angetippt werden können (Touch), wenn MouseOver eingeschaltet ist.
 		break;
 
 		default : 
