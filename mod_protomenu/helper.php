@@ -270,4 +270,20 @@ class ModProtomenuHelper extends ModMenuHelper {
 		$html = \Joomla\CMS\Helper\ModuleHelper::renderModule($module);
 		return $html;
 	}
+
+
+	public static function getLanguageInfo() 
+	{
+		$lang		= JFactory::getLanguage();
+		$languages	= JLanguageHelper::getLanguages();
+
+		foreach($languages as $item)
+		{
+			if($item->lang_code === $lang->getTag())
+			{
+				return $item;
+			}
+		}
+		return false;
+	}
 }

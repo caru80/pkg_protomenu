@@ -1,14 +1,42 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        3.0.9
+ * @version        3.0.5
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
  * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
  * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+/**
+	Protomenu 2.1.0
+	Carsten Ruppert - 2018-06-12
 
+	2.1.0 - 2018-06-12
+	- Fix für MouseOver
+
+	2.0.1 - 2018-03-01
+	- Fix für MouseOver: Untermenus bleiben geschlossen, obwohl Mauszeiger auf einem Elterneintrag zeigt.
+
+	2.0.0 - 2018-02-23
+	- Plugins können nun auch dynamisch pro Instant geladen werden, nicht mehr nur für alle Instanzen
+	- Fix von statischen CSS-Klassennamen im Code
+	- Doppeltes auslösen von Event afterStateChanged korrigiert
+
+	0.12.0 - 2018-02-22
+	- Fix der Plugin-Logik. Es wurde immer ein und die gleiche Instanz eines Plugin-Objekts (Backdrop) benutzt, egal wieviele Instanzen von Protomenu existierten.
+	- Fix von Backdrop-Plugin
+
+	0.11.0 – 2017-11-29
+	- Unterscheidung Touch und Mouseover, wenn Option „Mouseover” eingeschaltet ist.
+	- etc.
+
+	0.10.0 – 2017-11-06
+	- Entkernt!
+	- Abhängigkeit von $.prepareTransition entfernt
+	- Abhängigkeit von $.touchSwipe entfernt
+
+*/
 'use strict';
 (function($) {
 
@@ -40,7 +68,6 @@
 		{
 
 			this.opt = $.extend({}, $.Protomenu.defaults, options);
-			this.$wrapper = this.$node.children('.nav-wrapper');
 			this.$menu  = this.$node.find('.nav-first');
 
 			this.setupTriggers();
@@ -95,7 +122,8 @@
 
 				el.on('touchend.protomenu', function(ev){
 					let item = $(this);
-					if(item.data('ptmenu') && $(ev.target).parents('li').get(0) === this)
+
+					if(item.data('ptmenu'))
 					{
 						ev.preventDefault();
 						ev.stopPropagation();
@@ -175,14 +203,13 @@
 			}
 
 			let triggers;
-			
 			if(!this.opt.mouseover) 
 			{
 				triggers = this.$menu.find('[data-ptm-trigger]');
 			}
 			else 
 			{
-				triggers = this.$menu.find('[data-ptm-item]').not('[data-ptm-item].static');
+				triggers = this.$menu.find('[data-ptm-item]');
 			}
 
 			for(let i = 0, ilen = triggers.length; i < ilen; i++)
@@ -338,33 +365,24 @@
 			return {w : x, h : y};
 		},
 
-		isInViewport: function (sub, el) {
-			var vp = this.getVps(),
-				sp = sub.scrollTop();
-
-			if (vp.h + sp >= el.offset().top && el.offset().top + el.height() > sp) {
-				return true;
-			}
-
-			return false;
-		},
-
 
 		setSubmenuScrollPosition : function (sub) 
 		{
 			//let active = sub.find('[data-ptm-item].active');
-			let active  = $('[data-ptm-item].active', sub),
-				gap 	= $('.nav-child-header', sub);
+			let active = $('[data-ptm-item].active', sub);
 
-			gap = gap.length ? gap.outerHeight() : 0;
+			console.log(active);
 
-			if(active.length && !this.isInViewport(sub, active.eq(active.length -1)))
+			if(active.length)
 			{
-				this.$wrapper.scrollTop(Math.ceil(active.eq(active.length -1).position().top) - gap);
+				console.log(active.eq(0).position().top)
+				console.log(sub);
+				$('.navgrid-slide', '#navgrid').scrollTop(Math.ceil(active.eq(0).position().top));
 			}
 			else
 			{
-				this.$wrapper.scrollTop(0)
+				console.log('ScrollTop: 0');
+				$('.navgrid-slide', '#navgrid').scrollTop(0)
 			}
 		},
 

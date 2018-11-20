@@ -6,7 +6,6 @@
 */
 .ptmenu{
 	font-size: 1rem;
-	text-align: left;
 
 	// -- Das markieren von Text im Menü verhindern:
 	-webkit-user-select: none; 
@@ -32,48 +31,93 @@
 
 // -- Ein Menüeintrag
 .ptmenu ul li {
+	
+	// Ein Anker
 	a.nav-item {
 		font-size: inherit;
+		white-space: nowrap;
+
 		&[tabindex="0"]{ cursor: default; } // Wenn kein href Attribut vorhanden ist (z.B.: <a tabindex="0" class="nav-item">Foo</a>)
+	}
+
+	// Aktiver Menüeintrag
+	&.active > a.nav-item,
+	&.alias-parent-active > a.nav-item {
+	}
+
+	// Geöffnet, Angetippt und Hover
+	a.nav-item:active, 		// Touch; Mit dem Finger angetippt. Bleibt nicht aktiv, „blitzt” nur kurz auf.
+	a.nav-item.open,		// Hat ein Untermenü geöffnet, bleibt aktiv.
+	&:hover > a.nav-item { 	// Maus; Hover...
 	}
 }
 
 // -- Ein Menüeintrag in der ersten Ebene (Horizontales Menü)
-
 .ptmenu ul.nav-first{
-	display: flex;
-	justify-content: flex-end;
+
 }
-
 .ptmenu ul.nav-first > li {
-	> .ptmenu-item-custom > span,
-	> .ptmenu-item-custom > a {
-		@include size(2.2em, 2.2em);
-		line-height: 2.2em;
+	display: inline-block;
 
+	> .ptmenu-item-custom > span,
+	> .ptmenu-item-custom > a,
+	> .nav-item > a {
 		display: block;
 		color: #ffffff;
-		background-color: $primary;
-		border-radius: 3px; // $border-radius;
+		background-color: lighten($primary, 5%);
+		border-radius: $border-radius;
 		text-align: center;
-		overflow: hidden;
-
-		i {
-			font-size: 1.2em;
-			line-height: inherit;
-		}
+		line-height: 1.75em;
+		@include size(1.75em, 1.75em);
 	}
 	> .ptmenu-item-custom.open > span,
-	> .ptmenu-item-custom.open > a {
-		&, &:focus {
-			background-color: lighten($primary, 15%);;
-		}
+	> .ptmenu-item-custom.open > a,
+	> .nav-item.opem > a {
+		background-color: lighten($primary, 15%);;
 	}
 
 	+ li {
-		margin-left: 0.5em;
+		margin-left: 0.75em;
 	}
 }
+
+.ptmenu .nav-item .item-label {
+	font-weight: 400;
+}
+
+
+
+// -- Bild im Menüeintrag (<div>)
+.ptmenu .nav-item .item-image {
+	img{max-width: 100%;}
+}
+
+// -- Joomla Item-Typ: Menüüberschrift (<span>)
+.ptmenu .nav-item.nav-header {}
+
+
+// -- Joomla Item-Typ: Trennzeichen (<span>)
+.ptmenu .seperator {}
+
+
+// -- Module (Wrapper) (<div>)
+.ptmenu .ptmenu-item-modules {}
+
+
+// -- Code (und Weiterlesen-Text) (<div>)
+.ptmenu .nav-first > li > .ptmenu-item-custom {
+	cursor: pointer;
+}
+
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Pfeile – Wenn etwas aufgeklappt werden kann.
+
+-------------------------------------------------------------------------------- */
+
 
 
 /* --------------------------------------------------------------------------------
@@ -82,31 +126,98 @@
 
 -------------------------------------------------------------------------------- */
 
-.ptmenu .nav-first > li > .nav-child {
-	padding: 0.5em 0;
-	border-radius: 3px;
-	margin-top: 5px;
-}
-
 // -- Alle Untermenüs
-.ptmenu .nav-child {
-    background-color: lighten($secondary, 18%);
+.ptmenu .nav-child{
+    background-color: $gray-800;
     min-width: 100%;
 	width: auto;
+	margin: 7px 0;
+	padding: 15px;
+	border-radius: $border-radius;
+	text-align: left;
+}
+.ptmenu .nav-child li + li {
+	padding-top: 8px !important;
 }
 
-.ptmenu .nav-child .nav-item {
-	display: block;
-	font-size: 0.95em;
-	padding: 0.25em 1em;
+.ptmenu .nav-child li:not(.mega) .ptmenu-item-custom {
+	min-width: 100%;
 	color: #ffffff;
-	&:hover {
-		text-decoration: none;
-	}
-	&:active {
-		background-color: $primary;
+	white-space: nowrap;
+}
+.ptmenu .nav-child li:not(.mega) .ptmenu-item-custom .table {
+	font-size: 0.9em;
+	td {
+		padding: 0.5em 0;
+		border-top: 1px solid $gray-700;
 	}
 }
+
+.ptmenu .nav-child .ptmenu-item-custom {
+	.highlight {
+		display: block;
+		font-size: 1.2em;
+		font-weight: 600;
+		text-align: center;
+		padding-bottom: 0.6em;
+	}
+}
+
+
+.ptmenu .nav-child .nav-item.btn {
+	width: 100%;
+}
+.ptmenu .nav-child .nav-item .item-label {
+	font-weight: 400;
+}
+
+
+//.ptmenu .nav-child:not(.mega) {} // Alle, außer Mega-Untermenüs (Ab Browsergeneration Internet Explorer 11)
+
+// -- Ein Mega-Untermenü
+.ptmenu .mega > .nav-child {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+
+
+/* --------------------------------------------------------------------------------
+
+ 	Backdrop
+
+-------------------------------------------------------------------------------- */
+
+.ptmenu-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+
+	background-color: rgba(255,255,255,0.7);
+	width: 0;
+	height: 0;
+	opacity: 0;
+	overflow: hidden;
+
+	z-index: 10; // Relativ zu <body> – div.ptmenu-backdrop wird im <body> an 1. Stelle eingehängt.
+	-webkit-transition: opacity 0.3s ease;
+			transition: opacity 0.3s ease;
+
+	&.in{ // Wichtig!
+		width: 100%;
+		height: 100%;
+		bottom: 0;
+		right: 0;
+		overflow: visible;
+	}
+	&.open{ // Übergänge
+		opacity: 1;
+	}
+}
+
+
+
+
 
 
 

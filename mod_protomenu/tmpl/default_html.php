@@ -58,7 +58,10 @@ defined('_JEXEC') or die;
     // -- Diese Zeichenketten (die Array-Keys) im Text ersetzen (durch die Werte).
 	$searchAndReplace   = array(
 		"readmore_url" 		=> $item->flink,
-		"readmore_title" 	=> $readmoreTitle
+		"readmore_title" 	=> $readmoreTitle,
+		"language_title"	=> ModProtomenuHelper::getLanguageInfo()->title_native,
+		"language_code" 	=> strtolower(ModProtomenuHelper::getLanguageInfo()->lang_code),
+		"uri_root" 			=> JUri::root()
 	);
 
 	/**
