@@ -175,12 +175,39 @@
 				description="PLG_PROTOMENU_MODULES_CHROME_STYLE_DESC"
 			/>
 
+			<field 
+				name="note-queryfragment"
+				type="note"
+				label="PLG_PROTOMENU_NOTE_QUERYFRAGMENT"
+				description="PLG_PROTOMENU_NOTE_QUERYFRAGMENT_DESC"
+			/>
+
+			<field
+				name="ptm_item_queryfragment"
+				type="text"
+				class="input-xxlarge"
+				default=""
+				label="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_LABEL"
+				description="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_DESC"
+				hint="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_HINT"
+			/>
+
+			<field
+				name="ptm_item_template"
+				type="text"
+				showon="ptm_item_queryfragment:"
+				class="input-xxlarge"
+				default=""
+				label="PLG_PROTOMENU_ITEM_TEMPLATE_LABEL"
+				description="PLG_PROTOMENU_ITEM_TEMPLATE_DESC"
+				hint="PLG_PROTOMENU_ITEM_TEMPLATE_HINT"
+			/>
 
 			<field 
 				name="note-enhanced"
 				type="note"
-				label="PLG_PROTOMENU_ENHANCED_ITEM_SETTINGS_NOTE"
-				description="PLG_PROTOMENU_ENHANCED_ITEM_SETTINGS_NOTE_DESC"
+				label="PLG_PROTOMENU_NOTE_ENHANCED_SETTINGS"
+				description="PLG_PROTOMENU_NOTE_ENHANCED_SETTINGS_DESC"
 			/>
 
 			<field
@@ -200,16 +227,6 @@
 				default=""
 				label="PLG_PROTOMENU_ITEM_ATTRIBUTES_LABEL"
 				description="PLG_PROTOMENU_ITEM_ATTRIBUTES_DESC"
-			/>
-			<field
-				name="ptm_item_template"
-				type="text"
-				cols="80"
-				rows="2"
-				class="input-xxlarge"
-				default=""
-				label="PLG_PROTOMENU_ITEM_TEMPLATE_LABEL"
-				description="PLG_PROTOMENU_ITEM_TEMPLATE_DESC"
 			/>
 
 			<field

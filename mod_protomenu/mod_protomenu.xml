@@ -7,12 +7,12 @@
 	>
 	<name>Protomenü</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2018-11-20</creationDate>
+	<creationDate>2018-12-14</creationDate>
 	<copyright>©2018 HEAD. MARKETING GmbH</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>webmaster@headmarketing.de</authorEmail>
 	<authorUrl>https://www.headmarketing.de</authorUrl>
-	<version>3.0.9</version>
+	<version>3.1.0</version>
 	<description>MOD_PTMENU_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_protomenu">mod_protomenu.php</filename>
@@ -28,7 +28,6 @@
 	<media destination="mod_protomenu" folder="media">
 		<filename>index.html</filename>
 		<folder>js</folder>
-		<folder>less</folder>
 		<folder>scss</folder>
 	</media>
 	<!--help key="JHELP_EXTENSIONS_MODULE_MANAGER_MENU" /-->
@@ -111,6 +110,19 @@
 				</field>
 
 				<field
+					name="menu_rendermode"
+					type="radio"
+					showon="menu_behavior:1"
+					class="btn-group btn-group-yesno"
+					label="MOD_PTMENU_FIELD_MENU_RENDERMODE_LABEL"
+					description="MOD_PTMENU_FIELD_MENU_RENDERMODE_DESC"
+					default="list"
+				>
+						<option value="list">MOD_PTMENU_FIELD_MENU_RENDERMODE_OPT_LIST</option>
+						<option value="listdivisions">MOD_PTMENU_FIELD_MENU_RENDERMODE_OPT_DIVS</option>
+				</field>
+
+				<field
 					name="seperateswitch"
 					type="radio"
 					showon="menu_behavior:1"
@@ -126,7 +138,7 @@
 				<field
 					name="mouseover"
 					type="radio"
-					showon="menu_behavior:1"
+					showon="menu_behavior:1[AND]menu_rendermode:list"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_FIELD_MOUSEOVER"
@@ -178,7 +190,7 @@
 				<field
 					name="submenu_close_button_label"
 					type="text"
-					showon="mouseover:0[AND]submenu_close_button:1[AND]menu_behavior:1"
+					showon="show_submenu_header:1[AND]mouseover:0[AND]submenu_close_button:1[AND]menu_behavior:1"
 					default=""
 					label="MOD_PTMENU_FIELD_SUBMENU_CLOSE_LABEL_LABEL"
 					description="MOD_PTMENU_FIELD_SUBMENU_CLOSE_LABEL_DESC"
@@ -187,7 +199,7 @@
 				<field
 					name="anywhereclose"
 					type="radio"
-					showon="mouseover:0[AND]menu_behavior:1"
+					showon="menu_behavior:1"
 					class="btn-group"
 					default="0"
 					label="MOD_PTMENU_FIELD_ANYWHERECLOSE"

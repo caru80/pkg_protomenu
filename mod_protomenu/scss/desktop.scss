@@ -1,15 +1,11 @@
 /*
 	Protomenu
-	Carsten Ruppert - 2018-??-??
+	Carsten Ruppert - 2018-11-29
 
 	Desktop-Theme
 */
-$pt-dropdown-bg-color: #21444b;
-
-
 .ptmenu{
 	font-size: 1rem;
-
 	// -- Das markieren von Text im Menü verhindern:
 	-webkit-user-select: none; 
 	-khtml-user-select: none; 
@@ -23,9 +19,6 @@ $pt-dropdown-bg-color: #21444b;
 	z-index: 110; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann auch nicht klappt, musst du dein Stylesheet korrigieren.
 }
 
-
-
-
 /* --------------------------------------------------------------------------------
 
  	Menüsinträge
@@ -34,17 +27,19 @@ $pt-dropdown-bg-color: #21444b;
 
 // -- Ein Menüeintrag
 .ptmenu ul li {
-	
+
 	// Ein Anker
 	a.nav-item {
+		display: flex;
+		flex-wrap: nowrap;
+
+		padding: 0.6em 1em 0.6em 1em;
+
 		font-size: inherit;
 		font-family: $font-family-sans-serif;
 		color: $gray-600;
 		font-weight: normal;
 		text-decoration: none;
-
-		display: block;
-		padding: 0.6em 1em 0.6em 1em;
 
 		&[tabindex="0"]{ cursor: default; } // Wenn kein href Attribut vorhanden ist (z.B.: <a tabindex="0" class="nav-item">Foo</a>)
 	}
@@ -61,18 +56,19 @@ $pt-dropdown-bg-color: #21444b;
 	.nav-item.open,			// Hat ein Untermenü geöffnet, bleibt aktiv.
 	&.open > .nav-item,
 	&:hover > .nav-item,
-	&:hover > .ptmenu-item-custom > .nav-item { 	// Maus; Hover...
+	&:hover > .ptmenu-item-custom > .nav-item
+	{
 		background-color: $primary;
 		color: #ffffff;
 	}
 }
 
 
-// -- Das erste <ul> 
-.ptmenu ul.nav-first{
+// -- Das erste <ul>. Menüeinträge horizontal darstellen.
+.ptmenu ul.nav-first {
 	display: flex;
-	justify-content: flex-end;
-	flex-wrap: wrap;
+	justify-content: flex-end; // Menüeinträge rechtsbündig ausrichten.
+	flex-wrap: wrap; // Umbrechen falls erforderlich.
 }
 
 
@@ -102,7 +98,7 @@ $pt-dropdown-bg-color: #21444b;
 .ptmenu .ptmenu-item-modules {}
 
 
-// -- Code (und Weiterlesen-Text) (<div>)
+// -- Code (HTML und „Weiterlesen-Text”) (<div>)
 .ptmenu .ptmenu-item-custom {}
 
 
@@ -115,40 +111,37 @@ $pt-dropdown-bg-color: #21444b;
 -------------------------------------------------------------------------------- */
 
 // -- Pfeil:
-.ptmenu ul li.deeper {
-	i.item-arrow {
-		font-style: normal; // !
+.ptmenu ul li.deeper i.item-arrow {
+	font-style: normal; // !
 
-		display: inline-block;
-		position: relative;
-		margin-left: 0.2em;
-		width: 0.7em;
-		height: 0.7em;
+	display: inline-block;
+	position: relative;
+	margin-left: 0.2em;
+	width: 0.7em;
+	height: 0.7em;
 
-		&:before {
-			font-family: 'Font Awesome 5 Free';
-			font-weight: 800;
-			content: fa-content($fa-var-chevron-right);
+	&:before {
+		@extend .fa;
+		content: '#{$fa-var-chevron-right}';
 
-			position: absolute;
-			top: 0.525em;
-			left: 0.2em;
+		position: absolute;
+		top: 0.525em;
+		left: 0.2em;
 
-			font-size: 0.7em;
-			line-height: 0;
+		font-size: 0.7em;
+		line-height: 0;
 
-			-webkit-transition: transform 0.25s ease;
-					transition: transform 0.25s ease;
-		}
+		-webkit-transition: transform 0.25s ease;
+				transition: transform 0.25s ease;
 	}
-
 }
+
 
 // -- Pfeil in der ersten Ebene:
 .ptmenu ul.nav-first > li.deeper {
 	> .ptmenu-item-custom > .nav-item i.item-arrow:before,
 	> .nav-item i.item-arrow:before{
-		content: fa-content($fa-var-chevron-down);
+		content: '#{$fa-var-chevron-down}';
 	}
 	
 	&.open > .nav-item i.item-arrow:before, // MouseOver
@@ -171,9 +164,8 @@ $pt-dropdown-bg-color: #21444b;
 
 // -- Alle Untermenüs
 .ptmenu .nav-child{
-	background-color: $pt-dropdown-bg-color;
+	background-color: #21444b;
 	min-width: 100%; 
-
 	a {
 		border-bottom: 1px solid #31565e;
 	}
@@ -181,8 +173,11 @@ $pt-dropdown-bg-color: #21444b;
 
 // -- Mega-Untermenü
 .ptmenu li.mega > .nav-child {
-	background-color: transparentize($pt-dropdown-bg-color, 5%);
+	background-color: transparentize(#21444b, 5%);
 	border-bottom: 1px solid #183439;
+
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
 .ptmenu .nav-child li {
@@ -194,7 +189,7 @@ $pt-dropdown-bg-color: #21444b;
 	}
 	&:hover > .nav-item{
 		color: #ffffff;
-		background-color: $secondary-light;
+		background-color: lighten($secondary, 10%);
 	}
 	&.current.active > .nav-item {
 		color: #ffffff;
@@ -203,12 +198,12 @@ $pt-dropdown-bg-color: #21444b;
 }
 
 
-
 // -- Sensoplast Megamenü
 .ptmenu .mega > .nav-child.in {
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
+
 
 .ptmenu .mega .nav-child.nav-level-3 {
 	height: 100%;
@@ -221,18 +216,15 @@ $pt-dropdown-bg-color: #21444b;
 	background-color: none;
 }
 .ptmenu .mega .nav-sub.nav-level-3 > li {
-
 	> a {
 		background-color: #183439;
-		border-bottom: 1px solid #31565e; // #183439;
+		border-bottom: 1px solid #31565e;
 	}
 	&:hover > a {
-		background-color: $primary; // lighten(#183439, 8%);
+		background-color: $primary;
 		border-bottom-color: darken($primary, 15%);
 	}
 }
-
-
 
 
 
@@ -420,8 +412,8 @@ $pt-dropdown-bg-color: #21444b;
 .ptmenu ul.row{
 	margin: 0 -($grid-gutter-width / 2);
 }
-.ptmenu ul.nav-first li[class*=col-],
-.ptmenu ul.nav-sub li[class*=col-]{
+.ptmenu ul.nav-first li[class*=col],
+.ptmenu ul.nav-sub li[class*=col]{
 	padding: 0 $grid-gutter-width / 2;
 }
 

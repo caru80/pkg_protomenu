@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.6
+ * @version        3.1.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -21,13 +21,11 @@ jimport('joomla.application.module.helper');
 ?>
 <nav id="ptmenu-<?php echo $module->id;?>" class="ptmenu <?php echo $class_sfx;?>">
 	<div class="nav-wrapper">
-		<ul class="nav-first" data-ptm-root>
-			<?php
-				/**
-					Rendere die Menüliste
-				*/
-				require JModuleHelper::getLayoutPath('mod_protomenu', 'default_list');
-			?>
-		</ul>
+		<?php
+			/**
+				Rendere die Menüliste
+			*/
+			require JModuleHelper::getLayoutPath('mod_protomenu', 'default_' . $params->get('menu_rendermode', 'list'));
+		?>
 	</div>
 </nav>

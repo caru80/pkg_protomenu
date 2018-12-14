@@ -208,43 +208,44 @@
 // -- Verhalten „Dropdown” und „Mega Menü”
 [data-ptm-item] [data-ptm-child]:not([data-ptm-static-child]) {
 	// Ausgeblendet:
-	height: 0;
-	width: 0;
-	overflow: hidden;
+	visibility: hidden;
+	opacity: 0;
 
 	// Übergang:
-	opacity: 0;
 	-webkit-transform: scale3d(0.95,0.95,0.95);
 			transform: scale3d(0.95,0.95,0.95);
-	-webkit-transition: -webkit-transform 0.2s cubic-bezier(.54,.39,0,1.02), opacity 0.3s ease;
-			transition: 		transform 0.2s cubic-bezier(.54,.39,0,1.02), opacity 0.3s ease;
-
-	// Alle .nav-child bekommen die Klasse „in” während ein Übergang (transition) läuft, und solange sie Eingeblendet sind.
-	&.in{ 
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
+	-webkit-transition: -webkit-transform 0.2s cubic-bezier(.54,.39,0,1.02), 
+						opacity 0.3s ease,
+						visibility 0.0s 0.3s linear;
+			transition: transform 0.2s cubic-bezier(.54,.39,0,1.02), 
+						opacity 0.3s ease,
+						visibility 0.0s 0.3s linear;
 
 	// Aktiv, Ausgeklappt, Geöffnet:
 	&.open{
 		z-index: 10;
+		visibility: visible;
 		opacity: 1;
 		transform: scale3d(1,1,1);
+
+		-webkit-transition: -webkit-transform 0.2s cubic-bezier(.54,.39,0,1.02), 
+							opacity 0.3s ease,
+							visibility 0.0s 0.0s linear;
+				transition: transform 0.2s cubic-bezier(.54,.39,0,1.02), 
+							opacity 0.3s ease,
+							visibility 0.0s 0.0s linear;
 	}
 }
 
-// -- Verhalten „Mega Menü” – Volle Breite, und keine Skalierung.
+// -- Verhalten „Mega Menü” – kein Skalierungseffekt.
 [data-ptm-item].mega [data-ptm-child]:not([data-ptm-static-child]) {
 
 	-webkit-transform: translate3d(0,0,0);
 			transform: translate3d(0,0,0);
-	-webkit-transition: opacity 0.3s ease;
-			transition: opacity 0.3s ease;
-
-	&.in {
-		min-width: 100%;
-	}
+	-webkit-transition: opacity 0.3s ease,
+						visibility 0.0s 0.3s linear;
+			transition: opacity 0.3s ease,
+						visibility 0.0s 0.3s linear;
 }
 
 

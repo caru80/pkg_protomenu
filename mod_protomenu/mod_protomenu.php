@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.6
+ * @version        3.1.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -33,7 +33,6 @@ if((bool) $params->get('menu_behavior',1)) {
 
     $options = array(
         'seperateswitch' 	=> $params->get('seperateswitch', 0 ,'INT'),
-        'mouseover'			=> $params->get('mouseover',0,'INT'),
         'clickAnywhere'		=> $params->get('anywhereclose',0,'INT')
         );
 
@@ -47,10 +46,18 @@ if((bool) $params->get('menu_behavior',1)) {
         $options['plugins'] = $jsPlugins;
     }
 
+	// -- Mouseover möglich und eingeschaltet?
+	if($params->get('menu_rendermode', 'list', 'string') === 'list' 
+		&& (int)$params->get('mouseover', 0, 'int') === 1)
+	{
+		$options['mouseover'] = 1;
+	}
+
     // -- Optionen für JS
     $jsOptions = json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-    $doc->addScript(JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.min.js');
+	//$doc->addScript(JUri::base( true ).'/media/mod_protomenu/js/jquery.protomenu.min.js');
+	$doc->addScript(JUri::base(true).'/media/mod_protomenu/js/jquery.protomenu.js');
 
     $initScript = <<<SCRIPT
 (function($){

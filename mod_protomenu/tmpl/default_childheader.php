@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.6
+ * @version        3.1.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -66,7 +66,7 @@ TREE;
 	// -- Schließen-Knopf:
 	if($params->get('submenu_close_button',0)):
 		$triggerData = "";
-		foreach($ptmItemConfig->dataAttribs as $key => $value) :
+		foreach($ptmItemConfig->dataAttribs as $name => $value) :
 			$triggerData .= " data-$name=\"$value\"";
 		endforeach;
 ?>

@@ -1,7 +1,7 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        3.0.9
+ * @version        3.1.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -20,45 +20,96 @@
 	};
 
 	$.Protomenu.defaults = {
-		classNames : {
-			open 	: 'open',
-			in 		: 'in'
+		class : {
+			open 		: 'open',	// Geöffnete Untermenüs
+			expanded 	: 'expanded', // Untermenüs in denen Untermenüs geöffnet sind
+			rtl 		: 'rtl', 	// Autoalign „right to left”
+			btt 		: 'btt'		// Autoalign „bottom to top”
 		},
-		classRtl 		: 'rtl',
-		classBtl 		: 'btt',
 		autoalign 		: true,
-		seperateswitch 	: false, 	// Hier auf true setzen, wenn Umschalter und Anke getrennt werden sollen.
+		seperateswitch 	: false, 	// Hier auf true setzen, wenn Umschalter und Anker getrennt werden sollen.
 		mouseover 		: false, 	// Öffnen von Untermenüs bei Mouseover
-		clickAnywhere 	: false,	// Irgendwo klicken um alle Menüs zu schließen? (Außer in dem Menü selbst, oder einem Modul in einem Menü)
+		clickAnywhere 	: false,	// Irgendwo - außerhalb des Menüs - klicken um alle Menüs zu schließen?
 		plugins 		: []
 	};
 
 	$.Protomenu.Plugins = [];
 
 	$.Protomenu.prototype = {
+
 		_init : function( options )
 		{
+			this.opt 		= $.extend({}, $.Protomenu.defaults, options);
+			this.$wrapper 	= this.$node.children('.nav-wrapper');
 
-			this.opt = $.extend({}, $.Protomenu.defaults, options);
-			this.$wrapper = this.$node.children('.nav-wrapper');
-			this.$menu  = this.$node.find('.nav-first');
+			this.setup();
+			this.initPlugins();
+		},
 
-			this.setupTriggers();
-			this.setupEvents();
-
-			// Plugins initialisieren
-			/*
-				Mit dem Käse wird immer auf das gleiche Plugin-Objekt zugegriffen.
-
-			if( $.Protomenu.Plugins.length > 0 )
+		/*
+			Menü einrichten
+		*/
+		setup : function()
+		{	
+			const submenus = this.$node.find('[data-ptm-child]');
+			
+			for(let i = 0, ilen = submenus.length; i < ilen; i++)
 			{
-				for( var i = 0, len = $.Protomenu.Plugins.length; i < len; i++ )
-				{
-					this[$.Protomenu.Plugins[i]].parent = this;
-					this[$.Protomenu.Plugins[i]]._init();
-				}
-			}*/
+				let sub = submenus.eq(i),
+					triggers;
 
+				if(!this.opt.mouseover) 
+				{
+					triggers = this.$node.find('[data-ptm-trigger="' + sub.data('ptm-child') + '"]');
+				}
+				else 
+				{
+					triggers = this.$node.find('[data-ptm-item="' + sub.data('ptm-child') + '"]').not('[data-ptm-item].static');
+				}
+
+				for(let x = 0, xlen = triggers.length; x < xlen; x++)
+				{
+					let trigger = triggers.eq(x),
+						d  		= {submenu : sub},
+						sep 	= trigger.find('[data-ptm-switcher]');
+
+					trigger = sep.length && this.opt.seperateswitch ? sep : trigger;
+					trigger.data('ptmenu', d);
+
+					this.attachTriggerEvent(trigger);
+				}
+
+				sub.data('ptmenu', {triggers : triggers});
+			}
+
+			// Bei nicht Mouseover irgendwo im Dokument (außerhalb vom Menü) klicken, um Alles zu schließen.
+			if(this.opt.clickAnywhere) 
+			{
+				$(document).on('click.protomenu', function(ev)
+				{ 
+					if(!$.contains(this.$node.get(0), ev.target))
+					{
+						this.closeRootLevel();
+					}
+				}.bind(this));
+			}
+
+			this.$node.on('afterStateChanged.protomenu', function() 
+			{
+				if(this.isExpanded())
+				{
+					this.$node.addClass(this.opt.class.expanded);
+				}
+				else 
+				{
+					this.$node.removeClass(this.opt.class.expanded);
+				}
+			}.bind(this));
+
+		},
+
+		initPlugins : function()
+		{
 			this.opt.plugins = this.opt.plugins.concat($.Protomenu.Plugins);
 			this.opt.plugins = this.opt.plugins.filter(function(value, index, self){return self.indexOf(value) === index;}); // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-an-array-remove-duplicates
 
@@ -73,262 +124,82 @@
 
 
 		/*
-			Auslösereignis an Auslöser für Untermenüs „el” binden (Anker oder separater „Umschalter”).
-
-			el – jQuery - Ein <a class="nav-item"> oder ein <xyz class="item-switch"> unterhalb von <a ...
+			Auslösereignisse an Auslöser binden (Anker oder separater „Umschalter”).
 		*/
-		attachTriggerEvent : function(el)
+		attachTriggerEvent : function(trigger)
 		{
-			let self = this;
+			const _ = this;
+			/*
+				Bei Maussteuerung ist der „trigger” ein <li> (und zwar ALLE <li> im Menü).
+				Bei Klicksteuerung ist der trigger ein beliebiges Element mit dem Attribut data-ptm-trigger
+			*/
 			if(this.opt.mouseover)
-			{
-				el.on('mouseover.protomenu', function(ev)
+			{	
+				// Maus Events
+				trigger.on('mouseenter.protomenu mouseleave.protomenu', function(ev)
+				{
+					let item = $(this);
+					_.toggleSubmenu(ev, item);
+				});
+
+				// Touch Event
+				trigger.on('touchend.protomenu', function(ev) 
 				{
 					let item = $(this);
 
-					if(item.data('ptmenu'))
-					{
-						ev.stopPropagation();
-					}
-					self.toggleSubmenu(item, true);
-				});
-
-				el.on('touchend.protomenu', function(ev){
-					let item = $(this);
-					if(item.data('ptmenu') && $(ev.target).parents('li').get(0) === this)
-					{
-						ev.preventDefault();
-						ev.stopPropagation();
-					}
-					self.toggleSubmenu(item);
-				});
-			}
-			else {
-				el.on('click.protomenu', function(ev)
-				{
-					let item = $(this);
-
-					if(item.data('ptmenu'))
+					if(item.data('ptmenu') && ev.delegateTarget === this)
 					{
 						ev.preventDefault();
 						ev.stopPropagation();
 					}
-					self.toggleSubmenu(item);
+					_.toggleSubmenu(ev, item);
 				});
-			}
-		},
-
-		/*
-			Sonstige Events einrichten.
-		*/
-		setupEvents : function() {
-			let self = this;
-
-			if( this.opt.clickAnywhere )
-			{
-				$(document).on('click', function(ev)
-				{ // Klick irgendwo zu schließen
-					self.closeRootLevel();
-				});
-			}
-			// -- Bubbling stoppen:
-			this.$node.find('.nav-module, .nav-item').on('click.protomenu', function(ev)
-			{ // Verhindern, dass ein klick auf den Content eines Moduls im Menü den Click-Event am Body auslöst.
-				ev.stopPropagation();
-			});
-		},
-
-		/*
-			Auslöser einrichten
-		*/
-		setupTriggers : function()
-		{	
-			let submenus = this.$menu.find('[data-ptm-child]'); //.not('.mega [data-ptm-child] [data-ptm-child]');
-			
-			for(let i = 0, ilen = submenus.length; i < ilen; i++)
-			{
-				let sub = submenus.eq(i),
-					triggers;
-
-				if(!this.opt.mouseover) 
-				{
-					triggers = this.$menu.find('[data-ptm-trigger="' + sub.data('ptm-child') + '"]');
-				}
-				else 
-				{
-					triggers = this.$menu.find('[data-ptm-item="' + sub.data('ptm-child') + '"]');
-				}
-					
-
-				for(let x = 0, xlen = triggers.length; x < xlen; x++)
-				{
-					let trigger = triggers.eq(x),
-						d  		= {submenu : sub},
-						sep 	= trigger.find('[data-ptm-switcher]');
-
-					trigger = sep.length && this.opt.seperateswitch ? sep : trigger;
-					trigger.data('ptmenu', d);
-				}
-
-				let d = {triggers : triggers};
-				sub.data('ptmenu', d);
-			}
-
-			let triggers;
-			
-			if(!this.opt.mouseover) 
-			{
-				triggers = this.$menu.find('[data-ptm-trigger]');
 			}
 			else 
 			{
-				triggers = this.$menu.find('[data-ptm-item]').not('[data-ptm-item].static');
-			}
-
-			for(let i = 0, ilen = triggers.length; i < ilen; i++)
-			{
-				let trigger  = triggers.eq(i),
-					switcher = trigger.find('[data-ptm-switcher]');
-				
-				if(switcher.length && this.opt.seperateswitch) {
-					trigger = switcher;
-				} 
-				
-				this.attachTriggerEvent(trigger);
-			}
-		},
-
-		/*
-			Deaktiviert alle „Auslöser” eines „Untermenüs”.
-		*/
-		disableTriggers : function(sub)
-		{
-			sub.data('ptmenu').triggers.removeClass(this.opt.classNames.open);
-
-			let descestors = sub.find('[data-ptm-child]');
-			for(let i = 0, len = descestors.length; i < len; i++)
-			{
-				let d = descestors.eq(i).data('ptmenu');
-				
-				if(d) 
+				trigger.on('click.protomenu', function(ev)
 				{
-					d.triggers.removeClass(this.opt.classNames.open); // Auslöser aller Nachkommen deaktivieren
-				}
+					let item = $(this);
+
+					if(item.data('ptmenu'))
+					{
+						ev.preventDefault();
+						ev.stopPropagation();
+					}
+					_.toggleSubmenu(ev, item);
+				});
 			}
 		},
 
 		/*
-			Schließe alle „Nachkommen” eines „Untermenüs”.
-		*/
-		disableDescestors : function(sub)
+		pauseEvents : function(el, events)
 		{
-			let descestors = sub.find('[data-ptm-child]');
-			descestors.removeClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
-		},
-
-		/*
-			Versteckt ein „Untermenü” nachdem dessen Transition beendet ist – sofern vorhanden
-		*/
-		disableAfterTransition : function(sub)
-		{
-			sub.removeClass(this.opt.classNames.in);
-			this.disableDescestors(sub);
-
-			if(this.opt.mouseover) {
-				for(let i = 0, len = sub.data('ptmenu').triggers.length; i < len; i++) {
-					let trigger = sub.data('ptmenu').triggers.eq(i);
-					// this.unpauseEvent(trigger, 'mouseover');
-				}
-			}
-		},
-
-		pauseEvent : function(el, name)
-		{
-			if(!el.data('paused-events')) {
+			if(!el.data('paused-events')) 
+			{
 				el.data('paused-events', {});
 			}
 
-			el.data('paused-events')[name] = el.data('events')[name];
-			el.data('events')[name] = null;
+			events.forEach(function(name)
+			{
+				el.data('paused-events')[name] = el.data('events')[name];
+				el.data('events')[name] = null;
+			}, this);
 		},
 
-		unpauseEvent : function(el, name)
+		unpauseEvents : function(el, events)
 		{
 			if(!el.data('paused-events')) return;
 
-			el.data('events')[name] = el.data('paused-events')[name];
-			el.data('paused-events')[name] = null;
+			events.forEach(function(name)
+			{
+				el.data('events')[name] = el.data('paused-events')[name];
+				el.data('paused-events')[name] = null;
+			}, this);
 		},
-
-		/*
-			Macht ein „Untermenü”, und dessen „Nachkommen”, zu.
 		*/
-		hideSub : function(sub)
+
+		getVps : function() 
 		{
-			/*
-				let tdur = parseFloat(sub.css('transition-duration'));
-				Siehe unten Problem „transitionEnd”
-			*/
-
-			let tdur = sub.css('transition-duration').split(','), // „transitionDuration”
-				d 	 = sub.data('ptmenu'),
-				time = 0;
-
-			tdur.forEach(function(dur) { // Dauer von längster transition ermitteln
-				dur = parseFloat(dur);
-				time = dur > time ? dur : time;
-			});
-
-			if(time > 0) // Es wird ein transition benutzt
-			{
-				let self = this;
-				/*
-					Das Problem mit transitionEnd:
-					- z.B.:
-						.nav-child{
-							transition: transform 0.3s ease, opacity 0.5 linear;
-						}
-
-						sub.one(...) würde nach 0.3s feuern, nicht nach 0.5 – Der CSS Author müsste zwingend die längste duration als erstes eingeben
-						sub.on() würde 2mal feuern, weil jede transition-Property den Event auslöst
-
-				sub.one('transitionend transitionEnd', function(ev)
-				{
-					let sub = $(this);
-					sub.removeClass('in');
-					self.disableDescestors(sub);
-				});
-
-				Deshalb setTimeout:
-				*/
-				d.timeout = window.setTimeout(
-								this.disableAfterTransition.bind(this, sub),
-								time * 1000
-							);
-
-				if(this.opt.mouseover) 
-				{
-					for(let i = 0, len = d.triggers.length; i < len; i++) 
-					{
-						let trigger = d.triggers.eq(i);
-						// this.pauseEvent(trigger, 'mouseover');
-					}
-				}
-
-				sub.data('ptmenu', d);
-				sub.removeClass(this.opt.classNames.open);
-			}
-			else // Es wird kein transition benutzt
-			{
-				sub.removeClass( $.map(this.opt.classNames, function(n){return n}).join(' ') );
-				this.disableDescestors(sub);
-			}
-			this.disableTriggers(sub);
-
-			this.$node.triggerHandler('afterStateChanged', {closed : sub});
-		},
-
-		getVps : function() {
 			let w = window,
 				e = document.documentElement,
 				b = document.getElementsByTagName('body')[0],
@@ -338,90 +209,155 @@
 			return {w : x, h : y};
 		},
 
-		isInViewport: function (sub, el) {
-			var vp = this.getVps(),
-				sp = sub.scrollTop();
-
-			if (vp.h + sp >= el.offset().top && el.offset().top + el.height() > sp) {
-				return true;
-			}
-
-			return false;
-		},
-
-
-		setSubmenuScrollPosition : function (sub) 
+		/*
+			Deaktiviert alle „Auslöser” eines „Untermenüs”.
+		*/
+		disableTriggersOf : function(sub)
 		{
-			//let active = sub.find('[data-ptm-item].active');
-			let active  = $('[data-ptm-item].active', sub),
-				gap 	= $('.nav-child-header', sub);
+			sub.data('ptmenu').triggers.removeClass(this.opt.class.open);
 
-			gap = gap.length ? gap.outerHeight() : 0;
+			const descestors = sub.find('[data-ptm-child]');
+			
+			for(let i = 0, len = descestors.length; i < len; i++)
+			{
+				let data = descestors.eq(i).data('ptmenu');
 
-			if(active.length && !this.isInViewport(sub, active.eq(active.length -1)))
-			{
-				this.$wrapper.scrollTop(Math.ceil(active.eq(active.length -1).position().top) - gap);
-			}
-			else
-			{
-				this.$wrapper.scrollTop(0)
+				if(data)
+				{
+					data.triggers.removeClass(this.opt.class.open); // Auslöser aller Nachkommen deaktivieren
+				}
 			}
 		},
 
+		/*
+			Schließe alle Nachkommen von Untermenü „sub”.
+		*/
+		closeDescestorsOf : function(sub)
+		{
+			if(this.opt.mouseover)
+			{
+				const descestors = sub.find('[data-ptm-child]');
+				descestors.removeClass(this.opt.class.open);
+			}
+			else 
+			{
+				const triggers = sub.find('[data-ptm-trigger]').not('.nav-child-header [data-ptm-trigger]');
+
+				for(let i = 0; i < triggers.length; i++)
+				{
+					let decestor = this.$node.find('[data-ptm-child="' + triggers.eq(i).data('ptm-trigger') + '"]');
+					if(decestor.length) 
+					{
+						decestor.removeClass(this.opt.class.open);
+						this.closeDescestorsOf(decestor);
+					}
+				}
+			}
+		},
+
+		/*
+			Sucht und schließt offene Elemente in Ebene 2, die erste die aufklappen kann.
+			Nachkommen von Ebene 2, die geöffnet sind, werden automatisch geschlossen.
+		*/
+		closeRootLevel : function()
+		{
+			const sub = this.$node.find('.' + this.opt.class.open + '[data-ptm-child][data-ptm-level="2"]');
+
+			if(sub.length)
+			{
+				this.hideSub(sub); //.eq(0));
+			}
+		},
+
+		/*
+			Schließt alle anderen Untermenüs auf der gleichen Ebene wie „sub”.
+		*/
+		closeEqualLevel : function(sub)
+		{
+			//const subs = sub.parents('ul').eq(0).find('.' + this.opt.class.open + '[data-ptm-child]').not(sub);
+			const subs = this.$node.find('[data-ptm-level="' + sub.data('ptm-level') + '"]').not(sub);
+
+			for(let i = 0, len = subs.length; i < len; i++ )
+			{
+				this.hideSub(subs.eq(i));
+			}
+		},
+
+		toggleSubmenu : function(ev, trigger)
+		{	
+			if(!trigger.data('ptmenu')) return; // trigger kam mit Mouseenter oder -leave hier rein, und hat kein Untermenü.
+
+			const data		= trigger.data('ptmenu'),
+				  isopen 	= data.submenu.hasClass(this.opt.class.open);
+
+			switch(ev.type) 
+			{
+				case 'mouseenter' :
+					this.showSub(data.submenu);
+				break;
+
+				case 'mouseleave' :
+					this.hideSub(data.submenu);
+				break;
+
+				default : // click und touchend
+					if(isopen)
+					{
+						this.hideSub(data.submenu);
+					}
+					else
+					{
+						this.showSub(data.submenu);
+					}
+			}
+		},
+
+		/*
+			Macht ein „Untermenü”, und dessen „Nachkommen”, zu.
+		*/
+		hideSub : function(sub)
+		{
+			sub.removeClass(this.opt.class.open);
+			this.closeDescestorsOf(sub);
+			this.disableTriggersOf(sub);
+
+			let parents = sub.parents('[data-ptm-child]');
+			if(parents.length)
+			{
+				parents.eq(parents.length -1).removeClass(this.opt.class.expanded);
+			}
+
+			this.$node.triggerHandler('afterStateChanged', {closed : sub});
+		},
 
 		/*
 			Macht ein „Untermenü” auf
 		*/
 		showSub : function(sub)
 		{
-			let d = sub.data('ptmenu');
-
-			if(d.timeout && this.opt.mouseover) window.clearTimeout(d.timeout); // Sofern für dieses „sub” ein Timeout in closeSub gesetzt wurde, müssen wir diesen hier löschen.
+			const data = sub.data('ptmenu');
 
 			this.closeEqualLevel(sub);
 
-			sub.addClass(this.opt.classNames.in);
-
-
-			this.setSubmenuScrollPosition(sub);
-
-			if(this.getVps().w - (sub.offset().left + sub.outerWidth()) < 0) {
-				sub.addClass(this.opt.classRtl);
-			}
-			if(this.getVps().h - (sub.offset().top + sub.outerHeight()) < 0) {
-			//	sub.addClass(this.opt.classBtl);
+			// Autoalign von rechts nach links
+			if(this.opt.autoalign)
+			{
+				if(this.getVps().w - (sub.offset().left + sub.outerWidth()) < 0) 
+				{
+					sub.addClass(this.opt.class.rtl);
+				}
 			}
 
-			sub.addClass(this.opt.classNames.open);
-			d.triggers.addClass(this.opt.classNames.open);
+			sub.addClass(this.opt.class.open);
+			data.triggers.addClass(this.opt.class.open);
+
+			let parents = sub.parents('[data-ptm-child]');
+			if(parents.length)
+			{
+				parents.eq(parents.length -1).addClass(this.opt.class.expanded);
+			}
 
 			this.$node.triggerHandler('afterStateChanged', {opened : sub});
-		},
-
-		/*
-			Sucht und schließt offene Elemente im Root-Level (und alle darunter). Wird bei Mouseover true benutzt.
-		*/
-		closeRootLevel : function()
-		{
-			// let sub = this.$menu.find('.nav-child.nav-level-2.' + this.opt.classNames.open);
-			let sub = this.$menu.find('.' + this.opt.classNames.open + '[data-ptm-child][data-ptm-level="2"]');
-
-			if(sub.length) this.hideSub(sub);
-		},
-
-		/*
-			Mach Alles auf der gleichen Ebene zu.
-		*/
-		closeEqualLevel : function(el)
-		{
-			//let subs = el.parent().parent().find('.' + this.opt.classNames.open + '[data-ptm-child]').not(el);
-
-			let subs = el.parent().parent().find('.' + this.opt.classNames.open + '[data-ptm-child]').not(el);
-
-			for(let i = 0, len = subs.length; i < len; i++ )
-			{
-				this.hideSub(subs.eq(i));
-			}
 		},
 
 		/*
@@ -432,61 +368,21 @@
 			let something;
 			if(first) // Nur im first-level suchen
 			{
-				something = this.$menu.find('.' + this.opt.classNames.open + '[data-ptm-child][data-ptm-level="2"]');
+				something = this.$node.find('.' + this.opt.class.open + '[data-ptm-child][data-ptm-level="2"]');
 			}
 			else
 			{
-				something = this.$menu.find('.' + this.opt.classNames.open + '[data-ptm-child]');
+				something = this.$node.find('.' + this.opt.class.open + '[data-ptm-child]');
 			}
 
 			if(something.length)
-				return true;
+			{
+				return something.length;
+			}
 
 			return false;
-		},
-
-		toggleSubmenu : function(trigger, mouseover)
-		{	
-			if(!trigger.data('ptmenu')) // Dieser „Trigger” hat kein Untermenü, wenn "this.opt.mouseover" an ist, könnte aber ein „Untermenü” offen sein, welches ausgeblendet werden muss.
-			{
-				if(mouseover) this.closeEqualLevel(trigger);
-				return;
-			}
-
-			var sub 	= trigger.data('ptmenu').submenu,
-				isopen 	= sub.hasClass(this.opt.classNames.open);
-
-			if(isopen && !mouseover)
-			{
-				this.hideSub(sub);
-				trigger.blur();
-			}
-			else if(!isopen) {
-				this.showSub(sub);
-			}
-
-			if( mouseover && !isopen )
-			{
-				/**
-					Wenn die Eltern-Liste des <li> verlassen wird, machen wir alles innerhalb der Eltern-Liste zu.
-					Das wird nötig, wenn Dropdown-Menüs in Megamenüs und in Spalten dargestellt werden */
-				let parentList = trigger.parents('[data-ptm-sub]');
-				parentList.one('mouseout.protomenu', function(trigger, sub, ev){
-					if(ev.currentTarget === ev.relatedTarget) {
-						this.closeEqualLevel($(ev.currentTarget));
-					}
-				}.bind(this, trigger, sub));
-
-				// -- Wenn <ul data-ptm-root> verlassen wird machen wir Alles zu.
-				$(document).off('mousemove.protomenu').on('mousemove.protomenu', function(ev) {
-					if(!$(ev.target).closest('[data-ptm-root]').length )
-					{
-						$(document).off('mousemove.protomenu');
-						this.closeRootLevel();
-					}
-				}.bind(this));
-			}
 		}
+
 	} // prototype
 
 	$.fn.protomenu = function(options)
@@ -528,7 +424,7 @@
 			{
 				if(this.parent.isExpanded(true))
 				{
-					this.backdrop.addClass( $.map(this.parent.opt.classNames, function(n){return n}).join(' ') );
+					this.backdrop.addClass(this.opt.class.open);
 				}
 				else
 				{
@@ -551,7 +447,6 @@
 			var afterTransition = function()
 			{
 				if(this.parent.isExpanded()) return;
-				this.backdrop.removeClass(this.parent.opt.classNames.in);
 			};
 
 			this.timer = window.setTimeout(
@@ -559,7 +454,7 @@
 				time * 1000
 			);
 
-			this.backdrop.removeClass(this.parent.opt.classNames.open);
+			this.backdrop.removeClass(this.parent.opt.class.open);
 		}
 	}
 

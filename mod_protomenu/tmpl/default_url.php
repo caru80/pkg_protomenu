@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.6
+ * @version        3.1.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 ?>
 <a
-	<?php echo $item->flink != '' ? ' href="' . $item->flink . ($ptmItemConfig->template != '' ? '?tmpl=' . $ptmItemConfig->template : '') . '"' : ' tabindex="0"'; ?> 
+	<?php echo $item->flink != '' ? ' href="' . $item->flink . $ptmItemConfig->queryfragment . '"' : ' tabindex="0"'; ?> 
 	class="<?php echo implode(' ', $ptmItemConfig->classes);?>" 
 	<?php
 		foreach($ptmItemConfig->dataAttribs as $name => $value):

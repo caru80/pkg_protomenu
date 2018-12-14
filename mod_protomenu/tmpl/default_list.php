@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.0.6
+ * @version        3.1.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -17,12 +17,16 @@ defined('_JEXEC') or die;
 
 // -- Sollen die Kinder von allen <li class="active"> nach dem neuladen der Seite geöffnet werden.
 $keepActiveOpen = $params->get('keepactiveopen', false);
+?>
 
+<ul class="nav-first" data-ptm-root>
+<?php
 foreach ($list as $i => &$item)
 {
 	/* CSS Klassen */
 
 	$classList = array(
+		'item',
 		'item-' . $item->id
 	);
 
@@ -107,11 +111,22 @@ foreach ($list as $i => &$item)
 	$ptmItemConfig = (object) [
 		"classes"       => array($item->anchor_css),
 		"dataAttribs"   => array(),
-		"customAttribs" => (string) $item->params->get('ptm_item_attributes',''),
-		"template" 		=> (string) $item->params->get('ptm_item_template','')
+		"customAttribs" => (string) $item->params->get('ptm_item_attributes','')
 	];
 	
+	// Query String und URI; Fragmentbezeichner
+	if((string) $item->params->get('ptm_item_queryfragment',''))
+	{
+		$ptmItemConfig->queryfragment = (string) $item->params->get('ptm_item_queryfragment','');
+	}
+	else if((string) $item->params->get('ptm_item_template','') != '')
+	{
+		$ptmItemConfig->queryfragment = (string) $item->params->get('ptm_item_template','');
+	}
+
+	
 	// -- Löst dieser Menüeintrag ein Untermenü aus?
+	
 	$ptmItemConfig->dataAttribs["ptm-trigger"] = '';
 	if($item->deeper)
 	{
@@ -119,6 +134,7 @@ foreach ($list as $i => &$item)
 			$ptmItemConfig->dataAttribs["ptm-trigger"] = $module->id . '-' . $item->id;
 		}
 	}
+	
 
 	if($parentActive && $keepActiveOpen && $item->parent) {
 		$ptmItemConfig->classes[] = 'open';
@@ -147,7 +163,7 @@ TMPL;
 		$staticChild = $parentStatic ? ' data-ptm-static-child' : '';
 
 		// -- Grid?
-		$containerClass = $item->params->get('ptm_item_behavior','') === 'megamenu' && $item->params->get('ptm_item_enable_grid',0) ? ' class="' . $item->params->get('ptm_item_grid_containerclass', 'container') . '"' : '';
+		$containerClass = $item->params->get('ptm_item_behavior','') === 'megamenu' && $item->params->get('ptm_item_enable_grid',0) ? $item->params->get('ptm_item_grid_containerclass', 'container') : '';
 		$rowClass       = $item->params->get('ptm_item_behavior','') === 'megamenu' && $item->params->get('ptm_item_enable_grid',0) ? $item->params->get('ptm_item_grid_rowclass', 'row') : '';
 
         // -- Untermenü Header. Navigationspfad und Schließen-Knopf
@@ -163,7 +179,7 @@ TMPL;
 		echo <<<TMPL
 <div class="nav-child nav-level-$childLevel $isVisible" data-ptm-child="$module->id-$item->id" data-ptm-level="$childLevel" $staticChild>
 	$childHeader
-	<div$containerClass>
+	<div class="nav-child-inner $containerClass">
 		<ul class="nav-sub nav-level-$childLevel $rowClass" data-ptm-sub="$module->id-$item->id">
 TMPL;
 	}
@@ -178,3 +194,4 @@ TMPL;
 	}
 }
 ?>
+</ul>
