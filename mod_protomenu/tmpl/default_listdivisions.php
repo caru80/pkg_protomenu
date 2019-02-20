@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.1.0
+ * @version        3.1.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -49,7 +49,7 @@ function getMenuTree($list, $level = 1, $parent = null) {
 }
 
 
-function renderMenu($list, $level = 1, $parent = null, $active_id = 0, $path = '', $params, $module) 
+function renderMenu($list, $level = 1, $parent = null, $active_id = 0, $path = array(), $params, $module) 
 {
 	
 	if($parent)
@@ -84,9 +84,17 @@ function renderMenu($list, $level = 1, $parent = null, $active_id = 0, $path = '
 
 
 		$staticChild = $parentStatic ? ' data-ptm-static-child' : '';
+		
+		/*
+			„Dirty-Patch” 3.1.1 – Aktive bleiben geöffnet
+		*/
+		$childClasses = '';
+		if(count($path) && in_array($parent->id, $path) && $params->get('keepactiveopen', false) && $staticChild === '') {
+			$childClasses = 'open id-' . $parent->id;
+		}
 
 		$html = <<<HTML
-			<div class="nav-child nav-level-$level" data-ptm-child="$module->id-$parent->id" data-ptm-level="$level"$staticChild>
+			<div class="nav-child nav-level-$level $childClasses" data-ptm-child="$module->id-$parent->id" data-ptm-level="$level"$staticChild>
 				$childHeader
 				<div class="nav-child-outer $containerClass">
 					<div class="nav-child-inner $rowClass">
