@@ -35,7 +35,7 @@ TREE;
 
 		foreach($item->tree as $t => $itemId) :
 			$treeItem 	= \Joomla\CMS\Factory::getApplication()->getMenu()->getItem($itemId);
-			$itemTitle 	= $treeItem->params->get('ptm_readmore_title','') != '' ? $treeItem->params->get('ptm_readmore_title','') : $treeItem->title;
+			$itemTitle 	= $treeItem->params->get('ptm_item_readmore_title','') != '' ? $treeItem->params->get('ptm_item_readmore_title','') : $treeItem->title;
 
 			if($treeItem->id != $item->id && $treeItem->deeper && $treeItem->params->get('ptm_item_behavior', '') !== 'static' ) :
 
