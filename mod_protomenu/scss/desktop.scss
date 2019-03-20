@@ -32,7 +32,6 @@
 	a.nav-item {
 		display: flex;
 		flex-wrap: nowrap;
-
 		padding: 0.6em 1em 0.6em 1em;
 
 		font-size: inherit;
@@ -67,13 +66,16 @@
 // -- Das erste <ul>. Menüeinträge horizontal darstellen.
 .ptmenu ul.nav-first {
 	display: flex;
-	justify-content: flex-end; // Menüeinträge rechtsbündig ausrichten.
-	flex-wrap: wrap; // Umbrechen falls erforderlich.
+	flex-wrap: wrap;
+	//justify-content: flex-end; // Menüeinträge rechtsbündig ausrichten.
 }
 
 
+
 // -- Ein Menüeintrag in der ersten Ebene
-.ptmenu ul.nav-first > li {}
+/*
+	.ptmenu ul.nav-first > li {}
+*/
 
 
 // -- Bild im Menüeintrag (<div>)
@@ -122,7 +124,7 @@
 
 	&:before {
 		@extend .fa;
-		content: '#{$fa-var-chevron-right}';
+		content: fa-content($fa-var-chevron-right);
 
 		position: absolute;
 		top: 0.525em;
@@ -141,7 +143,7 @@
 .ptmenu ul.nav-first > li.deeper {
 	> .ptmenu-item-custom > .nav-item i.item-arrow:before,
 	> .nav-item i.item-arrow:before{
-		content: '#{$fa-var-chevron-down}';
+		content: fa-content($fa-var-chevron-down);
 	}
 	
 	&.open > .nav-item i.item-arrow:before, // MouseOver
@@ -149,7 +151,6 @@
 	{
 		transform: rotate3d(1,0,0,-180deg);
 	}
-	
 }
 
 
@@ -164,66 +165,18 @@
 
 // -- Alle Untermenüs
 .ptmenu .nav-child{
-	background-color: #21444b;
 	min-width: 100%; 
-	a {
+	background-color: #21444b;
+	a.nav-item {
+		color: #ffffff;
 		border-bottom: 1px solid #31565e;
 	}
 }
 
 // -- Mega-Untermenü
-.ptmenu li.mega > .nav-child {
-	background-color: transparentize(#21444b, 5%);
-	border-bottom: 1px solid #183439;
-
+.ptmenu .mega > .nav-child {
 	padding-top: 20px;
 	padding-bottom: 20px;
-}
-
-.ptmenu .nav-child li {
-	.nav-item {
-		color: #ffffff;
-	}
-	.item-label {
-		font-weight: 400;
-	}
-	&:hover > .nav-item{
-		color: #ffffff;
-		background-color: lighten($secondary, 10%);
-	}
-	&.current.active > .nav-item {
-		color: #ffffff;
-		background-color: $primary;
-	}
-}
-
-
-// -- Sensoplast Megamenü
-.ptmenu .mega > .nav-child.in {
-	padding-top: 20px;
-	padding-bottom: 20px;
-}
-
-
-.ptmenu .mega .nav-child.nav-level-3 {
-	height: 100%;
-	background-color: $secondary;
-	.nav-child {
-		background: transparent;
-	}
-}
-.ptmenu .mega .nav-child.nav-level-3 a {
-	background-color: none;
-}
-.ptmenu .mega .nav-sub.nav-level-3 > li {
-	> a {
-		background-color: #183439;
-		border-bottom: 1px solid #31565e;
-	}
-	&:hover > a {
-		background-color: $primary;
-		border-bottom-color: darken($primary, 15%);
-	}
 }
 
 
@@ -408,13 +361,13 @@
 	&, li{
 		margin: 0; padding: 0;
 	}
-}
-.ptmenu ul.row{
-	margin: 0 -($grid-gutter-width / 2);
+	&.row {
+		margin: 0px ($grid-gutter-width / 2 * -1);
+	}
 }
 .ptmenu ul.nav-first li[class*=col],
 .ptmenu ul.nav-sub li[class*=col]{
-	padding: 0 $grid-gutter-width / 2;
+	padding: 0px $grid-gutter-width / 2;
 }
 
 
