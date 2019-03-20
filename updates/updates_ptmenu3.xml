@@ -16,6 +16,7 @@
 		<maintainerurl>https://www.headmarketing.de/</maintainerurl>
 		<targetplatform name="joomla" version="3.[8910]" />
 		<php_minimum>5.6.0</php_minimum>
+	</update>
 	<update>
 		<name>HEAD. Protomenü 2</name>
 		<description>Code Optimierung</description>
