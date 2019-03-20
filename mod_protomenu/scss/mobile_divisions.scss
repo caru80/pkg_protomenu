@@ -1,6 +1,6 @@
 /*
-	Protomenu 3.1.0
-	Carsten Ruppert - 2018-12-14
+	Protomenu 3.2.0
+	Carsten Ruppert - 2019-03-20
 
 	Mobile-Theme „Divisionen”
 	---------------
@@ -10,13 +10,7 @@
 .ptmenu{
 	font-size: 1rem;
 	height: 100%;
-
-	// -- Das markieren von Text im Menü verhindern:
-	-webkit-user-select: none; 
-	-khtml-user-select: none; 
-	-moz-user-select: none; 
-	-ms-user-select: none; 
-	user-select: none;
+	user-select: none; // Das markieren von Text im Menü verhindern
 }
 
 .ptmenu .nav-wrapper {
@@ -62,11 +56,11 @@
 	// Aktiver Menüeintrag
 	&.active > a.nav-item {
 		background-color: transparent;
-		color: lighten($primary, 10%);
+		color: lighten($primary, 0.1);
 
 		.item-label::before {
 			@extend .fas;
-			content: '#{$fa-var-angle-right}';
+			content: fa-content($fa-var-angle-right);
 			padding-right: 0.1em;
 		}
 	}
@@ -99,6 +93,7 @@
 		
 		border: solid lighten(#1f3c42, 3%);
 		border-width: 1px 0 0 0;
+		
 		&:first-of-type:not(.alias-of-parent) {
 			border: none;
 		}
@@ -107,12 +102,16 @@
 			margin-bottom: 1.5em;
 			background-color: transparent;
 			border-width: 1px;
-			border-color: lighten(#2c4f57, 5%);
+			//border-color: lighten(#2c4f57, 5%);
+			border-color: $gray-300;
+			color: $gray-300;
 		}
+
 		&.divider {
 			display: inline;
 			border: none;
 		}
+
 		&.heading {
 			background: transparent;
 			border: none;
@@ -121,6 +120,7 @@
 				padding-right: 0.25em;
 			}
 		}
+
 		& + .heading {
 			margin-top: 0.7em;
 		}
@@ -154,7 +154,7 @@
 	background-color: darken(#1f3c42, 3%);
 
 	&::before {
-		content: '#{$fa-var-ellipsis-h}';
+		content: fa-content($fa-var-ellipsis-h);
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -189,9 +189,7 @@
 
 
 // -- Code (und Weiterlesen-Text) (<div>)
-.ptmenu .ptmenu-item-custom {
-	color: #dddddd;
-}
+.ptmenu .ptmenu-item-custom {}
 
 
 //
@@ -213,7 +211,7 @@
 
 		&:before {
 			@extend .fas;
-			content: '#{$fa-var-ellipsis-h}';
+			content: fa-content($fa-var-ellipsis-h);
 		}
 	}
 }
@@ -222,7 +220,9 @@
 //
 // Untermenü-Header
 //
-.ptmenu .nav-child .nav-child-header{
+.ptmenu .nav-child .nav-child-header {
+	background-color: #1f3c42;
+	border-bottom: 1px solid lighten(#1f3c42, 5%);
 	position: sticky;
 	z-index: 120;
 	top: 0px;
