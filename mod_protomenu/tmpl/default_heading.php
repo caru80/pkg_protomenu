@@ -29,7 +29,7 @@ $ptmItemConfig->classes[] = 'nav-header';
 		endforeach;
 	?> 
 	<?php if($item->anchor_title != '') : ?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
-	<?php echo $ptmItemConfig->customAttribs;?>
+	<?php echo $item->protomenu->linkattribs;?>
 >
 	<?php 
 		// -- Bild
@@ -55,10 +55,10 @@ $ptmItemConfig->classes[] = 'nav-header';
 	
 	<?php
 		// -- Beschreibung/Text
-		if($item->params->get('ptm_item_description','') !== ''):
+		if($item->protomenu->item_description !== ''):
 	?>
 			<span class="item-description">
-				<?php echo $item->params->get('ptm_item_description','');?>
+				<?php echo $item->protomenu->item_description;?>
 			</span>
 	<?php
 		endif;
@@ -66,7 +66,7 @@ $ptmItemConfig->classes[] = 'nav-header';
 
 	<?php
 		// -- Umschalter trennen?
-		if($params->get('seperateswitch', 0) && $item->deeper && $item->params->get('ptm_item_behavior','') !== 'static'):
+		if($params->get('seperateswitch', 0) && $item->deeper && !$item->protomenu->staticItem):
 	?>
 			<span class="item-switch" data-ptm-switcher><i></i></span>
 	<?php

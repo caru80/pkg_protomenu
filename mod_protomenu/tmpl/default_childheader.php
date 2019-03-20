@@ -14,6 +14,8 @@
  * @license      GNU General Public License version 2 or later; see LICENSE.txt
  */
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 ?>
 
 <div class="nav-child-header">
@@ -34,12 +36,12 @@ defined('_JEXEC') or die;
 TREE;
 
 		foreach($item->tree as $t => $itemId) :
-			$treeItem 	= \Joomla\CMS\Factory::getApplication()->getMenu()->getItem($itemId);
+			$treeItem 	= Factory::getApplication()->getMenu()->getItem($itemId);
 			$itemTitle 	= $treeItem->params->get('ptm_item_readmore_title','') != '' ? $treeItem->params->get('ptm_item_readmore_title','') : $treeItem->title;
 
 			if($treeItem->id != $item->id && $treeItem->deeper && $treeItem->params->get('ptm_item_behavior', '') !== 'static' ) :
 
-				$id = isset($item->tree[$t+1]) ? \Joomla\CMS\Factory::getApplication()->getMenu()->getItem($item->tree[$t+1])->id : '';
+				$id = isset($item->tree[$t+1]) ? Factory::getApplication()->getMenu()->getItem($item->tree[$t+1])->id : '';
 
 				$tree .= <<<TREE
 <span class="tree-item index-$t">
@@ -70,7 +72,7 @@ TREE;
 			$triggerData .= " data-$name=\"$value\"";
 		endforeach;
 ?>
-		<a tabindex="0" class="nav-child-close" <?php echo $triggerData;?>>
+		<a tabindex="0" class="nav-child-close"<?php echo $triggerData;?>>
 			<i></i><span><?php echo $params->get('submenu_close_button_label','');?></span>
 		</a>
 <?php

@@ -15,8 +15,7 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.module.helper');
-
+use Joomla\CMS\Helper\ModuleHelper;
 // Note. It is important to remove spaces between elements. – siehe auch Google: "white-space dependent rendering", oder: http://stackoverflow.com/questions/5256533/a-space-between-inline-block-list-items
 ?>
 <nav id="ptmenu-<?php echo $module->id;?>" class="ptmenu <?php echo $class_sfx;?>">
@@ -25,7 +24,7 @@ jimport('joomla.application.module.helper');
 			/**
 				Rendere die Menüliste
 			*/
-			require JModuleHelper::getLayoutPath('mod_protomenu', 'default_' . $params->get('menu_rendermode', 'list'));
+			require ModuleHelper::getLayoutPath('mod_protomenu', 'default_' . $params->get('menu_rendermode', 'list'));
 		?>
 	</div>
 </nav>

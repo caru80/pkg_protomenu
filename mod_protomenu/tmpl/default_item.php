@@ -15,22 +15,21 @@
  */
 defined('_JEXEC') or die;
 
-// Note. It is important to remove spaces between elements.
+use Joomla\CMS\Helper\ModuleHelper;
 ?>
-
 <?php
 	switch($item->params->get('ptm_item_behavior','')):
 
         // -- HTML und Weiterlesen-Text
         case 'readmoretext' :
         case 'html' :
-			require JModuleHelper::getLayoutPath('mod_protomenu', 'default_html');
+			require ModuleHelper::getLayoutPath('mod_protomenu', 'default_html');
 		break;
         
         // -- Module
         case 'modules' :
         case 'moduleposition' :
-            require JModuleHelper::getLayoutPath('mod_protomenu', 'default_module');
+			require ModuleHelper::getLayoutPath('mod_protomenu', 'default_module');
         break;
 
 		default :
@@ -43,12 +42,12 @@ defined('_JEXEC') or die;
 				case 'url':
 				case 'component':
                 case 'heading':
-					require JModuleHelper::getLayoutPath('mod_protomenu', 'default_' . $item->type);
+					require ModuleHelper::getLayoutPath('mod_protomenu', 'default_' . $item->type);
 				break;
 				
 				default:
-					require JModuleHelper::getLayoutPath('mod_protomenu', 'default_url');
-			
+					require ModuleHelper::getLayoutPath('mod_protomenu', 'default_url');
+	
 			endswitch;
 
 	endswitch;

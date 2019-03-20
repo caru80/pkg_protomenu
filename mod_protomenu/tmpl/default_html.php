@@ -15,6 +15,7 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Uri\Uri;
 /**
 	Dieses Temlate zeigt HTML.
 */
@@ -28,7 +29,7 @@ defined('_JEXEC') or die;
 	}
 	
 	$readmoreLink		= '';
-	$readmoreTitle 		= $item->params->get('ptm_item_readmore_title','') ? $item->params->get('ptm_item_readmore_title','') : $item->title;
+	$readmoreTitle 		= $item->protomenu->readmore_title !== '' ? $item->protomenu->readmore_title : $item->title;
 	$readmoreInjected   = false;
 
 	// -- Den Weiterlesen-Link zusammenbauen:
@@ -41,12 +42,12 @@ defined('_JEXEC') or die;
 		ob_start();
 ?>
 		<a
-			<?php echo $item->flink != '' ? ' href="' . $item->flink . ($ptmItemConfig->template != '' ? '?tmpl=' . $ptmItemConfig->template : '') . '"' : ' tabindex="0"'; ?> 
+			<?php echo $item->flink != '' ? ' href="' . $item->flink . $item->protomenu->queryfragment . '"' : ' tabindex="0"'; ?> 
 			class="<?php echo implode(' ', $ptmItemConfig->classes);?>" 
 			<?php if($item->browserNav == 1):		?> target="_blank"<?php endif;?>
 			<?php if($item->browserNav == 2):		?> onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;"<?php endif;?>
 			<?php if($item->anchor_title != ''): 	?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
-			<?php echo $ptmItemConfig->customAttribs;?>
+			<?php echo $item->protomenu->linkattribs;?>
 		>
 				<?php echo $readmoreTitle;?> <i></i>
 		</a>
@@ -57,11 +58,11 @@ defined('_JEXEC') or die;
 
     // -- Diese Zeichenketten (die Array-Keys) im Text ersetzen (durch die Werte).
 	$searchAndReplace   = array(
-		"readmore_url" 		=> $item->flink,
+		"readmore_url" 		=> $item->flink . $item->protomenu->queryfragment,
 		"readmore_title" 	=> $readmoreTitle,
 		"language_title"	=> ModProtomenuHelper::getLanguageInfo()->title_native,
 		"language_code" 	=> strtolower(ModProtomenuHelper::getLanguageInfo()->lang_code),
-		"uri_root" 			=> JUri::root()
+		"uri_root" 			=> Uri::root()
 	);
 
 	/**

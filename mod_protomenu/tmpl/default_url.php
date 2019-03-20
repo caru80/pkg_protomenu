@@ -17,10 +17,10 @@ defined('_JEXEC') or die;
 
 // Note. It is important to remove spaces between elements.
 
-$item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
+$item->flink = \Joomla\Filter\OutputFilter::ampReplace(htmlspecialchars($item->flink));
 ?>
 <a
-	<?php echo $item->flink != '' ? ' href="' . $item->flink . $ptmItemConfig->queryfragment . '"' : ' tabindex="0"'; ?> 
+	<?php echo $item->flink != '' ? ' href="' . $item->flink . $item->protomenu->queryfragment . '"' : ' tabindex="0"'; ?> 
 	class="<?php echo implode(' ', $ptmItemConfig->classes);?>" 
 	<?php
 		foreach($ptmItemConfig->dataAttribs as $name => $value):
@@ -32,7 +32,7 @@ $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 	<?php if($item->browserNav == 1):		?> target="_blank"<?php endif;?>
 	<?php if($item->browserNav == 2):		?> onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;"<?php endif;?>
 	<?php if($item->anchor_title != ''): 	?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
-	<?php echo $ptmItemConfig->customAttribs;?>
+	<?php echo $item->protomenu->linkattribs;?>
 >
 	<?php 
         // -- Bild
@@ -50,7 +50,7 @@ $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
 	?>
 			<span class="item-label">
-                <?php echo $item->title;?><?php if($item->deeper && !$parentStatic): ?><i class="item-arrow"></i><?php endif;?>
+                <?php echo $item->title;?><?php if($item->deeper && !$item->protomenu->staticItem): ?><i class="item-arrow"></i><?php endif;?>
 			</span>
 	<?php
 		endif;
@@ -58,10 +58,10 @@ $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 	
 	<?php
 		// -- Beschreibung/Text
-		if($item->params->get('ptm_item_description','') !== ''):
+		if($item->protomenu->item_description):
 	?>
 			<span class="item-description">
-				<?php echo $item->params->get('ptm_item_description','');?>
+				<?php echo $item->protomenu->item_description;?>
 			</span>
 	<?php
 		endif;
@@ -69,7 +69,7 @@ $item->flink = JFilterOutput::ampReplace(htmlspecialchars($item->flink));
 
 	<?php
 		// -- Umschalter trennen?
-		if($params->get('seperateswitch', 0) && $item->deeper && !$parentStatic):
+		if($params->get('seperateswitch', 0) && $item->deeper && !$item->protomenu->staticItem):
 	?>
 			<span class="item-switch" data-ptm-switcher><i></i></span>
 	<?php

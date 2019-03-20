@@ -21,20 +21,16 @@ defined('_JEXEC') or die;
 
 // -- Aufgabe ermitteln:
 $task = '';
-switch($item->params->get('ptm_item_behavior', '')) {
-
-	case 'modules' :
-		$task = 'loadmodule';
-	break;
-
-	case 'moduleposition' :
-		$task = 'loadposition';
-	break;
+if($item->protomenu->loadModule)
+{
+	$task = 'loadmodule';
 }
-
+else
+{
+	$task = 'loadposition';
+}
 // -- Die Module rendern:
 $modulesHtml = ModProtomenuHelper::getModules($task, $item->params); 
-
 
 /**
 	Template Ausgabe:

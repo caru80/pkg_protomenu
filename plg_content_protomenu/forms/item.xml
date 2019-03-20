@@ -192,17 +192,6 @@
 				hint="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_HINT"
 			/>
 
-			<field
-				name="ptm_item_template"
-				type="text"
-				showon="ptm_item_queryfragment:"
-				class="input-xxlarge"
-				default=""
-				label="PLG_PROTOMENU_ITEM_TEMPLATE_LABEL"
-				description="PLG_PROTOMENU_ITEM_TEMPLATE_DESC"
-				hint="PLG_PROTOMENU_ITEM_TEMPLATE_HINT"
-			/>
-
 			<field 
 				name="note-enhanced"
 				type="note"

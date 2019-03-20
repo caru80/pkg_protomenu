@@ -1,11 +1,11 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.1.0
+ * @version        3.2.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
- * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
+ * @copyright      Copyright © 2018 - 2019 HEAD. MARKETING GmbH All Rights Reserved
  * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -14,6 +14,13 @@
  * @license      GNU General Public License version 2 or later; see LICENSE.txt
  */
 defined('_JEXEC') or die;
+
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Language\LanguageHelper;
+use Joomla\Registry\Registry;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
 
 // -- mod_menu helper
 require_once JPATH_BASE . '/modules/mod_menu/helper.php';
@@ -33,16 +40,16 @@ class ModProtomenuHelper extends ModMenuHelper {
 	 */
 	public static function getList(&$params, &$module = false)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$menu = $app->getMenu();
 
 		// Get active menu item
-		$base = self::getBase($params);
-		$user = JFactory::getUser();
-		$levels = $user->getAuthorisedViewLevels();
+		$base 	= self::getBase($params);
+		$levels = Factory::getUser()->getAuthorisedViewLevels();
 		asort($levels);
-		$key = 'menu_items' . $params . implode(',', $levels) . '.' . $base->id;
-		$cache = JFactory::getCache('mod_menu', '');
+		$key 	= 'menu_items' . $params . implode(',', $levels) . '.' . $base->id;
+		$cache 	= Factory::getCache('mod_menu', '');
+		// Für Joomla 4: $cache = Factory::getContainer()->get(CacheControllerFactoryInterface::class)->createCacheController('output', ['defaultgroup' => 'mod_menu']);
 
 		if ($cache->contains($key))
 		{
@@ -51,9 +58,9 @@ class ModProtomenuHelper extends ModMenuHelper {
 		else
 		{
 			$path           = $base->tree;
-			$start          = (int) $params->get('startLevel');
-			$end            = (int) $params->get('endLevel');
-			$showAll        = $params->get('showAllChildren');
+			$start          = (int) $params->get('startLevel', 1);
+			$end            = (int) $params->get('endLevel', 0);
+			$showAll        = $params->get('showAllChildren', 1);
 			$items          = $menu->getItems('menutype', $params->get('menutype'));
 			$hidden_parents = array();
 			$lastitem       = 0;
@@ -115,18 +122,37 @@ class ModProtomenuHelper extends ModMenuHelper {
 					}
 
 					$lastitem     = $i;
+					// Cru.: $item->active ist seitens Open Source Matters immer false... wird auch nirgendwo benutzt. 
+					// In Joomla 4 wurde es bis jetzt nicht geändert.
+					// Habe das geändert, und das wird nun von den Templates benutzt
+					// $item->active = false;
 					$item->active = false;
-					$item->flink  = $item->link;
+					if (in_array($item->id, $base->tree)
+						|| ($item->type === 'alias' && in_array($item->params->get('aliasoptions'), $base->tree)))
+					{
+						$item->active = true;
+					}
+
+					$item->flink = $item->link;
+					
+					// Ist dies der aktuelle Menüeintrag?
+					$item->current_active = false;
+					$active_id = self::getActive($params)->id;
+					if (($item->id === $active_id)
+						|| ($item->type === 'alias' && $item->params->get('aliasoptions') === $active_id)) 
+					{
+						$item->current_active = true;
+					}
 
 					// Reverted back for CMS version 2.5.6
 					switch ($item->type)
 					{
 						case 'separator':
-							break;
+						break;
 
 						case 'heading':
 							// No further action needed.
-							break;
+						break;
 
 						case 'url':
 							if ((strpos($item->link, 'index.php?') === 0) && (strpos($item->link, 'Itemid=') === false))
@@ -134,24 +160,24 @@ class ModProtomenuHelper extends ModMenuHelper {
 								// If this is an internal Joomla link, ensure the Itemid is set.
 								$item->flink = $item->link . '&Itemid=' . $item->id;
 							}
-							break;
+						break;
 
 						case 'alias':
 							$item->flink = 'index.php?Itemid=' . $item->params->get('aliasoptions');
-							break;
+						break;
 
 						default:
 							$item->flink = 'index.php?Itemid=' . $item->id;
-							break;
+						break;
 					}
 
 					if ((strpos($item->flink, 'index.php?') !== false) && strcasecmp(substr($item->flink, 0, 4), 'http'))
 					{
-						$item->flink = JRoute::_($item->flink, true, $item->params->get('secure'));
+						$item->flink = Route::_($item->flink, true, $item->params->get('secure'));
 					}
 					else
 					{
-						$item->flink = JRoute::_($item->flink);
+						$item->flink = Route::_($item->flink);
 					}
 
 					// We prevent the double encoding because for some reason the $item is shared for menu modules and we get double encoding
@@ -162,7 +188,47 @@ class ModProtomenuHelper extends ModMenuHelper {
 					$item->anchor_rel     = htmlspecialchars($item->params->get('menu-anchor_rel', ''), ENT_COMPAT, 'UTF-8', false);
 					$item->menu_image     = $item->params->get('menu_image', '') ? htmlspecialchars($item->params->get('menu_image', ''), ENT_COMPAT, 'UTF-8', false) : '';
 					$item->menu_image_css = htmlspecialchars($item->params->get('menu_image_css', ''), ENT_COMPAT, 'UTF-8', false);
-				}
+				
+					// Protomenü Item-Verhalten
+					$item->protomenu = new stdClass();
+					switch($item->params->get('ptm_item_behavior', ''))
+					{
+						case 'static' :
+							$item->protomenu->staticItem = true;
+						break;
+
+						case 'megamenu' :
+							$item->protomenu->megaMenu = true;
+							$item->protomenu->grid 	= (bool)$item->params->get('ptm_item_enable_grid', 0);
+						break;
+
+						case 'modules' :
+							$item->protomenu->loadModule 	= true;
+							$item->protomenu->moduleIds 	= $item->params->get('ptm_load_modules', array());
+						break;
+
+						case 'moduleposition' :
+							$item->protomenu->loadPosition 		= true;
+							$item->protomenu->modulePosition 	= htmlspecialchars($item->params->get('ptm_load_module_position',''), ENT_COMPAT, 'UTF-8', false);
+						break;
+
+						default :
+							$item->protomenu->staticItem 	= false;
+							$item->protomenu->megamenu 		= false;
+							$item->protomenu->grid 			= false;
+							$item->protomenu->loadModule 	= false;
+							$item->protomenu->loadPosition 	= false;
+					}
+					
+					// Protomenü: QueryString und Fragmentbezeichner
+					$item->protomenu->queryfragment 	= OutputFilter::ampReplace(htmlspecialchars($item->params->get('ptm_item_queryfragment',''), ENT_COMPAT, 'UTF-8', false));
+					// Protomenü: Eigene Attribute
+					$item->protomenu->linkattribs 		= htmlspecialchars($item->params->get('ptm_item_attributes',''), ENT_COMPAT, 'UTF-8', false);
+					// Protomenü: Titel überschreibeb
+					$item->protomenu->readmore_title 	= htmlspecialchars($item->params->get('ptm_item_readmore_title',''), ENT_COMPAT, 'UTF-8', false);
+					// Protomenu: Eigener optionaler Text
+					$item->protomenu->item_description 	= htmlspecialchars($item->params->get('ptm_item_description',''), ENT_COMPAT, 'UTF-8', false);
+				} // endforeach
 
 				if (isset($items[$lastitem]))
 				{
@@ -170,14 +236,126 @@ class ModProtomenuHelper extends ModMenuHelper {
 					$items[$lastitem]->shallower  = (($start ?: 1) < $items[$lastitem]->level);
 					$items[$lastitem]->level_diff = ($items[$lastitem]->level - ($start ?: 1));
 				}
-			}
+				
+			} // endif
 
 			$cache->store($items, $key);
-		}
+		} 
 
 		return $items;
 	}
 
+
+	/**
+	 * Bildet den Menübaum in ab, und gibt dieses Zurück. Das Array enthält alle Objekte der Menüeinträge. Kindelemente werden innerhalb der Eigenschaft „children” (array) eines Menüeintrags-Objekts abgebildet.
+	 * 
+	 * @param   array  $list   Die von ModProtomenuHelper::getList generierte Liste der Menüeinträge.
+	 * @param   int  $level   Die Ebene im Menübaum
+	 * @param 	object  $parent   Übergeordneter Menüeintrag von $level
+	 * 
+	 * @return   array  Ein mehrdimensonales Array, welches den Menübaum enthält.
+	 * 
+	 * @since   3.2
+	 */
+	public static function getMenuTree($list, $level = 1, $parent = null) 
+	{
+		$levelList = array();
+	
+		foreach($list as $item)
+		{
+			if($parent !== null)
+			{
+				if($item->parent_id === $parent && (int)$item->level === $level)
+				{
+					$levelList[] = $item;
+					if($item->deeper)
+					{
+						$item->children = self::getMenuTree($list, (int)$item->level + 1, $item->id);
+					}
+				}
+			}
+			else if((int)$item->level === $level)
+			{
+				$levelList[] = $item;
+				if($item->deeper)
+				{
+					$item->children = self::getMenuTree($list, (int)$item->level + 1, $item->id);
+				}
+			}
+		}
+	
+		return $levelList;
+	}
+
+	/**
+	 * 
+	 *  @since   3.2
+	 */
+	public static function getItemClassList(&$item)
+	{
+		$classList = array(
+			'item',
+			'item-' . $item->id
+		);
+		
+		// Ist der aktive Menüeintrag?
+		if($item->current_active)
+		{
+			$classList[] = 'current';
+			$classList[] = 'active';
+		}
+		else if ($item->active)		// Alle Menüeinträge im aktuellen Navigationspfad als Aktiv markieren
+		{
+			$classList[] = 'active';
+		}
+		
+		// Ist ein statisches Elternelement?
+		if($item->protomenu->staticItem)
+		{
+			$classList[] = 'static';
+		}
+	   
+		// Trennzeichen?
+		if ($item->type === 'separator')
+		{
+			$classList[] = 'divider';
+		}
+			
+		// Menü-Überschrift?
+		if ($item->type === 'heading')
+		{
+			$classList[] = 'heading';
+		}
+
+		// Hat Kindelemente?
+		if ($item->deeper)
+		{
+			$classList[] = 'deeper';
+		}
+
+		// Ist Elternelement?
+		if ($item->parent)
+		{
+			$classList[] = 'parent';
+		}
+
+		// Megamenü?
+		if($item->protomenu->megaMenu)
+		{
+			$classList[] = 'mega';
+		}
+
+		// Werden Module angezeigt?
+		if($item->protomenu->loadModule || $item->protomenu->loadPosition)
+		{
+			$classList[] = 'module';
+		}
+
+		// Eigene Klassen für Listenelement
+		$classList[] = $item->params->get('ptm_listitem_classes','');
+
+		return $classList;
+	}
 
 
 	/**
@@ -198,13 +376,13 @@ class ModProtomenuHelper extends ModMenuHelper {
 		{
 			case 'loadposition' :
 				
-				$modules = \Joomla\CMS\Helper\ModuleHelper::getModules($itemParams->get('ptm_load_module_position',''));
+				$modules = ModuleHelper::getModules($itemParams->get('ptm_load_module_position',''));
 
-				if(count($modules))
+				if (count($modules))
 				{
-					foreach( $modules as $i => $module )
+					foreach ( $modules as $module )
 					{
-						$html .= ModProtomenuHelper::renderModule($module, $itemParams);
+						$html .= self::renderModule($module, $itemParams);
 					}
 				}
 			break;
@@ -213,18 +391,19 @@ class ModProtomenuHelper extends ModMenuHelper {
 				
 				$modules = $itemParams->get('ptm_load_modules',array());
 
-				if(!count($modules)) break;
+				if (!count($modules)) break;
 
-                $db = \Joomla\CMS\Factory::getDbo();
+                $db = Factory::getDbo();
                 
                 // -- Zugriffsrechte respektieren
-                $levels     = \Joomla\CMS\Factory::getUser()->getAuthorisedViewLevels(); // Ids der Joomla Zugriffsebenen, denen der aktuelle User angehört.
-                
+                $levels = Factory::getUser()->getAuthorisedViewLevels(); // Ids der Joomla Zugriffsebenen, denen der aktuelle User angehört.
+				asort($levels);
+
                 // -- Veröffentlichungszeitraum respektieren
-                $now        = \Joomla\CMS\Factory::getDate()->toSql(); // Aktuelles Datum als SQL DateTime String
+                $now        = Factory::getDate()->toSql(); // Aktuelles Datum als SQL DateTime String
                 $nullDate   = $db->getNullDate(); // Null-Datum als SQL DateTime String
 
-                foreach($modules as $i => $modid) 
+                foreach ($modules as $modid) 
                 {
                     $q = $db->getQuery(true);
 
@@ -243,9 +422,9 @@ class ModProtomenuHelper extends ModMenuHelper {
 
                     $db->setQuery($q);
 
-                    if($result = $db->loadObject()) 
+                    if ($result = $db->loadObject()) 
                     {
-                        $html .= ModProtomenuHelper::renderModule($result, $itemParams);
+                        $html .= self::renderModule($result, $itemParams);
                     }
                 } // endforeach
 
@@ -257,28 +436,28 @@ class ModProtomenuHelper extends ModMenuHelper {
 
 	public static function renderModule(&$module, &$itemParams) 
 	{
-        $params = new \Joomla\Registry\Registry($module->params);
+        $params = new Registry($module->params);
         
-        if($itemParams->get('ptm_modules_chrome_style',0)) 
+        if ($itemParams->get('ptm_modules_chrome_style',0)) 
         {
             $params->set('style', $itemParams->get('ptm_modules_chrome_style'));
         }
 
 		$module->params = $params->toString();
 
-		$html = \Joomla\CMS\Helper\ModuleHelper::renderModule($module);
+		$html = ModuleHelper::renderModule($module);
 		return $html;
 	}
 
 
 	public static function getLanguageInfo() 
 	{
-		$lang		= JFactory::getLanguage();
-		$languages	= JLanguageHelper::getLanguages();
+		$lang		= Factory::getLanguage();
+		$languages	= LanguageHelper::getLanguages();
 
-		foreach($languages as $item)
+		foreach ($languages as $item)
 		{
-			if($item->lang_code === $lang->getTag())
+			if ($item->lang_code === $lang->getTag())
 			{
 				return $item;
 			}
