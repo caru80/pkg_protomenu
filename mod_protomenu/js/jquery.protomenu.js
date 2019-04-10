@@ -1,11 +1,11 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        3.1.0
+ * @version        3.2.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
- * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
+ * @copyright      Copyright © 2018 - 2019 HEAD. MARKETING GmbH All Rights Reserved
  * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -52,7 +52,8 @@
 		setup : function()
 		{	
 			const submenus = this.$node.find('[data-ptm-child]');
-			
+            
+
 			for(let i = 0, ilen = submenus.length; i < ilen; i++)
 			{
 				let sub = submenus.eq(i),
@@ -64,7 +65,8 @@
 				}
 				else 
 				{
-					triggers = this.$node.find('[data-ptm-item="' + sub.data('ptm-child') + '"]').not('[data-ptm-item].static');
+                    triggers = this.$node.find('[data-ptm-item="' + sub.data('ptm-child') + '"]').not('[data-ptm-item].static');
+                    //triggers = this.$node.find('[data-ptm-item="' + sub.data('ptm-child') + '"]');
 				}
 
 				for(let x = 0, xlen = triggers.length; x < xlen; x++)
@@ -145,14 +147,21 @@
 				// Touch Event
 				trigger.on('touchend.protomenu', function(ev) 
 				{
-					let item = $(this);
+                    let item = $(this);
 
-					if(item.data('ptmenu') && ev.delegateTarget === this)
+                    //if(item.data('ptmenu') && ev.delegateTarget === this) // delegateTarget ist bei <li> in einer <ul> IMMER this, weil nur noch items die ein Submenu haben einen Event auslösen.
+                    if($(ev.target).parents('[data-ptm-item]').get(0) === this)
 					{
 						ev.preventDefault();
 						ev.stopPropagation();
-					}
-					_.toggleSubmenu(ev, item);
+                    }
+                    else {
+                        /*
+                            Das Ereignis bricht sonst nicht ab und items, die kein Untermenü öffnen, lösen keinen Navigationsvorgang aus!
+                        */
+                        return;
+                    }
+                    _.toggleSubmenu(ev, item);
 				});
 			}
 			else 
@@ -285,7 +294,7 @@
 
 		toggleSubmenu : function(ev, trigger)
 		{	
-			if(!trigger.data('ptmenu')) return; // trigger kam mit Mouseenter oder -leave hier rein, und hat kein Untermenü.
+			if(!$(trigger).data('ptmenu')) return; // trigger kam mit Mouseenter oder -leave hier rein, und hat kein Untermenü.
 
 			const data		= trigger.data('ptmenu'),
 				  isopen 	= data.submenu.hasClass(this.opt.class.open);
@@ -309,7 +318,7 @@
 					{
 						this.showSub(data.submenu);
 					}
-			}
+            }
 		},
 
 		/*
