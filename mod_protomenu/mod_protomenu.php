@@ -1,11 +1,11 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.1.0
+ * @version        4.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
- * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
+ * @copyright      Copyright © 2018 - 2019 HEAD. MARKETING GmbH All Rights Reserved
  * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -19,7 +19,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Helper\ModuleHelper;
 
-require_once(__DIR__ . '/helper.php');
+JLoader::register('ModProtomenuHelper', __DIR__ . DIRECTORY_SEPARATOR . 'helper.php');
 
 $list		= ModProtomenuHelper::getList($params, $module);
 $class_sfx  = htmlspecialchars($params->get('moduleclass_sfx'), ENT_COMPAT, 'UTF-8');
@@ -46,10 +46,14 @@ if((bool) $params->get('menu_behavior',1)) {
 	}
 
 	// Mouseover möglich und eingeschaltet?
-	if($params->get('menu_rendermode', 'list', 'string') === 'list' 
-		&& (int)$params->get('mouseover', 0, 'int') === 1)
+	if((int)$params->get('mouseover', 0, 'int') === 1)
 	{
 		$options['mouseover'] = 1;
+
+		$options['events'] = array(
+			'mouse' 		=> $params->get('mouseover_events', 'mouseenter.protomenu mouseleave.protomenu'),
+			'mouseDelay' 	=> $params->get('mouseover_delay', 100)
+		);
 	}
 
 	// Optionen für Protomenü-JavaScript

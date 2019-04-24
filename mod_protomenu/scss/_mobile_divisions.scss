@@ -1,0 +1,223 @@
+/*
+	Protomenu
+	Carsten Ruppert - 2019-04-24
+
+	Mobile-Theme „Divisionen”
+	---------------
+	Dieses Theme funktioniert nur mit dem Render-Modus „Divisionen”, welcher in den Moduloptionen eingestellt werden muss.
+
+*/
+.ptmenu{
+	font-size: 1rem;
+	height: 100%;
+	user-select: none; 	// Das markieren von Text im Menü verhindern:
+}
+
+.ptmenu .nav-wrapper {
+	position: relative;
+	height: 100%;
+	z-index: 110; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann auch nicht klappt, musst du dein Stylesheet korrigieren.
+	overflow: hidden;
+}
+
+//
+// Ein Menü-Item
+//
+.ptmenu .item {
+	$link-color: (
+		"normal" 	: #333333,
+		"hover" 	: #ffffff,
+		"active" 	: #444444
+	);
+	$link-bg-color: (
+		"normal"	: transparent,
+		"hover"		: #559feb,
+		"active" 	: #cdd5dc
+	);
+
+	font-size: 1em;
+	
+	.item-link,
+	.item-heading 
+	{
+		display: flex;
+		position: relative;
+		padding: 0.6em 1em;
+		background-color: map-get($link-bg-color, "normal");
+		color: map-get($link-color, "normal");
+	}
+
+	// Aktiver Menüeintrag und aktiver Parent
+	&.parent.active,
+	&.current.active 
+	{
+		> .item-link,
+		&.deeper > .item-heading 
+		{
+			background-color: map-get($link-bg-color, "active");
+			color: map-get($link-color, "active");
+		}
+	}
+
+	// Geöffnet und angetippt
+	&.open,
+	&:active,
+	&.active.open,
+	&.active:active
+	{
+		> .item-link,
+		&.deeper > .item-heading 
+		{
+			background-color: map-get($link-bg-color, "hover");
+			color: map-get($link-color, "hover");
+			text-decoration: none;
+		}
+	}
+}
+
+// Erste Ebene Container
+.ptmenu .nav-first {}
+
+// Untermenü-Container
+.ptmenu .nav-child {
+	background-color: #efefef;
+}
+.ptmenu .nav-child .nav-child-inner {
+	padding: 30px;
+}
+
+/*
+	Deeper Anzeige (item kann aufgeklappt werden)
+
+	<xy class="item deeper">
+		<a class="nav-link">
+			<span class="item-label">Label</span>
+			<i class="item-deeper"></i> <------------------
+		</a>
+	</xy>
+*/
+
+//
+// Modern mit Punkten
+//
+.ptmenu .item.deeper {
+	> .item-link,
+	> .item-heading {
+		padding-right: 2.25em;
+	}
+}
+.ptmenu .item {
+
+	$bg-color: #333333; // Farbe Punkte
+	$size: 		0.25em;	// Größe Punkte: 16px (1rem) * 0.25 = 4px
+
+	.item-deeper {
+		&,
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			display: block;
+			width: $size;
+			height: $size;
+			background-color: $bg-color;
+			border-radius: 100%;
+			transition: transform 0.2s cubic-bezier(.54,.39,0,1.02);
+		}
+
+		right: 1em;
+		top: 50%;
+		margin: ($size / 4 * -1) ($size / 4 * -1) 0 0;
+	}
+
+	&.open > .item-link .item-deeper,
+	&.open > .item-heading .item-deeper
+	{
+		&::before,
+		&::after {
+			transform: translate3d(0, 0, 0);
+		}
+	}
+}
+
+// Ausrichtung Punkte
+.ptmenu .item.deeper {
+	.item-deeper {
+		&::before {
+			transform: translate3d(-175%, 0, 0);
+		}
+		&::after {
+			transform: translate3d(175%, 0, 0);
+		}
+	}
+}
+
+
+//
+// Klassisch mit statischen Punkten (FontAwesome)
+//
+/*
+.ptmenu .item.deeper {
+	.item-link,
+	.item-heading {
+		padding-right: 2.25em;
+	}
+
+	.item-deeper {
+		&::before {
+			@extend .fas;
+			content: fa-content($fa-var-ellipsis-h);
+		}
+		position: absolute;
+		right: 0;
+		width: 2em;
+		text-align: center;
+	}
+}
+*/
+
+
+
+
+//
+// Ausrichtung der Menü-Container
+//
+[data-ptm-root],
+[data-ptm-child]:not([data-ptm-static-child]) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+// Die Klasse expanded wird dem nav.ptmenu zugewiesen wenn ein Untermenü geöffnet ist.
+// Innerhalb der div.nav-child kann gescrollt werden. Wenn das Scrollen für das Elternelement von .nav-child dabei nicht abgeschaltet wird führt das zu seltsamen Ergebnissen.
+.ptmenu.expanded .nav-wrapper,
+[data-ptm-item].deeper > [data-ptm-child].expanded:not([data-ptm-static-child]) {
+	-ms-overflow-y: hidden;
+	overflow-y: 	hidden;
+}
+
+//
+// Ein- und Ausblende-Animation der Menü-Container
+//
+[data-ptm-child]:not([data-ptm-static-child]) {
+	visibility: hidden;
+	opacity: 0;
+	transform: translate3d(-100%, 0, 0);
+
+	transition: transform 0s 0.3s ease,
+				opacity 0.3s ease,
+				visibility 0s 0.3s linear;
+	
+	&.open {
+		visibility: visible;
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+		transition: transform 0.3s ease-out,
+					opacity 0.3s ease,
+					visibility 0s 0s linear;
+	}
+}

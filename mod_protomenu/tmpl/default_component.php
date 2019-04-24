@@ -1,11 +1,11 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.1.0
+ * @version        4.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
- * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
+ * @copyright      Copyright © 2018 - 2019 HEAD. MARKETING GmbH All Rights Reserved
  * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -19,14 +19,7 @@ defined('_JEXEC') or die;
 ?>
 <a
 	<?php echo $item->flink != '' ? ' href="' . $item->flink . $item->protomenu->queryfragment . '"' : ' tabindex="0"'; ?> 
-	class="<?php echo implode(' ', $ptmItemConfig->classes);?>" 
-	<?php
-		foreach($ptmItemConfig->dataAttribs as $name => $value):
-	?>
-			data-<?php echo $name;?>="<?php echo $value;?>"
-	<?php
-		endforeach;
-	?> 
+	class="item-link <?php echo $item->anchor_css;?>" 
 	<?php if($item->browserNav == 1):		?> target="_blank"<?php endif;?>
 	<?php if($item->browserNav == 2):		?> onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;"<?php endif;?>
 	<?php if($item->anchor_title != ''): 	?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
@@ -48,9 +41,11 @@ defined('_JEXEC') or die;
 		if($item->menu_image === '' 
 			|| ($item->menu_image && $item->params->get('menu_text', 1))) :
 	?>
+			<i class="item-icon"></i>
 			<span class="item-label">
-				<?php echo $item->title;?><?php if($item->deeper && !$item->protomenu->staticItem): ?><i class="item-arrow"></i><?php endif;?>
+				<?php echo $item->title;?>
 			</span>
+			<?php if($item->deeper && !$item->protomenu->staticItem): ?><i class="item-deeper"></i><?php endif;?>
 	<?php
 		endif;
 	?>

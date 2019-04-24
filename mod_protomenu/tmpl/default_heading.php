@@ -1,11 +1,11 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.1.0
+ * @version        4.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
- * @copyright      Copyright © 2018 HEAD. MARKETING GmbH All Rights Reserved
+ * @copyright      Copyright © 2018 - 2019 HEAD. MARKETING GmbH All Rights Reserved
  * @license        http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -16,18 +16,9 @@
 defined('_JEXEC') or die;
 
 // Note. It is important to remove spaces between elements.
-
-$ptmItemConfig->classes[] = 'nav-header';
 ?>
 <span
-	class="<?php echo implode(' ', $ptmItemConfig->classes);?>" 
-	<?php
-		foreach($ptmItemConfig->dataAttribs as $name => $value):
-	?>
-			data-<?php echo $name;?>="<?php echo $value;?>"
-	<?php
-		endforeach;
-	?> 
+	class="item-heading <?php echo $item->anchor_css;?>" 
 	<?php if($item->anchor_title != '') : ?> title="<?php echo $item->anchor_title;?>"<?php endif;?>
 	<?php echo $item->protomenu->linkattribs;?>
 >
@@ -46,9 +37,11 @@ $ptmItemConfig->classes[] = 'nav-header';
 		// -- Beschriftung
 		if($item->menu_image === '' || ($item->menu_image && $item->params->get('menu_text', 1))) :
 	?>
+			<i class="item-icon"></i>
 			<span class="item-label">
 				<?php echo $item->title;?>
 			</span>
+			<?php if($item->deeper && !$item->protomenu->staticItem): ?><i class="item-deeper"></i><?php endif;?>
 	<?php
 		endif;
 	?>

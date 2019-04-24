@@ -1,0 +1,210 @@
+/*
+	Protomenu
+	Carsten Ruppert - 2019-04-24
+
+	Mobile-Theme „Liste”
+	---------------
+	Dieses Theme funktioniert nur mit dem Render-Modus „Liste”, welcher in den Moduloptionen eingestellt werden muss.
+
+*/
+.ptmenu{
+	font-size: 1rem;
+	height: 100%;
+	user-select: none;	// Das markieren von Text im Menü verhindern:
+}
+
+.ptmenu .nav-wrapper {
+	position: relative;
+	height: 100%;
+	z-index: 110; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann auch nicht klappt, musst du dein Stylesheet korrigieren.
+	overflow-x: hidden;
+	-ms-overflow-y: scroll;
+	overflow-y: scroll;
+}
+
+
+//
+// Ein Menü-Item
+//
+.ptmenu .item {
+	$link-color: (
+		"normal" 	: #333333,
+		"hover" 	: #ffffff,
+		"active" 	: #444444
+	);
+	$link-bg-color: (
+		"normal"	: transparent,
+		"hover"		: #559feb,
+		"active" 	: #cdd5dc
+	);
+
+	font-size: 1em;
+	
+	.item-link,
+	.item-heading 
+	{
+		display: flex;
+		position: relative;
+		padding: 0.6em 1em;
+		background-color: map-get($link-bg-color, "normal");
+		color: map-get($link-color, "normal");
+	}
+
+	&.open > .item-link,
+	&.open > .item-heading
+	{
+		position: sticky;
+		top: 0;
+		z-index: 1000;
+	}
+
+	// Aktiver Menüeintrag und aktiver Parent
+	&.parent.active,
+	&.current.active 
+	{
+		> .item-link,
+		&.deeper > .item-heading 
+		{
+			background-color: map-get($link-bg-color, "active");
+			color: map-get($link-color, "active");
+		}
+	}
+
+	// Geöffnet und angetippt
+	&.open,
+	&:active,
+	&.active.open,
+	&.active:active{
+		> .item-link,
+		&.deeper > .item-heading{
+			background-color: map-get($link-bg-color, "hover");
+			color: map-get($link-color, "hover");
+			text-decoration: none;
+		}
+	}
+}
+
+
+// Erste Ebene Container
+.ptmenu .nav-first {
+	padding: 20px;
+}
+
+// Untermenü-Container
+.ptmenu .nav-child {
+	background-color: #efefef;
+}
+.ptmenu .nav-child .nav-child-inner {
+}
+
+
+/*
+	Deeper Anzeige (item kann aufgeklappt werden)
+
+	<xy class="item deeper">
+		<a class="nav-link">
+			<span class="item-label">Label</span>
+			<i class="item-deeper"></i> <------------------
+		</a>
+	</xy>
+*/
+
+//
+// Modern mit Punkten
+//
+.ptmenu .item.deeper {
+	> .item-link,
+	> .item-heading {
+		padding-right: 2.25em;
+	}
+}
+.ptmenu .item {
+
+	$bg-color: #333333; // Farbe Punkte
+	$size: 		0.25em;	// Größe Punkte: 16px (1rem) * 0.25 = 4px
+
+	.item-deeper {
+		&,
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			display: block;
+			width: 0.25em;
+			height: 0.25em;
+			background-color: $bg-color;
+			border-radius: 100%;
+			transition: transform 0.2s cubic-bezier(.54,.39,0,1.02);
+		}
+
+		right: 1em;
+		top: 50%;
+		margin: ($size / 4 * -1) ($size / 4 * -1) 0 0;
+	}
+
+	&.open > .item-link .item-deeper,
+	&.open > .item-heading .item-deeper
+	{
+		&::before,
+		&::after {
+			transform: translate3d(0, 0, 0);
+		}
+	}
+}
+
+// Ausrichtung Punkte
+.ptmenu .item.deeper {
+	.item-deeper {
+		&::before {
+			transform: translate3d(0, -175%, 0);
+		}
+		&::after {
+			transform: translate3d(0, 175%, 0);
+		}
+	}
+}
+
+
+//
+// Klassisch mit statischen Punkten (FontAwesome)
+//
+/*
+.ptmenu .item.deeper {
+	.item-link,
+	.item-heading {
+		padding-right: 2.25em;
+	}
+
+	.item-deeper {
+		&::before {
+			@extend .fas;
+			content: fa-content($fa-var-ellipsis-h);
+		}
+		position: absolute;
+		right: 0;
+		width: 2em;
+		text-align: center;
+	}
+}
+*/
+
+//
+// Ein- und Ausblende-Animation der Menü-Container
+//
+[data-ptm-child]:not([data-ptm-static-child]) {
+	display: none;
+	opacity: 0;
+	height: 0;
+	overflow: hidden;
+
+
+	transform: translate3d(0, 30px, 0);
+	&.open {
+		display: block;
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+		height: auto;
+		transition: transform 0.3s ease,
+					opacity 0.5s ease;
+	}
+}

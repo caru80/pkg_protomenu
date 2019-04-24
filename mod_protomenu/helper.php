@@ -1,7 +1,7 @@
 <?php
 /**
  * @package        HEAD. Protomenü
- * @version        3.2.0
+ * @version        4.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -15,20 +15,19 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\Registry\Registry;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\LanguageHelper;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Factory;
 
-// -- mod_menu helper
-require_once JPATH_BASE . '/modules/mod_menu/helper.php';
+// Importiere ModMenuHelper
+// JLoader::import('mod_menu.helper', JPATH_SITE . DIRECTORY_SEPARATOR . 'modules');
+JLoader::register('ModMenuHelper', JPATH_SITE . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'mod_menu' . DIRECTORY_SEPARATOR . 'helper.php');
 
 // -- Protomenu helper
 class ModProtomenuHelper extends ModMenuHelper {
-
-
 	/**
 	 * Get a list of the menu items. Modifiziert um Menüeinträge aus definierten Modulen und Menüeinträgen auszuschließen.
 	 *
@@ -45,11 +44,15 @@ class ModProtomenuHelper extends ModMenuHelper {
 
 		// Get active menu item
 		$base 	= self::getBase($params);
+
 		$levels = Factory::getUser()->getAuthorisedViewLevels();
 		asort($levels);
 		$key 	= 'menu_items' . $params . implode(',', $levels) . '.' . $base->id;
 		$cache 	= Factory::getCache('mod_menu', '');
-		// Für Joomla 4: $cache = Factory::getContainer()->get(CacheControllerFactoryInterface::class)->createCacheController('output', ['defaultgroup' => 'mod_menu']);
+		// 
+		// Für Joomla 4: 
+		// $cache = Factory::getContainer()->get(CacheControllerFactoryInterface::class)->createCacheController('output', ['defaultgroup' => 'mod_menu']);
+		//
 
 		if ($cache->contains($key))
 		{
@@ -126,9 +129,15 @@ class ModProtomenuHelper extends ModMenuHelper {
 					// In Joomla 4 wurde es bis jetzt nicht geändert.
 					// Habe das geändert, und das wird nun von den Templates benutzt
 					// $item->active = false;
+					$navPath = self::getActive($params)->tree;
+
 					$item->active = false;
+					/*
 					if (in_array($item->id, $base->tree)
 						|| ($item->type === 'alias' && in_array($item->params->get('aliasoptions'), $base->tree)))
+					*/
+					if (in_array($item->id, $navPath)
+						|| ($item->type === 'alias' && in_array($item->params->get('aliasoptions'), $navPath)))
 					{
 						$item->active = true;
 					}
@@ -191,6 +200,12 @@ class ModProtomenuHelper extends ModMenuHelper {
 				
 					// Protomenü Item-Verhalten
 					$item->protomenu = new stdClass();
+					$item->protomenu->staticItem 	= false;
+					$item->protomenu->megaMenu 		= false;
+					$item->protomenu->grid 			= false;
+					$item->protomenu->loadModule 	= false;
+					$item->protomenu->loadPosition 	= false;
+
 					switch($item->params->get('ptm_item_behavior', ''))
 					{
 						case 'static' :
@@ -211,23 +226,23 @@ class ModProtomenuHelper extends ModMenuHelper {
 							$item->protomenu->loadPosition 		= true;
 							$item->protomenu->modulePosition 	= htmlspecialchars($item->params->get('ptm_load_module_position',''), ENT_COMPAT, 'UTF-8', false);
 						break;
-
-						default :
-							$item->protomenu->staticItem 	= false;
-							$item->protomenu->megamenu 		= false;
-							$item->protomenu->grid 			= false;
-							$item->protomenu->loadModule 	= false;
-							$item->protomenu->loadPosition 	= false;
 					}
 					
 					// Protomenü: QueryString und Fragmentbezeichner
 					$item->protomenu->queryfragment 	= OutputFilter::ampReplace(htmlspecialchars($item->params->get('ptm_item_queryfragment',''), ENT_COMPAT, 'UTF-8', false));
 					// Protomenü: Eigene Attribute
-					$item->protomenu->linkattribs 		= htmlspecialchars($item->params->get('ptm_item_attributes',''), ENT_COMPAT, 'UTF-8', false);
+					$item->protomenu->linkattribs 		= htmlspecialchars($item->params->get('ptm_item_attributes',''), ENT_NOQUOTES, 'UTF-8', false);
 					// Protomenü: Titel überschreibeb
 					$item->protomenu->readmore_title 	= htmlspecialchars($item->params->get('ptm_item_readmore_title',''), ENT_COMPAT, 'UTF-8', false);
 					// Protomenu: Eigener optionaler Text
-					$item->protomenu->item_description 	= htmlspecialchars($item->params->get('ptm_item_description',''), ENT_COMPAT, 'UTF-8', false);
+					$item->protomenu->item_description 	= $item->params->get('ptm_item_description','');
+					// Protomenu: CSS Klassen für Container von Kindelementen
+					$item->protomenu->child_class = htmlspecialchars($item->params->get('ptm_child_class',''), ENT_COMPAT, 'UTF-8', false);
+					$item->protomenu->child_outer_class = htmlspecialchars($item->params->get('ptm_child_outer_class',''), ENT_COMPAT, 'UTF-8', false);
+					$item->protomenu->child_inner_class = htmlspecialchars($item->params->get('ptm_child_inner_class',''), ENT_COMPAT, 'UTF-8', false);
+					// Protomenu: Kind-Container standardmäßig geöffnet?
+					$item->protomenu->defaultopen = (bool)$item->params->get('ptm_child_defaultopen', false);
+
 				} // endforeach
 
 				if (isset($items[$lastitem]))
@@ -289,9 +304,9 @@ class ModProtomenuHelper extends ModMenuHelper {
 
 	/**
 	 * 
-	 *  @since   3.2
+	 *  @since   3.3
 	 */
-	public static function getItemClassList(&$item)
+	public static function getItemClassList(&$item, &$params, &$module = false)
 	{
 		$classList = array(
 			'item',
@@ -351,8 +366,38 @@ class ModProtomenuHelper extends ModMenuHelper {
 			$classList[] = 'module';
 		}
 
+		if ($item->deeper && !$item->protomenu->staticItem)
+		{
+			if ($item->active && (bool)$params->get('keepactiveopen', false))
+			{
+				$classList[] = 'open';
+				$item->protomenu->child_class .= ' open';
+			}
+			else if($item->protomenu->defaultopen)
+			{
+				$siblingActive = false;
+				if((bool)$params->get('keepactiveopen'))
+				{
+					foreach(self::getList($params, $module) as $sibling)
+					{
+						if($sibling->level == $item->level 
+							&& $sibling->id !== $item->id
+							&& $sibling->active)
+						{
+							$siblingActive = true;
+						}
+					}
+				}
+				if(!$siblingActive) 
+				{
+					$classList[] = 'open';
+					$item->protomenu->child_class .= ' open';
+				}
+			}
+		}
+
 		// Eigene Klassen für Listenelement
-		$classList[] = $item->params->get('ptm_listitem_classes','');
+		$classList[] = $item->params->get('ptm_listitem_classes', '');
 
 		return $classList;
 	}
@@ -364,11 +409,11 @@ class ModProtomenuHelper extends ModMenuHelper {
 	 * @param   string  $task   Ein String der definiert was zu tun ist. Dies kann entweder "loadmodule" oder "loadposition" sein.
 	 * @param   \Joomla\CMS\Registry\Registry  $itemParams   Ein Joomla Registry Objekt, welches die Menüitem-Parameter enthält.
 	 * 
-	 * @return   string  Das gerenderte HTML-Markup der angeforderten Module, oder ein leerer String, wenn keine Module gerendert wurden.
+	 * @return   string  Das gerenderte HTML-Markup der angeforderten Module oder ein leerer String, wenn keine Module gerendert wurden.
 	 * 
 	 * @since   3.0.0
 	 */
-	public static function getModules($task, &$itemParams) 
+	public static function getModules($task, &$itemParams, &$thismodule) 
 	{
 		$html = "";
 
@@ -405,6 +450,8 @@ class ModProtomenuHelper extends ModMenuHelper {
 
                 foreach ($modules as $modid) 
                 {
+					if($thismodule->id === $modid) continue; // Nicht das selbe Modul einfügen (Endlosschleife!)
+
                     $q = $db->getQuery(true);
 
                     $cond = array(

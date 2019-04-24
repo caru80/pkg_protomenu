@@ -1,27 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
 	<fields name="params">
-		<!--fieldset name="menu-options">
-		</fieldset-->
-		<fieldset name="PROTOMENU">
+		<fieldset name="menu-options">
+			<field 
+				name="note-protomenu-options"
+				type="note"
+				label="PLG_PROTOMENU_PROTOMENU"
+				description=""
+			/>
 
 			<field
-				name="ptm-note-behavior"
-				type="note"
+				name="ptm_listitem_classes"
+				type="text"
 				class=""
-				label="PLG_PROTOMENU_NOTE1"
-				description="PLG_PROTOMENU_NOTE1_DESC"
+				label="PLG_PROTOMENU_LISTITEM_CLASSES_LABEL"
+				description="PLG_PROTOMENU_LISTITEM_CLASSES_DESC"
 			/>
+
+			<field
+				name="ptm_item_attributes"
+				type="text"
+				cols="80"
+				rows="2"
+				class="input-xxlarge"
+				default=""
+				label="PLG_PROTOMENU_ITEM_ATTRIBUTES_LABEL"
+				description="PLG_PROTOMENU_ITEM_ATTRIBUTES_DESC"
+			/>
+
+			<field
+				name="ptm_item_queryfragment"
+				type="text"
+				class="input-xxlarge"
+				default=""
+				label="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_LABEL"
+				description="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_DESC"
+				hint="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_HINT"
+			/>
+
+
+			<field
+				name="ptm_item_hideinmodule"
+				type="sql"
+				default="10"
+				multiple="true"
+				query="SELECT id, CONCAT(title, ' (', language, ')') as value FROM #__modules WHERE client_id=0 AND module = 'mod_protomenu'"
+				key_field="id"
+				value_field="value"
+				header="JSELECT"
+				label="PLG_PROTOMENU_HIDEINMODULE_LABEL"
+				description="PLG_PROTOMENU_HIDEINMODULE_DESC"
+			/>
+
+            <field
+				name="ptm_item_hideinmenuitem"
+				type="menuitem"
+				default="0"
+				multiple="true"
+				label="PLG_PROTOMENU_HIDEINMENUITEM_LABEL"
+				description="PLG_PROTOMENU_HIDEINMENUITEM_DESC"
+			/>
+
+			<field
+				name="ptm_item_description"
+				type="textarea"
+				filter="raw"
+				class="input-xxlarge"
+				cols="40"
+				rows="5"
+				label="PLG_PROTOMENUT_ITEM_DESCRIPTION_LABEL"
+				description="PLG_PROTOMENUT_ITEM_DESCRIPTION_DESC"
+			/>
+
+		</fieldset>
+		<fieldset name="DROPDOWN_SETTINGS">
+
 			<field
 				name="ptm_item_behavior"
 				type="list"
 				label="PLG_PROTOMENU_BEHAVIOR"
 				description="PLG_PROTOMENU_BEHAVIOR_DESC"
-				default="0"
+				default="static"
 			>
+				<option value="static">PLG_PROTOMENU_BEHAVIOR_STATIC</option>
 				<option value="dropdown">PLG_PROTOMENU_BEHAVIOR_NORMAL</option>
 				<option value="megamenu">PLG_PROTOMENU_BEHAVIOR_MEGA</option>
-				<option value="static">PLG_PROTOMENU_BEHAVIOR_STATIC</option>
 				<option value="moduleposition">PLG_PROTOMENU_BEHAVIOR_LOADPOSITION</option>
 				<option value="modules">PLG_PROTOMENU_BEHAVIOR_LOADMODULE</option>
 				<option value="readmoretext">PLG_PROTOMENU_BEHAVIOR_READMORETEXT</option>
@@ -29,53 +92,46 @@
 			</field>
 
 			<field 
-				name="ptm-note-grid"
-				type="note"
-				showon="ptm_item_behavior:megamenu"
-				class=""
-				label="PLG_PROTOMENU_NOTE_GRID_LABEL"
-				description="PLG_PROTOMENU_NOTE_GRID_DESC"
-			/>
-			<field
-				name="ptm_item_enable_grid"
+				name="ptm_child_defaultopen"
 				type="radio"
-				showon="ptm_item_behavior:megamenu"
 				class="btn-group"
-				label="PLG_PROTOMENU_ITEM_ENABLE_GRID_LABEL"
-				description="PLG_PROTOMENU_ITEM_ENABLE_GRID_DESC"
+				label="PLG_PROTOMENU_NOTE_CHILD_DEFAULTOPEN_LABEL"
+				description="PLG_PROTOMENU_NOTE_CHILD_DEFAULTOPEN_DESC"
 				default="0"
+				filter="int"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
 
-			<field
-				name="ptm_item_grid_containerclass"
-				type="text"
-				showon="ptm_item_enable_grid:1[AND]ptm_item_behavior:megamenu"
-				default="container"
-				label="PLG_PROTOMENU_ITEM_GRID_CONTAINERCLASS_LABEL"
-				description="PLG_PROTOMENU_ITEM_GRID_CONTAINERCLASS_LABEL"
-				hint="PLG_PROTOMENU_ITEM_GRID_CONTAINERCLASS_HINT"
-			/>
-
-			<field
-				name="ptm_item_grid_rowclass"
-				type="text"
-				showon="ptm_item_enable_grid:1[AND]ptm_item_behavior:megamenu"
-				default="row"
-				label="PLG_PROTOMENU_ITEM_GRID_ROWCLASS_LABEL"
-				description="PLG_PROTOMENU_ITEM_GRID_ROWCLASS_LABEL"
-				hint="PLG_PROTOMENU_ITEM_GRID_ROWCLASS_HINT"
+			<field 
+				name="ptm-note-childcontainer"
+				type="note"
+				class=""
+				label="PLG_PROTOMENU_NOTE_CHILDCONTAINER_LABEL"
+				description=""
 			/>
 
 			<field 
-				name="ptm-note-gridlayout"
-				type="note"
-				showon="ptm_item_enable_grid:1[AND]ptm_item_behavior:megamenu"
-				class=""
-				label="PLG_PROTOMENU_NOTE_GRIDLAYOUT_LABEL"
-				description="PLG_PROTOMENU_NOTE_GRIDLAYOUT_DESC"
+				name="ptm_child_class"
+				type="text"
+				class="input-lg"
+				label="PLG_PROTOMENU_NOTE_CHILD_CLASS_LABEL"
+				description="PLG_PROTOMENU_NOTE_CHILD_CLASS_DESC"
+			/>
+			<field 
+				name="ptm_child_outer_class"
+				type="text"
+				class="input-lg"
+				label="PLG_PROTOMENU_NOTE_CHILD_OUTER_CLASS_LABEL"
+				description="PLG_PROTOMENU_NOTE_CHILD_OUTER_CLASS_DESC"
+			/>
+			<field 
+				name="ptm_child_inner_class"
+				type="text"
+				class="input-lg"
+				label="PLG_PROTOMENU_NOTE_CHILD_INNER_CLASS_LABEL"
+				description="PLG_PROTOMENU_NOTE_CHILD_INNER_CLASS_DESC"
 			/>
 
 			<field 
@@ -109,9 +165,9 @@
 				name="ptm_item_html_content"
 				type="editor"
 				editor="codemirror"
-				height="150"
-				width="300"
-				class="input-xxlarge"
+				height="300"
+				width="600"
+				
 				showon="ptm_item_behavior:html"
 				filter="safehtml"
 				label="PLG_PROTOMENU_ITEM_HTML_CONTENT_LABEL"
@@ -130,6 +186,7 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
+
 			<field
 				name="ptm_item_readmore_title"
 				type="text"
@@ -159,7 +216,7 @@
 				type="sql"
 				showon="ptm_item_behavior:modules"
 				default=""
-				query="SELECT id, CONCAT(title, ', Id: ', id, ' (', module, ', ', language, ')') as value FROM #__modules WHERE client_id=0 AND module != 'mod_protomenu'"
+				query="SELECT id, CONCAT(title, ', Id: ', id, ' (', module, ', ', language, ')') as value FROM #__modules WHERE client_id=0"
 				multiple="true"
 				key_field="id"
 				value_field="value"
@@ -176,79 +233,11 @@
 			/>
 
 			<field 
-				name="note-queryfragment"
+				name="ptm-note-child-classes"
 				type="note"
-				label="PLG_PROTOMENU_NOTE_QUERYFRAGMENT"
-				description="PLG_PROTOMENU_NOTE_QUERYFRAGMENT_DESC"
-			/>
-
-			<field
-				name="ptm_item_queryfragment"
-				type="text"
-				class="input-xxlarge"
-				default=""
-				label="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_LABEL"
-				description="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_DESC"
-				hint="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_HINT"
-			/>
-
-			<field 
-				name="note-enhanced"
-				type="note"
-				label="PLG_PROTOMENU_NOTE_ENHANCED_SETTINGS"
-				description="PLG_PROTOMENU_NOTE_ENHANCED_SETTINGS_DESC"
-			/>
-
-			<field
-				name="ptm_listitem_classes"
-				type="text"
 				class=""
-				label="PLG_PROTOMENU_LISTITEM_CLASSES_LABEL"
-				description="PLG_PROTOMENU_LISTITEM_CLASSES_DESC"
-			/>
-
-			<field
-				name="ptm_item_attributes"
-				type="text"
-				cols="80"
-				rows="2"
-				class="input-xxlarge"
-				default=""
-				label="PLG_PROTOMENU_ITEM_ATTRIBUTES_LABEL"
-				description="PLG_PROTOMENU_ITEM_ATTRIBUTES_DESC"
-			/>
-
-			<field
-				name="ptm_item_hideinmodule"
-				type="sql"
-				default="10"
-				multiple="true"
-				query="SELECT id, CONCAT(title, ' (', language, ')') as value FROM #__modules WHERE client_id=0 AND module = 'mod_protomenu'"
-				key_field="id"
-				value_field="value"
-				header="JSELECT"
-				label="PLG_PROTOMENU_HIDEINMODULE_LABEL"
-				description="PLG_PROTOMENU_HIDEINMODULE_DESC"
-			/>
-
-            <field
-				name="ptm_item_hideinmenuitem"
-				type="menuitem"
-				default="0"
-				multiple="true"
-				label="PLG_PROTOMENU_HIDEINMENUITEM_LABEL"
-				description="PLG_PROTOMENU_HIDEINMENUITEM_DESC"
-			/>
-
-			<field
-				name="ptm_item_description"
-				type="textarea"
-				filter="raw"
-				class="input-xxlarge"
-				cols="40"
-				rows="5"
-				label="PLG_PROTOMENUT_ITEM_DESCRIPTION_LABEL"
-				description="PLG_PROTOMENUT_ITEM_DESCRIPTION_DESC"
+				label="PLG_PROTOMENU_NOTE_OUTPUT_LABEL"
+				description="PLG_PROTOMENU_NOTE_OUTPUT_DESC"
 			/>
 
 		</fieldset>

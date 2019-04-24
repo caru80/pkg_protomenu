@@ -1,0 +1,117 @@
+/*
+	Protomenu
+	Carsten Ruppert - 2019-04-24
+
+	Untermenü-Header
+
+*/
+.ptmenu .nav-child-header {
+	font-size: 1rem;
+
+    display: flex;
+    flex-flow: row-reverse nowrap;
+	align-items: stretch;
+	justify-content: flex-end;
+
+	position: sticky;
+	z-index: 120;
+	top: 0px;
+
+	background-color: #ffffff;
+}
+
+// Schließen-Knopf
+.ptmenu .nav-child-header .nav-child-close a {
+
+	$colors : (
+		"background" : #559feb,
+		"text" 		 : #ffffff
+	);
+
+	$icon : $fa-var-angle-left;
+
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	
+	color: map-get($colors, "text");
+	background-color: map-get($colors, "background");
+
+	border-top-right-radius: 2em 100%;
+	border-bottom-right-radius: 2em 100%;
+	
+	padding: 0.75em 1em 0.75em 0.75em;
+	line-height: 1;
+
+	i::before {
+		@extend .fas;
+		content: fa-content($icon);
+		font-size: 1.15em;
+		line-height: inherit;
+		margin-right: 5px;
+	}
+	span {
+		font-size: 0.9em;
+	}
+
+	&:hover {
+		text-decoration: none;
+	}
+	&:active {
+		background-color: lighten(map-get($colors, "background"), 10%);
+	}
+}
+
+//
+// Untermenü-Pfad
+//
+.ptmenu .nav-child-tree {
+	flex-grow: 2;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	padding-left: 10px;
+}
+.ptmenu .nav-child-tree .tree-item {
+
+	$colors : (
+		"text" 	: #333333,
+		"link"	: #559feb,
+		"icon" 	: #559feb
+	);
+
+	$icons : (
+		"home" 		: $fa-var-home,
+		"divider" 	: $fa-var-angle-right
+	);
+
+	font-size: 1em;
+	color: map-get($colors, "text");
+    padding: 0.25em 0 0.25em 5px;
+
+	a {
+		color: map-get($colors, "link");
+		text-decoration: underline;
+	}
+
+	i::before {
+		@extend .fas;
+	}
+
+	// Trennzeichen
+    &:not(:first-child) i {
+		font-size: inherit;
+		float: left;
+		padding-right: 5px;
+        &::before {
+            content: fa-content(map-get($icons, "divider"));
+            color: map-get($colors, "icon");
+            font-size: 0.8em;
+        }
+	}
+	
+	// Home
+    &:first-child i::before {
+        content: fa-content(map-get($icons, "home"));
+    }
+}

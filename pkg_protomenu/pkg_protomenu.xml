@@ -2,16 +2,16 @@
 <extension type="package" version="3.0" method="upgrade">
 	<name>HEAD. Protomenü</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2019-03-20</creationDate>
+	<creationDate>2019-04-24</creationDate>
 	<copyright>© 2018 - 2019 HEAD. MARKETING GmbH</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>webmaster@headmarketing.de</authorEmail>
 	<authorUrl>https://www.headmarketing.de</authorUrl>
-	<version>3.2.0</version>
+	<version>4.0</version>
 	<description>Protomenü Installationspaket</description>
     <packagename>protomenu</packagename>
 	<updateservers>
-		<server type="extension" priority="1" name="pkg_protomenu">https://raw.githubusercontent.com/caru80/pkg_protomenu/master/updates/updates_ptmenu3.xml</server>
+		<server type="extension" priority="1" name="pkg_protomenu">https://raw.githubusercontent.com/caru80/pkg_protomenu/master/updates/updates_ptmenu4.xml</server>
 	</updateservers>
 	<files folder="packages">
 		<file type="module" id="protomenu" client="site">mod_protomenu.zip</file>

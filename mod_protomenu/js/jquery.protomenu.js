@@ -1,7 +1,7 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        3.2.1
+ * @version        4.0
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -30,7 +30,15 @@
 		seperateswitch 	: false, 	// Hier auf true setzen, wenn Umschalter und Anker getrennt werden sollen.
 		mouseover 		: false, 	// Öffnen von Untermenüs bei Mouseover
 		clickAnywhere 	: false,	// Irgendwo - außerhalb des Menüs - klicken um alle Menüs zu schließen?
-		plugins 		: []
+		plugins 		: [],
+		events          : {
+			//mouse : 'mouseenter.protomenu mouseleave.protomenu',
+			//mouseDelay : 0,
+			mouse : 'mouseenter.protomenu',
+			mouseDelay : 200,
+			touch : 'touchend.protomenu',
+			click : 'click.protomenu'
+		}
 	};
 
 	$.Protomenu.Plugins = [];
@@ -39,8 +47,11 @@
 
 		_init : function( options )
 		{
-			this.opt 		= $.extend({}, $.Protomenu.defaults, options);
+			this.opt 		= $.extend(true, {}, $.Protomenu.defaults, options);
 			this.$wrapper 	= this.$node.children('.nav-wrapper');
+
+			this.childMenus 	= this.$node.find('.ptmenu'); 				// Protomenü in Protomenü
+			this.childSubmenus 	= this.childMenus.find('[data-ptm-child]'); // Untermenüs von Protomenü in Protomenü
 
 			this.setup();
 			this.initPlugins();
@@ -51,32 +62,21 @@
 		*/
 		setup : function()
 		{	
-			const submenus = this.$node.find('[data-ptm-child]');
-            
+			const submenus = this.$node.find('[data-ptm-child]').not(this.childSubmenus);
 
 			for(let i = 0, ilen = submenus.length; i < ilen; i++)
 			{
-				let sub = submenus.eq(i),
-					triggers;
-
-				if(!this.opt.mouseover) 
-				{
-					triggers = this.$node.find('[data-ptm-trigger="' + sub.data('ptm-child') + '"]');
-				}
-				else 
-				{
-                    triggers = this.$node.find('[data-ptm-item="' + sub.data('ptm-child') + '"]').not('[data-ptm-item].static');
-                    //triggers = this.$node.find('[data-ptm-item="' + sub.data('ptm-child') + '"]');
-				}
+				let sub 		= submenus.eq(i),
+					triggers 	= this.$node.find('[data-ptm-item="' + sub.data('ptm-child') + '"]').not('[data-ptm-item].static');
 
 				for(let x = 0, xlen = triggers.length; x < xlen; x++)
 				{
 					let trigger = triggers.eq(x),
-						d  		= {submenu : sub},
+						data	= {submenu : sub},
 						sep 	= trigger.find('[data-ptm-switcher]');
 
 					trigger = sep.length && this.opt.seperateswitch ? sep : trigger;
-					trigger.data('ptmenu', d);
+					trigger.data('ptmenu', data);
 
 					this.attachTriggerEvent(trigger);
 				}
@@ -89,7 +89,7 @@
 			{
 				$(document).on('click.protomenu', function(ev)
 				{ 
-					if(!$.contains(this.$node.get(0), ev.target))
+					if($.contains(this.$node.get(0), ev.target) === false)
 					{
 						this.closeRootLevel();
 					}
@@ -131,46 +131,61 @@
 		attachTriggerEvent : function(trigger)
 		{
 			const _ = this;
-			/*
-				Bei Maussteuerung ist der „trigger” ein <li> (und zwar ALLE <li> im Menü).
-				Bei Klicksteuerung ist der trigger ein beliebiges Element mit dem Attribut data-ptm-trigger
-			*/
+
 			if(this.opt.mouseover)
 			{	
-				// Maus Events
-				trigger.on('mouseenter.protomenu mouseleave.protomenu', function(ev)
+				trigger.on(this.opt.events.mouse, function(ev)
 				{
-					let item = $(this);
-					_.toggleSubmenu(ev, item);
+					let item 		= $(this),
+						obsEvents 	= ['mouseenter','mouseover'];
+
+					if(_.opt.events.mouseDelay > 0 && !!~obsEvents.indexOf(ev.type))
+					{
+						item.one('mouseleave.ildetimer', function()
+						{
+							window.clearTimeout(this._ptmenuIdleTimer);
+						});
+
+						item.get(0)._ptmenuIdleTimer = window.setTimeout(function(item, ev)
+						{
+							this.toggleSubmenu(ev, item);
+							item.off('.ildetimer');
+						}.bind(_, item, ev), _.opt.events.mouseDelay);
+					}
+					else
+					{
+						_.toggleSubmenu(ev, item);
+					}
 				});
 
 				// Touch Event
-				trigger.on('touchend.protomenu', function(ev) 
+				trigger.on(this.opt.events.touch, function(ev) 
 				{
-                    let item = $(this);
+					let item = $(this);
 
-                    //if(item.data('ptmenu') && ev.delegateTarget === this) // delegateTarget ist bei <li> in einer <ul> IMMER this, weil nur noch items die ein Submenu haben einen Event auslösen.
-                    if($(ev.target).parents('[data-ptm-item]').get(0) === this)
+					//if(item.data('ptmenu') && ev.delegateTarget === this) // Das ist falsch, weil delegateTarget ist bei <li> in einer <ul> IMMER this, weil nur noch items die ein Submenu haben einen Event auslösen.
+					if($(ev.target).parents('[data-ptm-item]').get(0) === this)
 					{
 						ev.preventDefault();
 						ev.stopPropagation();
-                    }
-                    else {
-                        /*
-                            Das Ereignis bricht sonst nicht ab und items, die kein Untermenü öffnen, lösen keinen Navigationsvorgang aus!
-                        */
-                        return;
-                    }
-                    _.toggleSubmenu(ev, item);
+					}
+					else {
+						/*
+							Das Ereignis bricht sonst nicht ab und items, die kein Untermenü öffnen, lösen keinen Navigationsvorgang aus!
+						*/
+						return;
+					}
+					_.toggleSubmenu(ev, item);
 				});
 			}
 			else 
 			{
-				trigger.on('click.protomenu', function(ev)
+				trigger.on(this.opt.events.click, function(ev)
 				{
 					let item = $(this);
 
-					if(item.data('ptmenu'))
+					//if(item.data('ptmenu'))
+					if($(ev.target).parents('[data-ptm-item]').get(0) === this)
 					{
 						ev.preventDefault();
 						ev.stopPropagation();
@@ -219,47 +234,29 @@
 		},
 
 		/*
-			Deaktiviert alle „Auslöser” eines „Untermenüs”.
+			Deaktiviert alle „Auslöser” eines „Untermenüs”, und die Auslöser dessen Kind-Menüs.
 		*/
-		disableTriggersOf : function(sub)
+		disableTriggers : function(sub)
 		{
-			sub.data('ptmenu').triggers.removeClass(this.opt.class.open);
-
-			const descestors = sub.find('[data-ptm-child]');
-			
-			for(let i = 0, len = descestors.length; i < len; i++)
-			{
-				let data = descestors.eq(i).data('ptmenu');
-
-				if(data)
-				{
-					data.triggers.removeClass(this.opt.class.open); // Auslöser aller Nachkommen deaktivieren
-				}
-			}
+			let triggers = sub.data('ptmenu').triggers;
+			triggers.removeClass(this.opt.class.open);
 		},
-
+		
 		/*
 			Schließe alle Nachkommen von Untermenü „sub”.
 		*/
-		closeDescestorsOf : function(sub)
+		closeDescestors : function(sub)
 		{
-			if(this.opt.mouseover)
-			{
-				const descestors = sub.find('[data-ptm-child]');
-				descestors.removeClass(this.opt.class.open);
-			}
-			else 
-			{
-				const triggers = sub.find('[data-ptm-trigger]').not('.nav-child-header [data-ptm-trigger]');
+			const triggers = sub.find('[data-ptm-item].' + this.opt.class.open).not(this.childMenus.find('[data-ptm-item]')).not('.nav-child-header [data-ptm-item]');
 
-				for(let i = 0; i < triggers.length; i++)
+			for (let i = 0, len = triggers.length; i < len; i++)
+			{
+				let decestor = this.$node.find('[data-ptm-child="' + triggers.eq(i).data('ptm-item') + '"].' + this.opt.class.open);
+
+				if(decestor.length) 
 				{
-					let decestor = this.$node.find('[data-ptm-child="' + triggers.eq(i).data('ptm-trigger') + '"]');
-					if(decestor.length) 
-					{
-						decestor.removeClass(this.opt.class.open);
-						this.closeDescestorsOf(decestor);
-					}
+					decestor.removeClass(this.opt.class.open);
+					this.disableTriggers(decestor);
 				}
 			}
 		},
@@ -270,11 +267,11 @@
 		*/
 		closeRootLevel : function()
 		{
-			const sub = this.$node.find('.' + this.opt.class.open + '[data-ptm-child][data-ptm-level="2"]');
+			const sub = this.$node.find('[data-ptm-child][data-ptm-level="2"].' + this.opt.class.open).not(this.childSubmenus);
 
 			if(sub.length)
 			{
-				this.hideSub(sub); //.eq(0));
+				this.hideSub(sub);
 			}
 		},
 
@@ -283,8 +280,7 @@
 		*/
 		closeEqualLevel : function(sub)
 		{
-			//const subs = sub.parents('ul').eq(0).find('.' + this.opt.class.open + '[data-ptm-child]').not(sub);
-			const subs = this.$node.find('[data-ptm-level="' + sub.data('ptm-level') + '"]').not(sub);
+			const subs = this.$node.find('[data-ptm-level="' + sub.data('ptm-level') + '"]').not(sub).not(this.childSubmenus);
 
 			for(let i = 0, len = subs.length; i < len; i++ )
 			{
@@ -302,10 +298,12 @@
 			switch(ev.type) 
 			{
 				case 'mouseenter' :
+				case 'mouseover' :
 					this.showSub(data.submenu);
 				break;
 
 				case 'mouseleave' :
+				case 'mouseout' :
 					this.hideSub(data.submenu);
 				break;
 
@@ -318,7 +316,7 @@
 					{
 						this.showSub(data.submenu);
 					}
-            }
+			}
 		},
 
 		/*
@@ -326,11 +324,12 @@
 		*/
 		hideSub : function(sub)
 		{
-			sub.removeClass(this.opt.class.open);
-			this.closeDescestorsOf(sub);
-			this.disableTriggersOf(sub);
+			const parents = sub.parents('[data-ptm-child]');
 
-			let parents = sub.parents('[data-ptm-child]');
+			sub.removeClass(this.opt.class.open);
+			this.closeDescestors(sub);
+			this.disableTriggers(sub);
+			
 			if(parents.length)
 			{
 				parents.eq(parents.length -1).removeClass(this.opt.class.expanded);
@@ -344,9 +343,13 @@
 		*/
 		showSub : function(sub)
 		{
-			const data = sub.data('ptmenu');
+			const 	data 	= sub.data('ptmenu'),
+					parents = sub.parents('[data-ptm-child]');
 
 			this.closeEqualLevel(sub);
+
+			sub.addClass(this.opt.class.open);
+			data.triggers.addClass(this.opt.class.open);
 
 			// Autoalign von rechts nach links
 			if(this.opt.autoalign)
@@ -356,11 +359,7 @@
 					sub.addClass(this.opt.class.rtl);
 				}
 			}
-
-			sub.addClass(this.opt.class.open);
-			data.triggers.addClass(this.opt.class.open);
-
-			let parents = sub.parents('[data-ptm-child]');
+	
 			if(parents.length)
 			{
 				parents.eq(parents.length -1).addClass(this.opt.class.expanded);
@@ -377,11 +376,11 @@
 			let something;
 			if(first) // Nur im first-level suchen
 			{
-				something = this.$node.find('.' + this.opt.class.open + '[data-ptm-child][data-ptm-level="2"]');
+				something = this.$node.find('.' + this.opt.class.open + '[data-ptm-child][data-ptm-level="2"]').not(this.childSubmenus);
 			}
 			else
 			{
-				something = this.$node.find('.' + this.opt.class.open + '[data-ptm-child]');
+				something = this.$node.find('.' + this.opt.class.open + '[data-ptm-child]').not(this.childSubmenus);
 			}
 
 			if(something.length)
@@ -433,7 +432,7 @@
 			{
 				if(this.parent.isExpanded(true))
 				{
-					this.backdrop.addClass(this.opt.class.open);
+					this.backdrop.addClass(this.parent.opt.class.open);
 				}
 				else
 				{
