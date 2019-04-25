@@ -42,6 +42,7 @@ function renderMenuDivisions($list, $level = 1, $parent = null, $params, $module
 			"child_inner" => $parent->protomenu->child_inner_class
 		);
 		$childClasses->child .= $parent->protomenu->megaMenu ? ' mega' : '';
+		$childClasses->child .= $parent->protomenu->staticItem ? ' static' : '';
 
 		// Kindebene (Untermenü bauen):
 		$html = <<<HTML

@@ -58,11 +58,12 @@ TMPL;
 		}
 
 		$childClasses = (object) array(
-			"child" => $item->protomenu->child_class,
-			"child_outer" => $item->protomenu->child_outer_class,
-			"child_inner" => $item->protomenu->child_inner_class
+			"child" 		=> $item->protomenu->child_class,
+			"child_outer" 	=> $item->protomenu->child_outer_class,
+			"child_inner" 	=> $item->protomenu->child_inner_class
 		);
 		$childClasses->child .= $item->protomenu->megaMenu ? ' mega' : '';
+		$childClasses->child .= $item->protomenu->staticItem ? ' static' : '';
 
 
 		echo <<<TMPL
