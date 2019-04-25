@@ -38,7 +38,7 @@
 	font-size: 1em;
 	
 	.item-link,
-	.item-heading 
+	&.deeper > .item-heading 
 	{
 		display: flex;
 		position: relative;
