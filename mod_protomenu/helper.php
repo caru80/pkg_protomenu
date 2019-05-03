@@ -124,7 +124,6 @@ class ModProtomenuHelper extends ModMenuHelper {
 						$items[$lastitem]->level_diff = ($items[$lastitem]->level - $item->level);
 					}
 
-					$lastitem     = $i;
 					// Cru.: $item->active ist seitens Open Source Matters immer false... wird auch nirgendwo benutzt. 
 					// In Joomla 4 wurde es bis jetzt nicht geändert.
 					// Habe das geändert, und das wird nun von den Templates benutzt
@@ -132,14 +131,20 @@ class ModProtomenuHelper extends ModMenuHelper {
 					$navPath = self::getActive($params)->tree;
 
 					$item->active = false;
-					/*
-					if (in_array($item->id, $base->tree)
-						|| ($item->type === 'alias' && in_array($item->params->get('aliasoptions'), $base->tree)))
-					*/
-					if (in_array($item->id, $navPath)
-						|| ($item->type === 'alias' && in_array($item->params->get('aliasoptions'), $navPath)))
+					if (in_array($item->id, $navPath))
 					{
 						$item->active = true;
+					}
+					else if ($item->type === 'alias' 
+						&& in_array($item->params->get('aliasoptions'), $navPath))
+					{
+						$item->active = true;
+
+						// So werden z.B. URL oder Menüüberschriften aktiv, die ein Parent von einem Alias sind, welches gerade aktiv ist.
+						if (isset($items[$lastitem]) && $items[$lastitem]->id == $item->parent_id)
+						{
+							$items[$lastitem]->active = true;
+						}
 					}
 
 					$item->flink = $item->link;
@@ -243,6 +248,7 @@ class ModProtomenuHelper extends ModMenuHelper {
 					// Protomenu: Kind-Container standardmäßig geöffnet?
 					$item->protomenu->defaultopen = (bool)$item->params->get('ptm_child_defaultopen', false);
 
+					$lastitem     = $i;
 				} // endforeach
 
 				if (isset($items[$lastitem]))
