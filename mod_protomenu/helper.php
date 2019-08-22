@@ -21,6 +21,7 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\Module\Menu\Site\Helper\MenuHelper;
 
 // Importiere ModMenuHelper
 // JLoader::import('mod_menu.helper', JPATH_SITE . DIRECTORY_SEPARATOR . 'modules');
@@ -65,6 +66,9 @@ class ModProtomenuHelper extends ModMenuHelper {
 			$end            = (int) $params->get('endLevel', 0);
 			$showAll        = $params->get('showAllChildren', 1);
 			$items          = $menu->getItems('menutype', $params->get('menutype'));
+			
+			//var_dump($items);
+
 			$hidden_parents = array();
 			$lastitem       = 0;
 
@@ -77,6 +81,7 @@ class ModProtomenuHelper extends ModMenuHelper {
 					if (isset($items[$lastitem]) && $items[$lastitem]->id == $item->parent_id && $item->params->get('menu_show', 1) == 1)
 					{
 						$items[$lastitem]->parent = true;
+						$items[$lastitem]->protomenu->parent = true;
 					}
 
 					if (($start && $start > $item->level)
@@ -141,10 +146,20 @@ class ModProtomenuHelper extends ModMenuHelper {
 						$item->active = true;
 
 						// So werden z.B. URL oder Menüüberschriften aktiv, die ein Parent von einem Alias sind, welches gerade aktiv ist.
+						/*
 						if (isset($items[$lastitem]) && $items[$lastitem]->id == $item->parent_id)
 						{
 							$items[$lastitem]->active = true;
 						}
+						*/
+
+						// Nä! So werden z.B. URL oder Menüüberschriften aktiv, die ein Parent von einem Alias sind, welches gerade aktiv ist!
+						foreach($items as $x => $parent) {
+							if($x === $i) break;
+
+							if($parent->id === $item->parent_id) $parent->active = true;
+						}
+
 					}
 
 					$item->flink = $item->link;
@@ -157,7 +172,7 @@ class ModProtomenuHelper extends ModMenuHelper {
 					{
 						$item->current_active = true;
 					}
-
+					
 					// Reverted back for CMS version 2.5.6
 					switch ($item->type)
 					{
@@ -249,7 +264,10 @@ class ModProtomenuHelper extends ModMenuHelper {
 					// Protomenu: Kind-Container standardmäßig geöffnet?
 					$item->protomenu->defaultopen = (bool)$item->params->get('ptm_child_defaultopen', false);
 
+					$item->protomenu->classlist = self::getItemClassList($item, $params, $module);
+
 					$lastitem     = $i;
+
 				} // endforeach
 
 				if (isset($items[$lastitem]))
@@ -258,6 +276,7 @@ class ModProtomenuHelper extends ModMenuHelper {
 					$items[$lastitem]->shallower  = (($start ?: 1) < $items[$lastitem]->level);
 					$items[$lastitem]->level_diff = ($items[$lastitem]->level - ($start ?: 1));
 				}
+
 				
 			} // endif
 
@@ -317,7 +336,8 @@ class ModProtomenuHelper extends ModMenuHelper {
 	{
 		$classList = array(
 			'item',
-			'item-' . $item->id
+			'item-' . $item->id,
+			'item-level-' . (((int)$item->level - (int)$params->get('startLevel', 1)) + 1)
 		);
 		
 		// Ist der aktive Menüeintrag?
@@ -356,7 +376,8 @@ class ModProtomenuHelper extends ModMenuHelper {
 		}
 
 		// Ist Elternelement?
-		if ($item->parent)
+		if (!empty($item->parent)
+			|| !empty($item->protomenu->parent))
 		{
 			$classList[] = 'parent';
 		}
@@ -368,7 +389,8 @@ class ModProtomenuHelper extends ModMenuHelper {
 		}
 
 		// Werden Module angezeigt?
-		if($item->protomenu->loadModule || $item->protomenu->loadPosition)
+		if($item->protomenu->loadModule 
+			|| $item->protomenu->loadPosition)
 		{
 			$classList[] = 'module';
 		}
