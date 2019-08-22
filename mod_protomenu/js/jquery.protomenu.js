@@ -1,7 +1,7 @@
 
 /**
  * @package        HEAD. Protomenü 2
- * @version        4.0
+ * @version        4.0.1
  * 
  * @author         Carsten Ruppert <webmaster@headmarketing.de>
  * @link           https://www.headmarketing.de
@@ -32,12 +32,11 @@
 		clickAnywhere 	: false,	// Irgendwo - außerhalb des Menüs - klicken um alle Menüs zu schließen?
 		plugins 		: [],
 		events          : {
-			//mouse : 'mouseenter.protomenu mouseleave.protomenu',
-			//mouseDelay : 0,
-			mouse : 'mouseenter.protomenu',
-			mouseDelay : 200,
-			touch : 'touchend.protomenu',
-			click : 'click.protomenu'
+			mouse 		: 'mouseenter.protomenu mouseleave.protomenu',
+			mouseDelay 	: 200,
+			touch 		: 'touchend.protomenu',
+			click 		: 'click.protomenu',
+			namespace 	: '.protomenu'
 		}
 	};
 
@@ -138,6 +137,21 @@
 				{
 					let item 		= $(this),
 						obsEvents 	= ['mouseenter','mouseover'];
+
+					// Nachfolgendes verhindert, dass während ein Untermenü ausgeblendet wird, es wieder einblendet, wenn es mit der Maus berührt wird.
+					// Nur noch der direkte Nachfahre von .item löst das einblenden aus, außer <div data-ptm-child=""></div>
+					if(ev.type === 'mouseenter')
+					{
+						let allowed = item.children(':not([data-ptm-child])');
+	
+						allowed = $.merge(allowed, allowed.find('*')).toArray();
+
+						if(allowed.indexOf(ev.target) === -1)
+						{
+							return false;
+						}
+					}
+
 
 					if(_.opt.events.mouseDelay > 0 && !!~obsEvents.indexOf(ev.type))
 					{

@@ -61,8 +61,8 @@ class plgcontentprotomenuInstallerScript
      */
     public function postflight($type, $parent)
     {
-		$query = "UPDATE `#__extensions` SET `enabled`=1 WHERE `element` = 'protomenu' AND `folder` = 'content' ";
-        return JFactory::getDbo()->setQuery($query)->query();
+		  $query = "UPDATE `#__extensions` SET `enabled`=1 WHERE `element` = 'protomenu' AND `folder` = 'content' ";
+        return JFactory::getDbo()->setQuery($query)->execute();
    }
 
 }

@@ -45,7 +45,7 @@ defined('_JEXEC') or die;
 			<span class="item-label">
 				<?php echo $item->title;?>
 			</span>
-			<?php if($item->deeper && !$item->protomenu->staticItem): ?><i class="item-deeper"></i><?php endif;?>
+			<?php if($item->deeper && !$item->protomenu->staticItem): ?><span class="item-deeper"><i></i></span><?php endif;?>
 	<?php
 		endif;
 	?>

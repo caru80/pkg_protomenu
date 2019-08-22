@@ -28,7 +28,6 @@ foreach ($list as $i => &$item)
 	// Klassenliste für das Containerelement (<li>)
 	$classList = ModProtomenuHelper::getItemClassList($item, $params, $module);
 	$classList = trim(implode(' ', $classList));
-	
 /*
 	Ausgabe Template:
 */
@@ -60,7 +59,8 @@ TMPL;
 		$childClasses = (object) array(
 			"child" 		=> $item->protomenu->child_class,
 			"child_outer" 	=> $item->protomenu->child_outer_class,
-			"child_inner" 	=> $item->protomenu->child_inner_class
+			"child_inner" 	=> $item->protomenu->child_inner_class,
+			"submenu" 		=> $item->protomenu->child_submenu_class
 		);
 		$childClasses->child .= $item->protomenu->megaMenu ? ' mega' : '';
 		$childClasses->child .= $item->protomenu->staticItem ? ' static' : '';
@@ -71,7 +71,7 @@ TMPL;
 	$childHeader
 	<div class="nav-child-outer $childClasses->child_outer">
 		<div class="nav-child-inner $childClasses->child_inner">
-			<ul class="nav-sub nav-level-$childLevel" data-ptm-sub="$module->id-$item->id">
+			<ul class="nav-sub nav-level-$childLevel $childClasses->submenu" data-ptm-sub="$module->id-$item->id">
 TMPL;
 	}
 	elseif ($item->shallower) // Das nächste Item sitzt höher. Untermenü schließen, und Listeneintrag schließen.

@@ -8,7 +8,6 @@
 				label="PLG_PROTOMENU_PROTOMENU"
 				description=""
 			/>
-
 			<field
 				name="ptm_listitem_classes"
 				type="text"
@@ -16,7 +15,6 @@
 				label="PLG_PROTOMENU_LISTITEM_CLASSES_LABEL"
 				description="PLG_PROTOMENU_LISTITEM_CLASSES_DESC"
 			/>
-
 			<field
 				name="ptm_item_attributes"
 				type="text"
@@ -27,7 +25,6 @@
 				label="PLG_PROTOMENU_ITEM_ATTRIBUTES_LABEL"
 				description="PLG_PROTOMENU_ITEM_ATTRIBUTES_DESC"
 			/>
-
 			<field
 				name="ptm_item_queryfragment"
 				type="text"
@@ -37,8 +34,6 @@
 				description="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_DESC"
 				hint="PLG_PROTOMENU_ITEM_QUERYFRAGMENT_HINT"
 			/>
-
-
 			<field
 				name="ptm_item_hideinmodule"
 				type="sql"
@@ -51,7 +46,6 @@
 				label="PLG_PROTOMENU_HIDEINMODULE_LABEL"
 				description="PLG_PROTOMENU_HIDEINMODULE_DESC"
 			/>
-
             <field
 				name="ptm_item_hideinmenuitem"
 				type="menuitem"
@@ -60,7 +54,6 @@
 				label="PLG_PROTOMENU_HIDEINMENUITEM_LABEL"
 				description="PLG_PROTOMENU_HIDEINMENUITEM_DESC"
 			/>
-
 			<field
 				name="ptm_item_description"
 				type="textarea"
@@ -71,10 +64,8 @@
 				label="PLG_PROTOMENUT_ITEM_DESCRIPTION_LABEL"
 				description="PLG_PROTOMENUT_ITEM_DESCRIPTION_DESC"
 			/>
-
 		</fieldset>
 		<fieldset name="DROPDOWN_SETTINGS">
-
 			<field
 				name="ptm_item_behavior"
 				type="list"
@@ -90,7 +81,6 @@
 				<option value="readmoretext">PLG_PROTOMENU_BEHAVIOR_READMORETEXT</option>
 				<option value="html">PLG_PROTOMENU_BEHAVIOR_HTML</option>
 			</field>
-
 			<field 
 				name="ptm_child_defaultopen"
 				type="radio"
@@ -103,7 +93,6 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
-
 			<field 
 				name="ptm-note-childcontainer"
 				type="note"
@@ -111,7 +100,6 @@
 				label="PLG_PROTOMENU_NOTE_CHILDCONTAINER_LABEL"
 				description=""
 			/>
-
 			<field 
 				name="ptm_child_class"
 				type="text"
@@ -133,7 +121,13 @@
 				label="PLG_PROTOMENU_NOTE_CHILD_INNER_CLASS_LABEL"
 				description="PLG_PROTOMENU_NOTE_CHILD_INNER_CLASS_DESC"
 			/>
-
+			<field 
+				name="ptm_child_submenu_class"
+				type="text"
+				class="input-lg"
+				label="PLG_PROTOMENU_NOTE_CHILD_SUBMENU_CLASS_LABEL"
+				description="PLG_PROTOMENU_NOTE_CHILD_SUBMENU_CLASS_DESC"
+			/>
 			<field 
 				name="ptm-note-readmoretext"
 				type="note"
@@ -142,7 +136,6 @@
 				label="PLG_PROTOMENU_NOTE_READMORETEXT_LABEL"
 				description="PLG_PROTOMENU_NOTE_READMORETEXT_DESC"
 			/>
-
 			<field
 				name="ptm_item_readmoretext"
 				type="editor"
@@ -151,7 +144,6 @@
 				label="PLG_PROTOMENU_ITEM_READMORETEXT_LABEL"
 				description="PLG_PROTOMENU_ITEM_READMORETEXT_DESC"
 			/>
-
 			<field 
 				name="ptm-note-html-content"
 				type="note"
@@ -160,7 +152,6 @@
 				label="PLG_PROTOMENU_NOTE_HTML_CONTENT_LABEL"
 				description="PLG_PROTOMENU_NOTE_HTML_CONTENT_DESC"
 			/>
-
 			<field
 				name="ptm_item_html_content"
 				type="editor"
@@ -173,7 +164,6 @@
 				label="PLG_PROTOMENU_ITEM_HTML_CONTENT_LABEL"
 				description="PLG_PROTOMENU_ITEM_HTML_CONTENT_DESC"
 			/>
-
 			<field
 				name="ptm_item_disable_readmore"
 				type="radio"
@@ -186,7 +176,6 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
-
 			<field
 				name="ptm_item_readmore_title"
 				type="text"
@@ -194,7 +183,6 @@
 				label="PLG_PROTOMENU_ITEM_READMORETITLE_LABEL"
 				description="PLG_PROTOMENU_ITEM_READMORETITLE_DESC"
 			/>
-
 			<field
 				name="ptm-note-modules"
 				type="note"
@@ -210,7 +198,6 @@
 				description="PLG_PROTOMENU_LOADMODPOSITION_DESC"
 				default=""
 			/>
-
 			<field
 				name="ptm_load_modules"
 				type="sql"
@@ -223,7 +210,6 @@
 				label="PLG_PROTOMENU_LOADMODULE_LABEL"
 				description="PLG_PROTOMENU_LOADMODULE_DESC"
 				/>
-
 			<field
 				name="ptm_modules_chrome_style"
 				type="chromestyle"
@@ -231,7 +217,6 @@
 				label="PLG_PROTOMENU_MODULES_CHROME_STYLE_LABEL"
 				description="PLG_PROTOMENU_MODULES_CHROME_STYLE_DESC"
 			/>
-
 			<field 
 				name="ptm-note-child-classes"
 				type="note"
@@ -239,7 +224,6 @@
 				label="PLG_PROTOMENU_NOTE_OUTPUT_LABEL"
 				description="PLG_PROTOMENU_NOTE_OUTPUT_DESC"
 			/>
-
 		</fieldset>
 	</fields>
 </form>

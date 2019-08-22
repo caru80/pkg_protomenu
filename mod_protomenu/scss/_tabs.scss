@@ -1,20 +1,27 @@
 
 //
-// Tab-Darstellung
+// Tab-Darstellung – Baut auf _desktop.scss auf!
 // Mit Modulklassen-Suffix „tabs”
 //
 
 
 .ptmenu.tabs .nav-wrapper {
 	display: flex;
-	align-items: stretch;
+	//align-items: stretch;
+	flex-direction: flex-start;
 
 	.nav-first {
-		flex: 0 0 200px;
+		flex: 0 0 240px;
+		justify-content: flex-start;
+		.nav-first-outer {
+			width: 100%;
+		}
 	}
 	.nav-children {
 		position: relative;
-		flex: 0 1 auto;
+		// IE 11 sucks! Hier auf KEINEN FALL mit flex-basis arbeiten!
+		// https://stackoverflow.com/questions/35111090/text-in-a-flex-container-doesnt-wrap-in-ie11
+		flex-grow: 1;
 	}
 }
 
@@ -27,6 +34,13 @@
 	> .nav-child-outer {
 		> .nav-child-inner {
 			display: flex;
+			flex-flow: row nowrap;
+			//flex-direction: row-reverse;
+		}
+
+		> .nav-child-inner .heading {
+			flex-basis: 100%;
+			padding-left: 20px;
 		}
 
 		> .nav-child-inner > .item.parent {
@@ -35,15 +49,17 @@
 		}
 
 		> .nav-child-inner .nav-level-3 {
-			flex: 0 1 auto;
-			padding: 0 20px;
+			flex: 0 0 300px;
+			padding-left: 20px;
 
 			opacity: 0;
-			transform: translate3d(0, 30px, 0);
+			transform: translate3d(-30px, 0, 0);
 
 			+ .item + .nav-level-3 {
-				flex: 0 0 300px;
-				padding: 0;
+				// IE 11 sucks! Hier auf KEINEN FALL mit flex-basis arbeiten!
+				// https://stackoverflow.com/questions/35111090/text-in-a-flex-container-doesnt-wrap-in-ie11
+				flex-grow: 1;
+				transform: translate3d(0, 0, 0);
 			}
 		}
 	}
@@ -51,13 +67,15 @@
 	&.open > .nav-child-outer {
 		> .nav-child-inner .nav-level-3 {
 			opacity: 1;
-			transition: opacity 0.3s 0.1s ease,
-						transform 0.3s 0.1s ease;
-			transform: translate3d(0, 0px, 0);
+			transition: opacity 0.4s 0.0s ease,
+						transform 0.4s 0.0s ease;
+			transform: translate3d(0, 0, 0);
 
 			+ .item + .nav-level-3 {
-				transition: opacity 0.3s 0.2s ease,
-							transform 0.3s 0.2s ease;
+				transition: opacity 0.4s 0.1s ease,
+							transform 0.4s 0.1s ease;
+				
+				transform: translate3d(0, 0, 0);
 			}
 		}
 	}
@@ -71,13 +89,16 @@
 	z-index: 1;
 	top: 0;
 	left: 0;
-	height: 100%;
-	width: 100%;
 	overflow: hidden;
 	opacity: 0;
 
+	/*
 	transition: opacity 0.0s ease,
 				visibility 0s 0.0s ease;
+	*/
+
+	transition: opacity 0.3s ease,
+				visibility 0s 0.3s ease;
 
 	&.open{
 		position: static;
@@ -88,36 +109,54 @@
 	}
 }
 
+.ptmenu .ptmenu.tabs .nav-wrapper .nav-children > [data-ptm-child]:not([data-ptm-static-child]) {
+	&.open {visibility: hidden};
+}
+.ptmenu .open .ptmenu.tabs .nav-wrapper .nav-children > [data-ptm-child]:not([data-ptm-static-child]) {
+	&.open {visibility: visible};
+}
+
+
 .ptmenu.tabs .nav-first-inner > .item {
 
 	position: relative;
+
+	* {
+		z-index: 2;
+	}
+
 	img {max-width: 100%;}
 
-	&.deeper:hover > .item-link {
+	&.deeper:hover > .item-link,
+	&.deeper:hover > .item-heading {
 		transition: background-color 0s 0.2s ease, color 0s 0.2s ease;
 	}
 
-	&.deeper > .item-link:before {
+	&.deeper > .item-link:before,
+	&.deeper > .item-heading:before  {
 		content: '';
 		display: block;
 		position: absolute;
-		z-index: 2;
+		z-index: -1;
 		left: 0;
 		bottom: 0;
-		height: 2px;
+		//height: 2px;
+		height: 100%;
 		width: 0;
 
-		background-color: transparentize(#559feb, 1.0);
+		background-color: transparentize($primary, 1.0);
 		transition: width 0s linear, background-color 0s linear;
 	}
 
-	&.deeper:hover > .item-link::before {
+	&.deeper:hover > .item-link::before,
+	&.deeper:hover > .item-heading::before {
 		width: 100%;
-		background-color: transparentize(#559feb, 0.0);
+		background-color: transparentize($primary, 0.0);
 		transition-duration: 0.2s;
 	}
 
-	&.deeper.open > .item-link::before {
+	&.deeper.open > .item-link::before,
+	&.deeper.open > .item-heading::before {
 		width: 100%;
 	}
 }

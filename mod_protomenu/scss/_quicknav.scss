@@ -7,12 +7,6 @@
 .ptmenu{
 	font-size: 1rem;
 	text-align: left;
-
-	// -- Das markieren von Text im Menü verhindern:
-	-webkit-user-select: none; 
-	-khtml-user-select: none; 
-	-moz-user-select: none; 
-	-ms-user-select: none; 
 	user-select: none;
 }
 
@@ -21,92 +15,80 @@
 	z-index: 120; // Optional erhöhen, falls ein anderes Stylesheet den z-index verseucht. Wenn das dann auch nicht klappt, musst du dein Stylesheet korrigieren.
 }
 
+.ptmenu .item {
+	$link-color: (
+		"normal" 	: #ffffff,
+		"hover" 	: #ffffff,
+		"active" 	: #444444
+	);
+	$link-bg-color: (
+		"normal"	: transparent,
+		"hover"		: $primary-light,
+		"active" 	: $primary-light
+	);
 
-/* --------------------------------------------------------------------------------
+	font-size: 1em;
+	
+	.item-link,
+	&.deeper > .item-heading 
+	{
+		display: flex;
+		position: relative;
 
- 	Menüsinträge
+		padding: 0.6em 1em;
+		background-color: map-get($link-bg-color, "normal");
+		color: map-get($link-color, "normal");
 
--------------------------------------------------------------------------------- */
+		// !!!!!!!!! :
+		align-items: center;
+		height: 100%;
+	}
 
-// -- Ein Menüeintrag
-.ptmenu ul li {
-	a.nav-item {
-		font-size: inherit;
-		&[tabindex="0"]{ cursor: default; } // Wenn kein href Attribut vorhanden ist (z.B.: <a tabindex="0" class="nav-item">Foo</a>)
+	// Aktiver Menüeintrag und aktiver Parent
+	&.parent.active,
+	&.current.active
+	{
+		> .item-link,
+		&.deeper > .item-heading 
+		{
+			background-color: map-get($link-bg-color, "active");
+			color: map-get($link-color, "active");
+		}
+	}
+
+	// Hover, geöffnet und angetippt
+	&.open,
+	//&:hover,
+	&:active,
+	//&.active:hover,
+	&.active.open
+	//&.active:active
+	{
+		> .item-link,
+		&.deeper > .item-heading 
+		{
+			background-color: map-get($link-bg-color, "hover");
+			color: map-get($link-color, "hover");
+			text-decoration: none;
+		}
 	}
 }
 
-// -- Ein Menüeintrag in der ersten Ebene (Horizontales Menü)
 
-.ptmenu ul.nav-first{
-	display: flex;
+
+// Erste Ebene Container
+.ptmenu .nav-first {
+	display: flex; // Horizontales Menü
 	justify-content: flex-end;
+	flex-wrap: wrap;
 }
 
-.ptmenu ul.nav-first > li {
-	> .ptmenu-item-custom > span,
-	> .ptmenu-item-custom > a {
-		@include size(2.2em, 2.2em);
-		line-height: 2.2em;
-
-		display: block;
-		color: #ffffff;
-		background-color: $primary;
-		border-radius: 3px; // $border-radius;
-		text-align: center;
-		overflow: hidden;
-
-		i {
-			font-size: 1.2em;
-			line-height: inherit;
-		}
-	}
-	> .ptmenu-item-custom.open > span,
-	> .ptmenu-item-custom.open > a {
-		&, &:focus {
-			background-color: lighten($primary, 15%);;
-		}
-	}
-
-	+ li {
-		margin-left: 0.5em;
-	}
-}
-
-
-/* --------------------------------------------------------------------------------
-
- 	Submenus / Untermenüs
-
--------------------------------------------------------------------------------- */
-
-.ptmenu .nav-first > li > .nav-child {
-	padding: 0.5em 0;
-	border-radius: 3px;
-	margin-top: 5px;
-}
-
-// -- Alle Untermenüs
+// Untermenü-Container
 .ptmenu .nav-child {
-    background-color: lighten($secondary, 18%);
-    min-width: 100%;
-	width: auto;
+	background-color: $primary;
+	min-width: 150px;
+	min-height: 100%;
 }
-
-.ptmenu .nav-child .nav-item {
-	display: block;
-	font-size: 0.95em;
-	padding: 0.25em 1em;
-	color: #ffffff;
-	&:hover {
-		text-decoration: none;
-	}
-	&:active {
-		background-color: $primary;
-	}
-}
-
-
 
 
 
@@ -117,78 +99,92 @@
 	
 	Hier sind keinerlei Änderungen nötig.
 
-	<li data-ptm-item="ModulId-ItemId">
-		<a|span>
+	<li data-ptm-item="ModulId-Itemid" class="item-Itemid deeper parent [current active]">
+		<a|span|...>
 		<div class="nav-child nav-level-N" data-ptm-child="ModulId-ItemId" data-ptm-level="N” [data-ptm-static-child]>
 
 -------------------------------------------------------------------------------- */
 
 // -- Untermenüs Positionieren – Verhalten „Dropdown”
-[data-ptm-item]:not(.mega) {
+[data-ptm-item].deeper:not(.mega) {
 
 	// Untermenüs richten sich am <li> aus:
 	position: relative;
 
-	// Ab der 2. Menüebene – von Oben nach Unten.
-	[data-ptm-child]:not([data-ptm-static-child]) {
-		position: absolute;
+	// Bug in Apple Safari – Alle nachfolgenden .item haben in Safari einen höheren z-Index als: [data-ptm-item].open > [data-ptm-child], so das bei einem 2-zeiligen Menü das Untermenü nicht erreicht werden kann.
+	&.open {
 		z-index: 2;
+	}
+
+	// Ab der 2. Menüebene – die Erste, die aufklappen kann – von Oben nach Unten ausrichten.
+	> [data-ptm-child]:not([data-ptm-static-child]) 
+	{
+		position: absolute;
 		top: 100%;
 		left: 0;
-		// Oder, wenn kein Platz mehr das ist, von Rechts nach Links:
+
 		&.rtl {
 			left: auto;
 			right: 0;
-        }
-        &.btt {
-            top: auto;
-            bottom: 100%;
-        }
+		}
 	}
-	
-	// Ab der dritten Ebene – von Links nach Rechts:
-	[data-ptm-child] [data-ptm-child]:not([data-ptm-static-child]) {
+	// Von Unten nach Oben (bottom-to-top: „btt”) ausrichten:
+	&.btt > [data-ptm-child]:not([data-ptm-static-child]) 
+	{
+		top: auto;
+		bottom: 100%;
+	}
+
+
+	// Ab der dritten Ebene von Links nach Rechts ausrichten:
+	> [data-ptm-child] [data-ptm-child]:not([data-ptm-static-child]) 
+	{
 		top: 0;
 		left: 100%;
-		
-		// Oder, wenn kein Platz mehr das ist, von Rechts nach Links:
+
+		// Oder von Rechts nach Links (right-to-left: „rtl”) ausrichten:
 		&.rtl {
 			left: auto;
 			right: 100%;
 		}
-		
-		// Oder, wenn kein Platz mehr das ist, von Unten nach Oben
-		&.btt {
-			top: auto;
-			bottom: 0;
-		}
+	}
+
+
+	// Von Unten nach Oben (bottom-to-top: „btt”) ausrichten:
+	> [data-ptm-child] [data-ptm-item].deeper.btt > 
+		[data-ptm-child]:not([data-ptm-static-child]) 
+	{
+		top: auto;
+		bottom: 0;
 	}
 }
 
 // -- Untermenüs Positionieren – Verhalten „Mega Menü”
-[data-ptm-item].mega {
+[data-ptm-item].deeper.mega {
 
-	// Untermenüs richten sich an <div class="nav-wrapper"> aus. Nur die 2. Ebene.
+	// Durch die Position static an <li class="deeper mega ..."> richtet sich das .nav-child automatisch am nächst Höheren Element mit Position relative oder absolute aus. In diesem Fall ist das: div.nav-wrapper
 	position: static;
 
-	// Nur die 2. Menüebene – von Oben nach unten.
-	> [data-ptm-child] {
-		position: absolute;
-		z-index: 2;
-		top: 100%;
-        left: 0;
-        &.btt {
-            top: auto;
-            bottom: 100%;
-        }
+	// Bug in Apple Safari – Alle nachfolgenden .item haben in Safari einen höheren z-Index als: [data-ptm-item].open > [data-ptm-child], so das bei einem 2-zeiligen Menü das Untermenü nicht erreicht werden kann.
+	&.open ~ [data-ptm-item] {
+		z-index: -1;
 	}
 
-	// Ab der dritten Ebene – von Links nach Rechts:
-	[data-ptm-child] [data-ptm-child]:not([data-ptm-static-child]) {
+	// ... Dies betrifft aber nur die nächste Kindebene, die von oben nach unten aufklappen soll.
+	> [data-ptm-child]:not([data-ptm-static-child]) {
+		position: absolute;
+		z-index: 20;
+		//top: 100%;
+		left: 0;
+	}
+
+	// ... Ab der dritten Ebene soll wie gehabt von links nach Rechts aufgeklappt werden.
+	> [data-ptm-child] [data-ptm-child]:not([data-ptm-static-child]) {
 		top: 0;
 		left: 100%;
 	}
 }
+
 
 
 /* --------------------------------------------------------------------------------
@@ -197,61 +193,68 @@
 	 
 	Hier sind keinerlei Änderungen nötig, es sei denn der Einblendeeffekt soll geändert werden. 
 
-	<li data-ptm-item="ModulId-ItemId">
-		<a|span>
-		<div class="nav-child nav-level-N" data-ptm-child="ModulId-ItemId" data-ptm-level="N” [data-ptm-static-child]>
+	<li data-ptm-item="ModulId-Itemid" class="item-Itemid deeper parent [current active]">
+		<a|span|...>
+		<div class="nav-child nav-level-N" data-ptm-child="ModulId-ItemId" data-ptm-level="N" [data-ptm-static-child]>
 
 -------------------------------------------------------------------------------- */
 
-// -- Verhalten „Dropdown” und „Mega Menü”
-[data-ptm-item] [data-ptm-child]:not([data-ptm-static-child]) {
-	// Ausgeblendet:
-	visibility: hidden;
-	opacity: 0;
+[data-ptm-item].deeper {
+	//
+	// Standard-Dropdown
+	//
+	> [data-ptm-child]:not([data-ptm-static-child]) 
+	{
+		visibility: hidden;
+		opacity: 0;
 
-	// Übergang:
-	-webkit-transform: scale3d(0.95,0.95,0.95);
-			transform: scale3d(0.95,0.95,0.95);
-	-webkit-transition: -webkit-transform 0.2s cubic-bezier(.54,.39,0,1.02), 
-						opacity 0.3s ease,
-						visibility 0.0s 0.3s linear;
-			transition: transform 0.2s cubic-bezier(.54,.39,0,1.02), 
-						opacity 0.3s ease,
-						visibility 0.0s 0.3s linear;
+		transform: scale3d(0.95,0.95,0.95);
+		//transition-duration: 0s;
+		transition-duration: 0.3s;
+	}
 
-	// Aktiv, Ausgeklappt, Geöffnet:
-	&.open{
+	//
+	// Mega-Dropdown
+	// Hier soll kein Skalierungseffekt (scale3d) benutzt werden, weil das bei einem Element mit 100% Breite nicht gut aussieht.
+	//
+	&.mega > [data-ptm-child]:not([data-ptm-static-child]) 
+	{
+		transform: translateZ(0); // GPU Rendern...
+	}
+
+	//
+	// Auslösen
+	//
+	> [data-ptm-child].open
+	{
 		z-index: 10;
 		visibility: visible;
 		opacity: 1;
-		transform: scale3d(1,1,1);
+	}
 
-		-webkit-transition: -webkit-transform 0.2s cubic-bezier(.54,.39,0,1.02), 
-							opacity 0.3s ease,
-							visibility 0.0s 0.0s linear;
-				transition: transform 0.2s cubic-bezier(.54,.39,0,1.02), 
-							opacity 0.3s ease,
-							visibility 0.0s 0.0s linear;
+	// Offen, nicht Mega
+	> [data-ptm-child].open
+	{
+		transform: 	scale3d(1,1,1);
+		transition:	transform 0.2s cubic-bezier(.54,.39,0,1.02), 
+					opacity 0.3s ease;
+	}
+
+	// Offen, Mega-Dropdown
+	&.mega > [data-ptm-child].open
+	{
+		transition:	opacity 0.3s ease;
 	}
 }
 
-// -- Verhalten „Mega Menü” – kein Skalierungseffekt.
-[data-ptm-item].mega [data-ptm-child]:not([data-ptm-static-child]) {
 
-	-webkit-transform: translate3d(0,0,0);
-			transform: translate3d(0,0,0);
-	-webkit-transition: opacity 0.3s ease,
-						visibility 0.0s 0.3s linear;
-			transition: opacity 0.3s ease,
-						visibility 0.0s 0.3s linear;
-}
 
 
 /* --------------------------------------------------------------------------------
 
 	Listen- und Grid-Fix
 	 
-	You shall not touch this! Es sei denn, du musst.
+	Das soll nicht bearbeitet werden! Es sei denn, du musst.
 	 
 -------------------------------------------------------------------------------- */
 
@@ -261,24 +264,11 @@
 	&, li{
 		margin: 0; padding: 0;
 	}
-}
-.ptmenu ul.row{
-	margin: 0 -($grid-gutter-width / 2);
-}
-.ptmenu ul.nav-first li[class*=col-],
-.ptmenu ul.nav-sub li[class*=col-]{
-	padding: 0 $grid-gutter-width / 2;
-}
-
-
-/* --------------------------------------------------------------------------------
-
-	Keine Outlines für Hyperlinks
-	 	 
--------------------------------------------------------------------------------- */
-
-.ptmenu li a.nav-item{ 
-	&:hover, &:focus, &:active{
-		outline: none !important;
+	&.row {
+		margin: 0px ($grid-gutter-width / 2 * -1);
 	}
+}
+.ptmenu ul.nav-first li[class*=col],
+.ptmenu ul.nav-sub li[class*=col]{
+	padding: 0px $grid-gutter-width / 2;
 }

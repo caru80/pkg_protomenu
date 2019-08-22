@@ -1,0 +1,46 @@
+//
+// Hauptmenü Desktop
+//
+@mixin protomenu-item-colors($bg-color, $color, $deeper-bg, $open-bg-color: $bg-color, $open-color: $color, $open-deeper-bg: $deeper-bg, $active-bg-color: $open-bg-color, $active-color: $open-color, $active-deeper-bg: $open-deeper-bg) {
+	&:hover,
+	&:active,
+	&.active:hover,
+	&.active.open:hover,
+	&.active:active
+	{
+		> .item-link,
+		&.deeper > .item-heading {
+			color: $color !important;
+			background-color: $bg-color !important;
+
+			.item-deeper i {
+				background-color: $deeper-bg !important;
+			}
+		}
+	}
+
+	&.open {
+		> .item-link,
+		&.deeper > .item-heading {
+			color: $open-color !important;
+			background-color: $open-bg-color !important;
+
+			.item-deeper i {
+				background-color: $open-deeper-bg !important;
+			}
+		}
+	}
+
+	&.active,
+	&.active.open {
+		> .item-link,
+		&.deeper > .item-heading {
+			color: $active-color !important;
+			background-color: $active-bg-color !important;
+
+			.item-deeper i {
+				background-color: $active-deeper-bg !important;
+			}
+		}
+	}
+}

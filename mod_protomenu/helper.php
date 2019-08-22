@@ -245,6 +245,7 @@ class ModProtomenuHelper extends ModMenuHelper {
 					$item->protomenu->child_class = htmlspecialchars($item->params->get('ptm_child_class',''), ENT_COMPAT, 'UTF-8', false);
 					$item->protomenu->child_outer_class = htmlspecialchars($item->params->get('ptm_child_outer_class',''), ENT_COMPAT, 'UTF-8', false);
 					$item->protomenu->child_inner_class = htmlspecialchars($item->params->get('ptm_child_inner_class',''), ENT_COMPAT, 'UTF-8', false);
+					$item->protomenu->child_submenu_class = htmlspecialchars($item->params->get('ptm_child_submenu_class',''), ENT_COMPAT, 'UTF-8', false);
 					// Protomenu: Kind-Container standardmäßig geöffnet?
 					$item->protomenu->defaultopen = (bool)$item->params->get('ptm_child_defaultopen', false);
 

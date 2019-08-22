@@ -15,6 +15,7 @@
  */
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 /**
 	Dieses Temlate zeigt HTML.
@@ -62,14 +63,16 @@ use Joomla\CMS\Uri\Uri;
 		"readmore_title" 	=> $readmoreTitle,
 		"language_title"	=> ModProtomenuHelper::getLanguageInfo()->title_native,
 		"language_code" 	=> strtolower(ModProtomenuHelper::getLanguageInfo()->lang_code),
-		"uri_root" 			=> Uri::root()
+		"uri_root" 			=> Uri::root(),
+		"user_fullname" 	=> Factory::getUser()->name,
+		"user_name"		 	=> Factory::getUser()->username
 	);
 
 	/**
 		Template Ausgabe:
 	*/
 ?>
-<div class="item-html <?php echo $item->anchor_css;?>">
+<!--div class="item-html <?php echo $item->anchor_css;?>"-->
 	<?php
 		// -- Im Text den Platzhalter für den Weiterlesen-Link ersetzen:
 		if(!$item->params->get('ptm_item_disable_readmore',0)) :
@@ -94,4 +97,4 @@ use Joomla\CMS\Uri\Uri;
 			echo $readmoreLink;
 		endif;
 	?>
-</div>
+<!--/div-->
