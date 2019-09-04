@@ -2,12 +2,12 @@
 <extension type="package" version="3.0" method="upgrade">
 	<name>HEAD. Protomenü</name>
 	<author>Carsten Ruppert</author>
-	<creationDate>2019-04-24</creationDate>
+	<creationDate>2019-09-04</creationDate>
 	<copyright>© 2018 - 2019 HEAD. MARKETING GmbH</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>webmaster@headmarketing.de</authorEmail>
 	<authorUrl>https://www.headmarketing.de</authorUrl>
-	<version>4.0</version>
+	<version>4.0.1</version>
 	<description>Protomenü Installationspaket</description>
     <packagename>protomenu</packagename>
 	<updateservers>
